@@ -1,7 +1,9 @@
 package org.baratie.yumyum.domain.favorite.domain;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.*;
+import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.store.domain.Store;
 
 @Entity
 @Builder
@@ -10,4 +12,19 @@ import lombok.*;
 @Getter
 @ToString
 public class Favorite {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "favorite_id")
+    private Long id;
+
+    @Column(name = "is_favorite", nullable = false)
+    private boolean isFavorite;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "member", nullable = false)
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "store", nullable = false)
+    private Store store;
 }
