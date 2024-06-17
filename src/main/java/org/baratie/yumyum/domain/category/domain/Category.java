@@ -2,6 +2,7 @@ package org.baratie.yumyum.domain.category.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.baratie.yumyum.domain.store.domain.Store;
 
 @Entity
 @Getter
@@ -15,4 +16,10 @@ public class Category {
     @Column(name = "category_id")
     private Long id;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "store", nullable = false)
+    private Store store;
 }

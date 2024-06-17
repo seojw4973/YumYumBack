@@ -15,4 +15,10 @@ public class Image {
     @Column(name = "image_id")
     private Long id;
 
+    @Column(name = "image_url", nullable = false)
+    private String imageUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "image_type", nullable = false)
+    private ImageType imageType;
 }
