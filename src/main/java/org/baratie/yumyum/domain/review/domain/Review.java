@@ -2,6 +2,7 @@ package org.baratie.yumyum.domain.review.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.baratie.yumyum.domain.BaseTimeEntity;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.store.domain.Store;
 
@@ -11,7 +12,7 @@ import org.baratie.yumyum.domain.store.domain.Store;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Review {
+public class Review extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")

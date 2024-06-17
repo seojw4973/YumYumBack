@@ -2,6 +2,7 @@ package org.baratie.yumyum.domain.image.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.baratie.yumyum.domain.BaseTimeEntity;
 
 @Entity
 @Getter
@@ -9,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Image {
+public class Image extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id")
