@@ -2,7 +2,10 @@ package org.baratie.yumyum.domain.store.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.baratie.yumyum.domain.BaseTimeEntity;
 import org.baratie.yumyum.domain.member.domain.Member;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -10,7 +13,7 @@ import org.baratie.yumyum.domain.member.domain.Member;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Store {
+public class Store extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_id")
@@ -25,7 +28,11 @@ public class Store {
     @Column(name = "address", nullable = false)
     private String address;
 
+    @Column(name = "hours")
+    private LocalDateTime hours;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @Column(name = "member")
     private Member member;
+
 }
