@@ -1,0 +1,3 @@
+[submodule "src/main/resources/prod"]
+	path = src/main/resources/prod
+	url = https://github.com/Bit-Baratie/baratie-sub.git
