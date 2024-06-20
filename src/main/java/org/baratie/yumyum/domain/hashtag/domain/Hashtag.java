@@ -3,6 +3,7 @@ package org.baratie.yumyum.domain.hashtag.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.baratie.yumyum.domain.review.domain.Review;
+import org.baratie.yumyum.domain.store.domain.Store;
 
 @Entity
 @Getter
@@ -21,5 +22,5 @@ public class Hashtag {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Column(name = "review")
-    private Review review;
+    private Store store;
 }

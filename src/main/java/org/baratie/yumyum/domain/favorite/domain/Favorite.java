@@ -17,7 +17,7 @@ public class Favorite {
     @Column(name = "favorite_id")
     private Long id;
 
-    @Column(name = "is_favorite", nullable = false)
+    @Column(name = "is_favorite")
     private boolean isFavorite;
 
     @ManyToOne(fetch = FetchType.LAZY)
