@@ -28,13 +28,17 @@ public class Member extends BaseTimeEntity {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "image_url", nullable = false)
-    private String image_url;
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
 
-    @Column(name = "is_deleted", nullable = false)
+    @Column(name = "is_deleted")
     private boolean isDeleted;
+
+    @Column(name = "social_type")
+    private SocialType socialType;
+
 }

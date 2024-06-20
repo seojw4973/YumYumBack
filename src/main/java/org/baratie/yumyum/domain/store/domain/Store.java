@@ -5,6 +5,7 @@ import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
 import org.baratie.yumyum.domain.member.domain.Member;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,6 +31,16 @@ public class Store extends BaseTimeEntity {
 
     @Column(name = "hours")
     private LocalDateTime hours;
+
+    @Column(name = "is_closed")
+    private boolean isClosed;
+
+    @Column(name = "views")
+    private int views;
+
+    private BigDecimal longitude;
+
+    private BigDecimal latitude;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Column(name = "member")
