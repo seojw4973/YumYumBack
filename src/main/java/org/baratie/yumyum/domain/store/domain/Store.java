@@ -23,14 +23,14 @@ public class Store extends BaseTimeEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "call", nullable = false)
+    @Column(name = "calls", nullable = false)
     private String call;
 
     @Column(name = "address", nullable = false)
     private String address;
 
     @Column(name = "hours")
-    private LocalDateTime hours;
+    private String hours;
 
     @Column(name = "is_closed")
     private boolean isClosed;
@@ -38,8 +38,10 @@ public class Store extends BaseTimeEntity {
     @Column(name = "views")
     private int views;
 
+    @Column(name = "longitude", nullable = false)
     private BigDecimal longitude;
 
+    @Column(name = "latitude", nullable = false)
     private BigDecimal latitude;
 
     @ManyToOne(fetch = FetchType.LAZY)
