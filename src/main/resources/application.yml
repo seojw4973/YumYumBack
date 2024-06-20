@@ -1,0 +1,3 @@
+spring:
+    config:
+        import: classpath:prod/application-prod.yml
