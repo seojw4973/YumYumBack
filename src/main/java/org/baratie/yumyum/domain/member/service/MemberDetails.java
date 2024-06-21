@@ -2,8 +2,6 @@ package org.baratie.yumyum.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
-import org.baratie.yumyum.domain.member.domain.Role;
-import org.baratie.yumyum.domain.member.dto.MemberDTO;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.User;
@@ -11,10 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Configuration
 @Service

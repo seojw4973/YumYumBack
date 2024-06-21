@@ -7,12 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class MemberDTO {
+public class LoginDto {
 
     private String email;
     private String password;
-    private String phoneNumber;
-    private String nickName;
-    private String imageUrl;
-
 }
