@@ -21,10 +21,10 @@ public class Favorite {
     private boolean isFavorite;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "member", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "store", nullable = false)
+    @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 }

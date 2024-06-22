@@ -21,6 +21,6 @@ public class Hashtag {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "review")
+    @JoinColumn(name = "store_id")
     private Store store;
 }

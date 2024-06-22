@@ -3,17 +3,15 @@ package org.baratie.yumyum.domain.member.service;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.domain.Role;
-import org.baratie.yumyum.domain.member.dto.MemberDTO;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Configuration
@@ -25,14 +23,26 @@ public class MemberDetails implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("Could not found user" + email)
-        );
+        System.out.println("loadUserByUsername....");
+        System.out.println("email : " + email);
 
-        return User.builder()
-                .username(member.getEmail())
-                .password(member.getPassword())
-                .roles("ROLE_USER")
-                .build();
+        try {
+            Optional<Member> member = memberRepository.findByEmail(email);
+            if (member.isEmpty()) {
+                System.out.println("User not found with email: " + email);
+                throw new UsernameNotFoundException("User not found with email: " + email);
+            }
+
+            System.out.println("member: " + member.get());
+
+            return User.builder()
+                    .username(member.get().getEmail())
+                    .password(member.get().getPassword())
+                    .authorities(new SimpleGrantedAuthority(Role.USER.getRole()))
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

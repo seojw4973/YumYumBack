@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.domain.SocialType;
-import org.baratie.yumyum.domain.member.dto.LoginDTO;
-import org.baratie.yumyum.domain.member.dto.MemberDTO;
+import org.baratie.yumyum.domain.member.dto.LoginDto;
+import org.baratie.yumyum.domain.member.dto.MemberDto;
+import org.baratie.yumyum.domain.member.dto.TokenDto;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +21,10 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    public String register(MemberDTO memberDTO){
+    public String register(MemberDto memberDTO){
         String response = null;
         try{
             if(!memberRepository.existsByNickname(memberDTO.getNickName())){
@@ -28,6 +33,7 @@ public class MemberService {
                         .nickname(memberDTO.getNickName())
                         .email(memberDTO.getEmail())
                         .password(encodedPassword)
+                        .phoneNumber(memberDTO.getPhoneNumber())
                         .imageUrl(memberDTO.getImageUrl())
                         .role(Role.USER)
                         .isDeleted(false)
@@ -42,6 +48,18 @@ public class MemberService {
             response = "회원가입에 실패하였습니다.";
         }
         return response;
+    }
+
+    public TokenDto login(LoginDto loginDto){
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
+        System.out.println("authenticationToken : " + authenticationToken);
+
+        Authentication auth = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        System.out.println("auth :" + auth);
+        TokenDto tokenDto = jwtService.createToken(auth);
+
+        return tokenDto;
     }
 
 }

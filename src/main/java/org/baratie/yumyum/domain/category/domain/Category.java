@@ -20,6 +20,6 @@ public class Category {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "store", nullable = false)
+    @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 }

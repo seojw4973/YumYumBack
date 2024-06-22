@@ -26,11 +26,11 @@ public class Review extends BaseTimeEntity {
     private int grade;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "store")
+    @JoinColumn(name = "store_id")
     private Store store;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "member")
+    @JoinColumn(name = "member_id")
     private Member member;
 
 }

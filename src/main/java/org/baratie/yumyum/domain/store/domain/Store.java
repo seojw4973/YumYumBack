@@ -45,7 +45,7 @@ public class Store extends BaseTimeEntity {
     private BigDecimal latitude;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "member")
+    @JoinColumn(name = "member_id")
     private Member member;
 
 }
