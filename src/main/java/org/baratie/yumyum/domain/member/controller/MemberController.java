@@ -23,13 +23,15 @@ public class MemberController {
     @PostMapping
     public ResponseEntity<String> registerMember(@RequestBody MemberDto memberDTO) {
         String response = memberService.register(memberDTO);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@RequestBody LoginDto loginDto) {
         System.out.println("login.....");
-        return ResponseEntity.ok(memberService.login(loginDto));
+        TokenDto tokenDto = memberService.login(loginDto);
+        System.out.println("Token: " + tokenDto);
+        return ResponseEntity.ok().body(tokenDto);
     }
 
 

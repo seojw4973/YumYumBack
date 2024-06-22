@@ -1,6 +1,7 @@
 package org.baratie.yumyum.domain.member.service;
 
 import io.jsonwebtoken.*;
+import jakarta.annotation.PostConstruct;
 import org.baratie.yumyum.domain.member.dto.TokenDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +31,7 @@ public class JwtService {
 
     private static final String AUTHORITIES_KEY = "auth";
 
+    @PostConstruct
     protected void init(){ key = Base64.getEncoder().encodeToString(key.getBytes()); }
 
     public TokenDto createToken(Authentication authentication){

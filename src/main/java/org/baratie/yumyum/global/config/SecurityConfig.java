@@ -1,7 +1,7 @@
 package org.baratie.yumyum.global.config;
 
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.member.Filter.JwtAuthenticationFilter;
+import org.baratie.yumyum.domain.member.filter.JwtAuthenticationFilter;
 import org.baratie.yumyum.domain.member.service.JwtService;
 import org.baratie.yumyum.global.exception.AuthEntryPoint;
 import org.baratie.yumyum.global.exception.JwtAccessDeniedHandler;
@@ -33,7 +33,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // cors 설정 처리(서로 다른 Server 환경에서 자원 공유 시 사용)
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -48,28 +47,22 @@ public class SecurityConfig {
         return source;
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                 .csrf(csrfConfigurer -> csrfConfigurer.disable())
-
-                // 인증정보 없을 시 401 에러, 권한 없을 시 403 에러 반환
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
-
-                // 세션 사용하지 않으므로 STATELESS
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
                 .and()
-                .authorizeHttpRequests(
-                        auth -> auth
-                                .requestMatchers("/member/login").permitAll()
-                                .anyRequest().authenticated()
-                )
+                .authorizeRequests()
+                .requestMatchers("/member", "/member/login").permitAll()
+                .anyRequest().authenticated()
+                .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }

@@ -1,4 +1,4 @@
-package org.baratie.yumyum.domain.member.Filter;
+package org.baratie.yumyum.domain.member.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,23 +20,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = request.getHeader("Authorization");
+        String requestURI = request.getRequestURI();
 
-        if(request.getRequestURI().equals("/member/login")){
+        if (requestURI.equals("/member/login") || requestURI.equals("/member/register")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-
-        if(jwt == null || !jwt.startsWith("Bearer ")) {
-            System.out.println("Authorization header not found");
+        if (jwt == null || !jwt.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
         String token = jwt.substring(7);
-        if(jwtService.validateToken(token)) {
-            Authentication authentication = jwtService.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            if (jwtService.validateToken(token)) {
+                Authentication authentication = jwtService.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token validation failed");
+            return;
         }
+
         filterChain.doFilter(request, response);
     }
 }

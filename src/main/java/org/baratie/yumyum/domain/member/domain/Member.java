@@ -10,7 +10,7 @@ import org.baratie.yumyum.domain.BaseTimeEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Member extends BaseTimeEntity {
+public class Member {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
@@ -38,6 +38,7 @@ public class Member extends BaseTimeEntity {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "social_type")
     private SocialType socialType;
 
