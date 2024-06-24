@@ -8,7 +8,6 @@ import org.baratie.yumyum.domain.member.dto.LoginDto;
 import org.baratie.yumyum.domain.member.dto.MemberDto;
 import org.baratie.yumyum.domain.member.dto.TokenDto;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -60,6 +59,18 @@ public class MemberService {
         TokenDto tokenDto = jwtService.createToken(auth);
 
         return tokenDto;
+    }
+
+    public MemberDto getMyInfo(Long member_id){
+        Member member = memberRepository.findById(member_id).orElseThrow();
+
+        MemberDto memberDto = new MemberDto().builder()
+                .email(member.getEmail())
+                .nickName(member.getNickname())
+                .phoneNumber(member.getPhoneNumber())
+                .imageUrl(member.getImageUrl()).build();
+
+        return memberDto;
     }
 
 }
