@@ -7,11 +7,7 @@ import org.baratie.yumyum.domain.member.dto.TokenDto;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.domain.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +28,14 @@ public class MemberController {
         TokenDto tokenDto = memberService.login(loginDto);
         System.out.println("Token: " + tokenDto);
         return ResponseEntity.ok().body(tokenDto);
+    }
+
+    @GetMapping("/{member_id}")
+    public ResponseEntity<MemberDto> getMember(@PathVariable Long member_id) {
+        System.out.println("getMember...");
+        MemberDto memberDto = memberService.getMyInfo(member_id);
+        System.out.println("memberDto: " + memberDto);
+        return ResponseEntity.ok().body(memberDto);
     }
 
 
