@@ -1,13 +1,12 @@
 package org.baratie.yumyum.global.config;
 
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.member.filter.JwtAuthenticationFilter;
+import org.baratie.yumyum.domain.member.Filter.JwtAuthenticationFilter;
 import org.baratie.yumyum.domain.member.service.JwtService;
 import org.baratie.yumyum.global.exception.AuthEntryPoint;
 import org.baratie.yumyum.global.exception.JwtAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -58,7 +57,8 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .requestMatchers("/member", "/member/login").permitAll()
+                .requestMatchers("/member", "/member/login",
+                        "/swagger-ui/*", "/api/swagger-config", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);

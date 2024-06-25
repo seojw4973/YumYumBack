@@ -2,46 +2,47 @@ package org.baratie.yumyum.domain.store.service;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.favorite.repository.FavoriteRepository;
-import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
-import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
-import org.baratie.yumyum.domain.menu.domain.Menu;
-import org.baratie.yumyum.domain.menu.repository.MenuRepository;
 import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
 import org.baratie.yumyum.domain.store.repository.StoreRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class StoreService {
 
     private final StoreRepository storeRepository;
     private final ReviewRepository reviewRepository;
     private final FavoriteRepository favoriteRepository;
-    private final HashtagRepository hashtagRepository;
-    private final MenuRepository menuRepository;
 
-    public StoreDetailDto StoreDetail(Long id){
-        Store store = storeRepository.findById(id).orElseThrow();
-        int reviewCount = reviewRepository.countReviewByStoreId(id);
-        int favoriteCount = favoriteRepository.countFavoriteByStoreId(id);
-        List<Hashtag> hashtags = hashtagRepository.findByStoreId(id);
-        List<Menu> menuList = menuRepository.findByStoreId(id);
+    /**
+     * 맛집 상세 조회
+     * @param store_id 가게 pk
+     * @return StoreDetailDto
+     */
+    public StoreDetailDto StoreDetail(Long store_id){
+        Store store = validationStoreId(store_id);
 
-        StoreDetailDto storeDetailDto = new StoreDetailDto().builder()
-                .name(store.getName())
-                .address(store.getAddress())
-                .hours(store.getHours())
-                .views(store.getViews())
-                .reviewCount(reviewCount)
-                .favoriteCount(favoriteCount)
-                .hashtagList(hashtags)
-                .menuList(menuList)
-                .build();
-        return storeDetailDto;
+        int reviewCount = reviewRepository.countReviewByStoreId(store_id);
+        int favoriteCount = favoriteRepository.countFavoriteByStoreId(store_id);
+
+        return StoreDetailDto.fromEntity(store, reviewCount, favoriteCount);
+    }
+
+
+    /**
+     *
+     * @param store_id 가게 pk
+     * @return Store
+     */
+    private Store validationStoreId(Long store_id) {
+        return storeRepository.findById(store_id).orElseThrow(
+                () -> new NotFoundException("존재하지 않는 가게입니다.")
+        );
     }
 
 }
