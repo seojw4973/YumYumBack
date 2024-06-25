@@ -27,4 +27,20 @@ public class Favorite {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
+
+    /**
+     * 즐겨찾기 된 상태에서 누르면 즐겨찾기 취소 이므로 false 가 넘어온다.
+     * @param isFavorite 클라이언트에서 보낸 즐겨찾기 변경 상태
+     */
+    public void changeFavoriteStatus(boolean isFavorite) {
+        this.isFavorite = isFavorite;
+    }
+
+    public static Favorite insertFavorite(Member member, Store store) {
+        return Favorite.builder()
+                .member(member)
+                .store(store)
+                .isFavorite(true)
+                .build();
+    }
 }
