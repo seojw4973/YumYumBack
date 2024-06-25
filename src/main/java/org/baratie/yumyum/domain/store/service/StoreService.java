@@ -5,7 +5,9 @@ import org.baratie.yumyum.domain.favorite.repository.FavoriteRepository;
 import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
+import org.baratie.yumyum.domain.store.exception.StoreNotFoundException;
 import org.baratie.yumyum.domain.store.repository.StoreRepository;
+import org.baratie.yumyum.global.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -41,7 +43,7 @@ public class StoreService {
      */
     private Store validationStoreId(Long store_id) {
         return storeRepository.findById(store_id).orElseThrow(
-                () -> new NotFoundException("존재하지 않는 가게입니다.")
+                () -> new StoreNotFoundException(ErrorCode.STORE_NOT_FOUND)
         );
     }
 

@@ -16,12 +16,22 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
 
+    /**
+     *
+     * @param memberDTO
+     * @return
+     */
     @PostMapping
     public ResponseEntity<String> registerMember(@RequestBody MemberDto memberDTO) {
         String response = memberService.register(memberDTO);
         return ResponseEntity.ok(response);
     }
 
+    /**
+     *
+     * @param loginDto
+     * @return
+     */
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@RequestBody LoginDto loginDto) {
         System.out.println("login.....");
@@ -30,6 +40,11 @@ public class MemberController {
         return ResponseEntity.ok().body(tokenDto);
     }
 
+    /**
+     *
+     * @param member_id
+     * @return
+     */
     @GetMapping("/{member_id}")
     public ResponseEntity<MemberDto> getMember(@PathVariable Long member_id) {
         System.out.println("getMember...");
