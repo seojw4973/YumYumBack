@@ -17,9 +17,9 @@ public class MemberController {
     private final MemberRepository memberRepository;
 
     /**
-     *
+     * 회원가입
      * @param memberDTO
-     * @return
+     * @return response
      */
     @PostMapping
     public ResponseEntity<String> registerMember(@RequestBody MemberDto memberDTO) {
@@ -28,9 +28,9 @@ public class MemberController {
     }
 
     /**
-     *
+     * 로그인
      * @param loginDto
-     * @return
+     * @return TokenDto
      */
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@RequestBody LoginDto loginDto) {
@@ -41,14 +41,14 @@ public class MemberController {
     }
 
     /**
-     *
-     * @param member_id
+     * 내 정보 보기
+     * @param memberId
      * @return
      */
-    @GetMapping("/{member_id}")
-    public ResponseEntity<MemberDto> getMember(@PathVariable Long member_id) {
+    @GetMapping("/{memberId}")
+    public ResponseEntity<MemberDto> getMember(@PathVariable Long memberId) {
         System.out.println("getMember...");
-        MemberDto memberDto = memberService.getMyInfo(member_id);
+        MemberDto memberDto = memberService.getMyInfo(memberId);
         System.out.println("memberDto: " + memberDto);
         return ResponseEntity.ok().body(memberDto);
     }
