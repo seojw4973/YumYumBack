@@ -23,6 +23,11 @@ public class MemberService {
     private final JwtService jwtService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
+    /**
+     *
+     * @param memberDTO
+     * @return
+     */
     public String register(MemberDto memberDTO){
         String response = null;
         try{
@@ -49,20 +54,35 @@ public class MemberService {
         return response;
     }
 
+    /**
+     *
+     * @param loginDto
+     * @return
+     */
     public TokenDto login(LoginDto loginDto){
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
-        System.out.println("authenticationToken : " + authenticationToken);
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
+            System.out.println("authenticationToken : " + authenticationToken);
 
-        Authentication auth = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        System.out.println("auth :" + auth);
-        TokenDto tokenDto = jwtService.createToken(auth);
+            Authentication auth = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+            System.out.println("auth :" + auth);
 
-        return tokenDto;
+            TokenDto tokenDto = jwtService.createToken(auth);
+            return tokenDto;
+        } catch (Exception e) {
+            e.printStackTrace(); // 예외 발생 시 스택 트레이스를 출력
+            throw new RuntimeException("로그인 실패", e); // 사용자 정의 예외 메시지와 함께 예외를 다시 던짐
+        }
     }
 
-    public MemberDto getMyInfo(Long member_id){
-        Member member = memberRepository.findById(member_id).orElseThrow();
+    /**
+     *
+     * @param memberId
+     * @return
+     */
+    public MemberDto getMyInfo(Long memberId){
+        Member member = memberRepository.findById(memberId).orElseThrow();
 
         MemberDto memberDto = new MemberDto().builder()
                 .email(member.getEmail())

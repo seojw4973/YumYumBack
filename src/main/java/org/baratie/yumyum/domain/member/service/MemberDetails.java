@@ -1,6 +1,7 @@
 package org.baratie.yumyum.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
@@ -27,19 +28,13 @@ public class MemberDetails implements UserDetailsService {
         System.out.println("email : " + email);
 
         try {
-            Optional<Member> member = memberRepository.findByEmail(email);
-            if (member.isEmpty()) {
-                System.out.println("User not found with email: " + email);
-                throw new UsernameNotFoundException("User not found with email: " + email);
-            }
+            Member member = memberRepository.findByEmail(email).orElseThrow(
+                    () -> new UsernameNotFoundException(email)
+            );
 
-            System.out.println("member: " + member.get());
+            System.out.println("member: " + member);
 
-            return User.builder()
-                    .username(member.get().getEmail())
-                    .password(member.get().getPassword())
-                    .authorities(new SimpleGrantedAuthority(Role.USER.getRole()))
-                    .build();
+            return new CustomUserDetails(member);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
