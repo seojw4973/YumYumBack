@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.hashtag.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.baratie.yumyum.domain.review.domain.Review;
@@ -14,7 +15,7 @@ import org.baratie.yumyum.domain.store.domain.Store;
 public class Hashtag {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
+    @Column(name = "hashtag_id")
     private Long id;
 
     @Column(name = "content", nullable = false)
@@ -22,5 +23,6 @@ public class Hashtag {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
+    @JsonIgnore
     private Store store;
 }

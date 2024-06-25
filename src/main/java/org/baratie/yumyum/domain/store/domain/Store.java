@@ -44,8 +44,4 @@ public class Store extends BaseTimeEntity {
     @Column(name = "latitude", nullable = false)
     private BigDecimal latitude;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
 }
