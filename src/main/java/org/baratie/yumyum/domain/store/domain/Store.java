@@ -3,10 +3,16 @@ package org.baratie.yumyum.domain.store.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
+import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
+import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
 import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.menu.domain.Menu;
+import org.baratie.yumyum.domain.menu.dto.MenuDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,5 +49,11 @@ public class Store extends BaseTimeEntity {
 
     @Column(name = "latitude", nullable = false)
     private BigDecimal latitude;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<Hashtag> hashtagList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<Menu> menuList = new ArrayList<>();
 
 }

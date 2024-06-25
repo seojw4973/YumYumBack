@@ -1,4 +1,4 @@
-package org.baratie.yumyum.domain.member.filter;
+package org.baratie.yumyum.domain.member.Filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
