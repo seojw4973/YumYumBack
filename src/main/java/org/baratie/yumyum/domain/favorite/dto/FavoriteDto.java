@@ -1,5 +1,10 @@
 package org.baratie.yumyum.domain.favorite.dto;
 
 
-public record FavoriteDto(Long storeId, boolean isFavorite) {
+import lombok.Getter;
+
+@Getter
+public class FavoriteDto {
+    private Long storeId;
+    private boolean isFavorite;
 }

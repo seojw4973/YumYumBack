@@ -23,7 +23,7 @@ public class MemberDetails implements UserDetailsService {
     private final MemberRepository memberRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         System.out.println("loadUserByUsername....");
         System.out.println("email : " + email);
 

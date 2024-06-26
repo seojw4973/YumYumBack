@@ -2,12 +2,14 @@ package org.baratie.yumyum.domain.member.service;
 
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
+import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.dto.TokenDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.Subject;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 @Component
 public class JwtService {
 
+    private final MemberDetails memberDetails;
+
     @Value("${spring.jwt.key}")
     private String key;
 
@@ -30,6 +34,10 @@ public class JwtService {
     private Long rtkLive;
 
     private static final String AUTHORITIES_KEY = "auth";
+
+    public JwtService(MemberDetails memberDetails) {
+        this.memberDetails = memberDetails;
+    }
 
     @PostConstruct
     protected void init(){ key = Base64.getEncoder().encodeToString(key.getBytes()); }
@@ -80,6 +88,8 @@ public class JwtService {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        return new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
+        CustomUserDetails userDetails = memberDetails.loadUserByUsername(claims.getSubject());
+
+        return new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
     }
 }

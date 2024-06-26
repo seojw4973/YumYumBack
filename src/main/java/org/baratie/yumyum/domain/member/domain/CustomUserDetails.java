@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.member.domain;
 
+import lombok.ToString;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+@ToString
 public class CustomUserDetails implements UserDetails {
 
     private final Member member;
@@ -30,7 +32,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return member.getNickname();
+        return member.getEmail();
     }
 
     @Override
@@ -51,5 +53,9 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Long getId() {
+        return member.getId();
     }
 }
