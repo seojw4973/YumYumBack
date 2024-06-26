@@ -1,11 +1,10 @@
-package org.baratie.yumyum.domain.favorite.repository;
+package org.baratie.yumyum.domain.favorite.repository.impl;
 
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.favorite.domain.Favorite;
-import org.baratie.yumyum.domain.favorite.domain.QFavorite;
+import org.baratie.yumyum.domain.favorite.repository.FavoriteCustomRepository;
 
 import java.util.Optional;
 

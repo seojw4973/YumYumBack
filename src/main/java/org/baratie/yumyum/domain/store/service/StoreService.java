@@ -68,12 +68,12 @@ public class StoreService {
 
 
     /**
-     * 가게 정보 가져오기
+     * 가게가 존재하는지와 폐업한 가게인지 확인
      * @param storeId 가게 pk
      * @return Store
      */
-    private Store validationStoreId(Long storeId) {
-        return storeRepository.findById(storeId).orElseThrow(
+    public Store validationStoreId(Long storeId) {
+        return storeRepository.existAndDeletedStore(storeId).orElseThrow(
                 () -> new StoreNotFoundException(ErrorCode.STORE_NOT_FOUND)
         );
     }

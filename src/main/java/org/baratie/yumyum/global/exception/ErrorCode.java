@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "가게를 찾을 수 없습니다."),
+    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 가게이거나 폐업한 가게입니다."),
     EXIST_STORE_NAME(HttpStatus.BAD_REQUEST, "이미 존재하는 가게입니다.");
 
     private final HttpStatus status;
