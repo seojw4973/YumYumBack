@@ -25,4 +25,9 @@ public class Hashtag {
     @JoinColumn(name = "store_id")
     @JsonIgnore
     private Store store;
+
+    public void addStore(Store store){
+        this.store = store;
+
+    }
 }

@@ -50,10 +50,10 @@ public class Store extends BaseTimeEntity {
     @Column(name = "latitude", nullable = false)
     private BigDecimal latitude;
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
     private List<Hashtag> hashtagList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
     private List<Menu> menuList = new ArrayList<>();
 
 }

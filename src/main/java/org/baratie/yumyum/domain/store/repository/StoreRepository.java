@@ -11,4 +11,5 @@ import java.util.Optional;
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
 
+    boolean existsByName(String storeName);
 }
