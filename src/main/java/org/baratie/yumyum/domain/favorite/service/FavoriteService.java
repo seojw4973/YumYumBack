@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.favorite.domain.Favorite;
 import org.baratie.yumyum.domain.favorite.dto.FavoriteDto;
 import org.baratie.yumyum.domain.favorite.repository.FavoriteRepository;
+import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.exception.StoreNotFoundException;
 import org.baratie.yumyum.domain.store.repository.StoreRepository;
@@ -17,12 +19,14 @@ public class FavoriteService {
 
     private final StoreRepository storeRepository;
     private final FavoriteRepository favoriteRepository;
+    private final MemberRepository memberRepository;
 
-    public void addFavorite(Member member, FavoriteDto request) {
+    public void addFavorite(CustomUserDetails customUserDetails, FavoriteDto request) {
 
-        Store store = validationStoreId(request.storeId());
+        Store store = validationStoreId(request.getStoreId());
+        Member member = memberRepository.findById(customUserDetails.getId()).orElseThrow();
 
-        favoriteRepository.exist(member.getId(), store.getId()).ifPresentOrElse(
+        favoriteRepository.exist(customUserDetails.getId(), store.getId()).ifPresentOrElse(
                 favorite -> {
                     favorite.changeFavoriteStatus(request.isFavorite());
                     favoriteRepository.save(favorite);

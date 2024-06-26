@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (jwtService.validateToken(token)) {
                 Authentication authentication = jwtService.getAuthentication(token);
+                System.out.println("authentication = " + authentication);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
