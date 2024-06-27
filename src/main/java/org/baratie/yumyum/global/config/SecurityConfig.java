@@ -3,6 +3,7 @@ package org.baratie.yumyum.global.config;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.Filter.JwtAuthenticationFilter;
 import org.baratie.yumyum.domain.member.service.JwtService;
+import org.baratie.yumyum.domain.member.service.OAuth2Service;
 import org.baratie.yumyum.global.exception.AuthEntryPoint;
 import org.baratie.yumyum.global.exception.JwtAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -26,6 +29,8 @@ public class SecurityConfig {
     private final AuthEntryPoint authEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtService jwtService;
+    private final OAuth2Service oAuth2Service;
+    private final ClientRegistrationRepository clientRegistrationRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -47,21 +52,29 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, InMemoryReactiveClientRegistrationRepository clientRegistrationRepository) throws Exception {
         http.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                 .csrf(csrfConfigurer -> csrfConfigurer.disable())
-                .exceptionHandling()
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http.exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
-                .accessDeniedHandler(jwtAccessDeniedHandler)
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .requestMatchers("/member", "/member/login",
-                        "/swagger-ui/*", "/api/swagger-config", "/v3/api-docs/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+                .accessDeniedHandler(jwtAccessDeniedHandler);
+
+
+        http.authorizeRequests()
+            .requestMatchers("/member", "/member/login", "/oauth2/**",
+              "/swagger-ui/*", "/api/swagger-config", "/v3/api-docs/**").permitAll()
+            .anyRequest().authenticated();
+
+        http.oauth2Login(oauth2 -> oauth2
+                .redirectionEndpoint(endpoint -> endpoint.baseUri("/"))
+                .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2Service))
+
+        );
+
+
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
