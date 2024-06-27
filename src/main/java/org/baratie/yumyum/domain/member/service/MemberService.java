@@ -7,7 +7,9 @@ import org.baratie.yumyum.domain.member.domain.SocialType;
 import org.baratie.yumyum.domain.member.dto.LoginDto;
 import org.baratie.yumyum.domain.member.dto.MemberDto;
 import org.baratie.yumyum.domain.member.dto.TokenDto;
+import org.baratie.yumyum.domain.member.exception.MemberNotFoundException;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
+import org.baratie.yumyum.global.exception.ErrorCode;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -91,6 +93,17 @@ public class MemberService {
                 .imageUrl(member.getImageUrl()).build();
 
         return memberDto;
+    }
+
+    /**
+     * 회원 존재 여부 확인
+     * @param memberId
+     * @return Member
+     */
+    public Member validationMemberId(Long memberId){
+        return memberRepository.findById(memberId).orElseThrow(
+                () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND)
+        );
     }
 
 }

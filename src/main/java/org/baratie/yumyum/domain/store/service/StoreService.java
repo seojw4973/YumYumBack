@@ -32,23 +32,29 @@ public class StoreService {
     private final FavoriteRepository favoriteRepository;
     private final MenuRepository menuRepository;
     private final HashtagRepository hashtagRepository;
+    private final GeoUtils geoUtils;
 
+    /**
+     * 가게 등록
+     * @param createStoreDto
+     */
     @Transactional
     public void createStore(final CreateStoreDto createStoreDto) throws IOException, InterruptedException, ApiException {
         existStoreName(createStoreDto.getName());
 
-        Store store = createStoreDto.toEntity();
+        BigDecimal[] bigDecimals = geoUtils.findGeoPoint(createStoreDto.getAddress());
+        BigDecimal lat = bigDecimals[0];
+        BigDecimal lng = bigDecimals[1];
 
+        Store store = createStoreDto.toEntity(lat, lng);
         Store saveStore = storeRepository.save(store);
 
         List<Menu> menuList = store.getMenuList();
         menuList.forEach(menu -> menu.addStore(saveStore));
-
         menuRepository.saveAll(menuList);
 
         List<Hashtag> hashtagList = store.getHashtagList();
         hashtagList.forEach(hashtag -> hashtag.addStore(saveStore));
-
         hashtagRepository.saveAll(hashtagList);
     }
 
@@ -92,7 +98,7 @@ public class StoreService {
      */
     public BigDecimal[] addressToLagLng(String address) throws IOException, InterruptedException, ApiException {
         System.out.println("address = " + address);
-        BigDecimal[] latlng =  GeoUtils.findGeoPoint(address);
+        BigDecimal[] latlng =  geoUtils.findGeoPoint(address);
         return latlng;
     }
 
