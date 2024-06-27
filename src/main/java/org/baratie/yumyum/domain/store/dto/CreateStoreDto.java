@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class CreateStoreDto {
 
+    private final GeoUtils geoUtils = new GeoUtils();
+
     private String name;
     private String address;
     private String calls;
@@ -35,13 +37,9 @@ public class CreateStoreDto {
     List<HashtagDto> hashtagList;
     List<MenuDto> menuList;
 
-    public Store toEntity() throws IOException, InterruptedException, ApiException {
+    public Store toEntity(BigDecimal latitude, BigDecimal longitude) throws IOException, InterruptedException, ApiException {
         List<Hashtag> hashtagList = this.hashtagList.stream().map(HashtagDto::toEntity).collect(Collectors.toList());
         List<Menu> menuList = this.menuList.stream().map(MenuDto::toEntity).collect(Collectors.toList());
-
-        BigDecimal[] bigDecimal = GeoUtils.findGeoPoint(this.address);
-        BigDecimal lat = bigDecimal[0];
-        BigDecimal lng = bigDecimal[1];
 
         return Store.builder()
                 .name(this.name)
@@ -49,8 +47,8 @@ public class CreateStoreDto {
                 .call(this.calls)
                 .hours(this.hours)
                 .isClosed(this.isClosed)
-                .latitude(lat)
-                .longitude(lng)
+                .latitude(latitude)
+                .longitude(longitude)
                 .hashtagList(hashtagList)
                 .menuList(menuList)
                 .build();
