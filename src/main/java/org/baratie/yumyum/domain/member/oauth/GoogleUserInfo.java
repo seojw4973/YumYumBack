@@ -5,18 +5,18 @@ import lombok.AllArgsConstructor;
 import java.util.Map;
 
 @AllArgsConstructor
-public class NaverUserInfo implements OAuth2UserInfo {
+public class GoogleUserInfo implements OAuth2UserInfo {
 
     private Map<String, Object> attributes;
 
     @Override
     public String getProviderId() {
-        return (String) attributes.get("id");
+        return (String) attributes.get("sub");
     }
 
     @Override
     public String getProvider() {
-        return "naver";
+        return "google";
     }
 
     @Override
@@ -31,10 +31,11 @@ public class NaverUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getPhone() {
-        return (String) attributes.get("mobile");
+        return "";
     }
 
     @Override
-    public String getNickname() { return (String) attributes.get("nickname"); }
-
+    public String getNickname() {
+        return "";
+    }
 }

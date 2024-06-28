@@ -5,36 +5,37 @@ import lombok.AllArgsConstructor;
 import java.util.Map;
 
 @AllArgsConstructor
-public class NaverUserInfo implements OAuth2UserInfo {
+public class KakaoUserInfo implements OAuth2UserInfo{
 
     private Map<String, Object> attributes;
 
     @Override
     public String getProviderId() {
-        return (String) attributes.get("id");
+        return attributes.get("id").toString();
     }
 
     @Override
     public String getProvider() {
-        return "naver";
+        return "kakao";
     }
 
     @Override
     public String getName() {
-        return (String) attributes.get("name");
+        return (String) ((Map) attributes.get("kakao_account")).get("name");
     }
 
     @Override
     public String getEmail() {
-        return (String) attributes.get("email");
+        return (String) ((Map) attributes.get("kakao_account")).get("email");
     }
 
     @Override
     public String getPhone() {
-        return (String) attributes.get("mobile");
+        return "";
     }
 
     @Override
-    public String getNickname() { return (String) attributes.get("nickname"); }
-
+    public String getNickname() {
+        return (String) ((Map) attributes.get("properties")).get("nickname");
+    }
 }

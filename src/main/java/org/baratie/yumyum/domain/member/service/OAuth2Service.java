@@ -5,6 +5,8 @@ import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.domain.SocialType;
+import org.baratie.yumyum.domain.member.oauth.GoogleUserInfo;
+import org.baratie.yumyum.domain.member.oauth.KakaoUserInfo;
 import org.baratie.yumyum.domain.member.oauth.NaverUserInfo;
 import org.baratie.yumyum.domain.member.oauth.OAuth2UserInfo;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
@@ -35,10 +37,20 @@ public class OAuth2Service extends DefaultOAuth2UserService {
             System.out.println("네이버 로그인 요청");
             oAuth2UserInfo = new NaverUserInfo( (Map)oAuth2User.getAttributes().get("response"));
             socialType = SocialType.NAVER;
+        } else if(provider.equals("kakao")){
+            System.out.println("카카오 로그인 요청");
+            oAuth2UserInfo = new KakaoUserInfo( (Map)oAuth2User.getAttributes());
+            socialType = SocialType.KAKAO;
+        } else if(provider.equals("google")){
+            System.out.println("구글 로그인 요청");
+            oAuth2UserInfo = new GoogleUserInfo( oAuth2User.getAttributes() );
         }
 
         String email = oAuth2UserInfo.getEmail();
-        String nickname = oAuth2UserInfo.getName();
+        String nickname = oAuth2UserInfo.getNickname();
+        String phoneNumber = oAuth2UserInfo.getPhone();
+
+
 
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
         Member member = null;
@@ -48,8 +60,11 @@ public class OAuth2Service extends DefaultOAuth2UserService {
                     .email(email)
                     .nickname(nickname)
                     .role(Role.USER)
+                    .imageUrl("22")
+                    .phoneNumber(phoneNumber)
                     .socialType(socialType)
                     .build();
+            memberRepository.save(member);
         }else{
             member = optionalMember.get();
         }
