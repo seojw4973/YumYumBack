@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.store.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
@@ -19,7 +20,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"hashtagList", "menuList"})
 public class Store extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,9 +51,11 @@ public class Store extends BaseTimeEntity {
     @Column(name = "latitude", nullable = false)
     private BigDecimal latitude;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
     private List<Hashtag> hashtagList = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
     private List<Menu> menuList = new ArrayList<>();
 
