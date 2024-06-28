@@ -46,6 +46,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                         ExpressionUtils.as(avgGrade, "avgGrade"),
                         store.name.as("storeName"),
                         store.address,
+                        review.grade,
                         review.content))
                 .from(review)
                 .join(review.member, member)

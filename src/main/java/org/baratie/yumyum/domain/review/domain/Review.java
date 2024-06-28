@@ -6,6 +6,7 @@ import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
 import org.baratie.yumyum.domain.image.domain.Image;
 import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.review.dto.UpdateReviewRequestDto;
 import org.baratie.yumyum.domain.store.domain.Store;
 
 import java.util.ArrayList;
@@ -42,4 +43,15 @@ public class Review extends BaseTimeEntity {
     @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE)
     private List<Image> imageList = new ArrayList<>();
 
+    /**
+     * 리뷰 수정
+     * @param request 변경할 리뷰 내용
+     * @return Review
+     */
+    public Review updateReview(UpdateReviewRequestDto request) {
+        this.content = request.getContent();
+        this.grade = request.getGrade();
+
+        return this;
+    }
 }
