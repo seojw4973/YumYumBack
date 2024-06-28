@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.image.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
@@ -11,7 +12,7 @@ import org.baratie.yumyum.domain.store.domain.Store;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"store", "review"})
 public class Image extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +26,13 @@ public class Image extends BaseTimeEntity {
     @Column(name = "image_type", nullable = false)
     private ImageType imageType;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
     private Store store;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
     private Review review;
 }
