@@ -46,6 +46,16 @@ public class ReviewService {
     }
 
     /**
+     * 리뷰 삭제
+     * @param reviewId 삭제할 리뷰
+     */
+    public void deleteReview(Long reviewId) {
+        validationReviewId(reviewId);
+
+        reviewRepository.deleteById(reviewId);
+    }
+
+    /**
      * 리뷰가 존재하는지 확인
      * @param reviewId 검증할 reviewId
      * @return Review
@@ -56,6 +66,7 @@ public class ReviewService {
         if (!exists) {
             throw new ReviewNotFoundException(ErrorCode.REVIEW_NOT_FOUND);
         }
+
         return true;
     }
 
@@ -66,6 +77,5 @@ public class ReviewService {
     public Review getReview(Long reviewId) {
         return reviewRepository.findById(reviewId).get();
     }
-
 
 }

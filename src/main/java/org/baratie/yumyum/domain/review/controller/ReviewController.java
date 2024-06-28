@@ -21,7 +21,7 @@ public class ReviewController {
     public ResponseEntity<ReviewDetailDto> getReviewDetail(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long reviewId) {
         ReviewDetailDto reviewDetail = reviewService.getReviewDetail(customUserDetails, reviewId);
 
-        return new ResponseEntity<>(reviewDetail, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(reviewDetail, HttpStatus.OK);
     }
 
     @PatchMapping("/{reviewId}")
@@ -29,5 +29,12 @@ public class ReviewController {
         reviewService.updateReview(reviewId, request);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
+        reviewService.deleteReview(reviewId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
