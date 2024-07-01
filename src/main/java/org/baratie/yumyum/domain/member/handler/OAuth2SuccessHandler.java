@@ -24,12 +24,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
-        TokenDto token = jwtService.createToken(authentication);
-        System.out.println("atk = " + token.getAtk());
-        System.out.println("rtk = " + token.getRtk());
+        String atk = jwtService.createToken(authentication);
+        String rtk = jwtService.createRtk(authentication);
+        System.out.println("atk = " + atk);
+        System.out.println("rtk = " + rtk);
 
         String targetUrl = UriComponentsBuilder.fromUriString("/main")
-                .queryParam("atk", token.getAtk())
+                .queryParam("atk", atk)
                 .build().toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);

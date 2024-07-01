@@ -42,7 +42,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("*"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         config.setAllowedMethods(Arrays.asList("*"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
@@ -56,11 +56,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                 .csrf(csrfConfigurer -> csrfConfigurer.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeRequests(auth -> auth
-                .requestMatchers("/member", "/member/login",
-                        "/login/oauth2/code/naver","/oauth2/**",
+                .requestMatchers("/member", "/member/login", "/member/oauth2",
+                        "/login/oauth2/code/*","/oauth2/**", "/oauth2.0/**",
                         "/swagger-ui/*", "/api/swagger-config", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated());
 
@@ -70,6 +70,8 @@ public class SecurityConfig {
 
 
         http.oauth2Login()
+//                .authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization/naver"))
+//                .redirectionEndpoint(redirect -> redirect.baseUri("/login/oauth2/code/*"))
                 .userInfoEndpoint()
                 .userService(oAuth2Service)
                 .and()
