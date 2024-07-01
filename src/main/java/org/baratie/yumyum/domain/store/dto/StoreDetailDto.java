@@ -5,6 +5,7 @@ import jakarta.persistence.OneToMany;
 import lombok.*;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
+import org.baratie.yumyum.domain.image.dto.ImageDto;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.dto.MenuDto;
 import org.baratie.yumyum.domain.store.domain.Store;
@@ -27,6 +28,7 @@ public class StoreDetailDto {
 
     private List<HashtagDto> hashtagList;
     private List<MenuDto> menuList;
+    private List<ImageDto> imageList;
 
     private int reviewCount;
     private int favoriteCount;
@@ -35,14 +37,18 @@ public class StoreDetailDto {
         List<MenuDto> menuList = store.getMenuList().stream().map(menu -> MenuDto.builder()
                 .name(menu.getName())
                 .price(menu.getPrice())
-                .build()).collect(Collectors.toList());
+                .build()).toList();
 
         List<HashtagDto> hashtagList = store.getHashtagList().stream().map(hashtag -> HashtagDto.builder()
                 .content(hashtag.getContent())
                 .build()).toList();
 
+        List<ImageDto> imageList = store.getImageList().stream().map(image -> ImageDto.builder()
+                .imageUrl(image.getImageUrl())
+                .build()).toList();
+
         return StoreDetailDto.builder()
-        .name(store.getName())
+                .name(store.getName())
                 .address(store.getAddress())
                 .hours(store.getHours())
                 .views(store.getViews())
@@ -50,6 +56,7 @@ public class StoreDetailDto {
                 .favoriteCount(favoriteCount)
                 .hashtagList(hashtagList)
                 .menuList(menuList)
+                .imageList(imageList)
                 .build();
     }
 

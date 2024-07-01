@@ -16,11 +16,13 @@ import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.service.StoreService;
 import org.baratie.yumyum.global.exception.ErrorCode;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -34,6 +36,7 @@ public class ReviewService {
      * @param request
      * 멤버 id 값이 필요한지는 의문, 토론 필요
      */
+    @Transactional
     public void createReview(CustomUserDetails customUserDetails, CreateReviewDto request){
         Member member = memberService.validationMemberId(customUserDetails.getId());
         Store store = storeService.validationStoreId(request.getStoreId());

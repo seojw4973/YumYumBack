@@ -10,6 +10,7 @@ import org.baratie.yumyum.domain.image.domain.Image;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.dto.MenuDto;
+import org.baratie.yumyum.domain.store.dto.UpdateStoreDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -63,5 +64,17 @@ public class Store extends BaseTimeEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
     private List<Image> imageList = new ArrayList<>();
+
+    public Store updateStore(UpdateStoreDto request){
+        this.name = request.getName();
+        this.call = request.getCall();
+        this.address = request.getAddress();
+        this.hours = request.getHours();
+        this.hashtagList = request.getHashtagList();
+        this.menuList = request.getMenuList();
+        this.imageList = request.getImageList();
+
+        return this;
+    }
 
 }

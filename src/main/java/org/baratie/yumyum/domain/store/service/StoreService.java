@@ -13,6 +13,7 @@ import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.CreateStoreDto;
 import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
+import org.baratie.yumyum.domain.store.dto.UpdateStoreDto;
 import org.baratie.yumyum.domain.store.exception.StoreExistException;
 import org.baratie.yumyum.domain.store.exception.StoreNotFoundException;
 import org.baratie.yumyum.domain.store.repository.StoreRepository;
@@ -65,6 +66,7 @@ public class StoreService {
         imageRepository.saveAll(imageList);
     }
 
+
     /**
      * 맛집 상세 조회
      * @param storeId 가게 pk
@@ -77,6 +79,36 @@ public class StoreService {
         int favoriteCount = favoriteRepository.countFavoriteByStoreId(storeId);
 
         return StoreDetailDto.fromEntity(store, reviewCount, favoriteCount);
+    }
+
+    @Transactional
+    public void updateStore(Long storeId, UpdateStoreDto request) throws IOException, InterruptedException, ApiException {
+        Store findstore = validationStoreId(storeId);
+        Store updateStore = findstore.updateStore(request);
+
+        if(!findstore.getAddress().equals(updateStore.getAddress())) {
+            BigDecimal[] bigDecimals = geoUtils.findGeoPoint(request.getAddress());
+            BigDecimal lat = bigDecimals[0];
+            BigDecimal lng = bigDecimals[1];
+
+            updateStore.builder()
+                    .latitude(lat)
+                    .longitude(lng)
+                    .build();
+        }
+        Store saveStore = storeRepository.save(updateStore);
+        List<Menu> menuList = updateStore.getMenuList();
+        menuList.forEach(menu -> menu.addStore(saveStore));
+        menuRepository.saveAll(menuList);
+
+        List<Hashtag> hashtagList = updateStore.getHashtagList();
+        hashtagList.forEach(hashtag -> hashtag.addStore(saveStore));
+        hashtagRepository.saveAll(hashtagList);
+
+        List<Image> imageList = updateStore.getImageList();
+        imageList.forEach(image -> image.addStore(saveStore));
+        imageRepository.saveAll(imageList);
+
     }
 
 
