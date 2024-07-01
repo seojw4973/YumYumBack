@@ -6,6 +6,7 @@ import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
+import org.baratie.yumyum.domain.image.domain.Image;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.dto.MenuDto;
@@ -58,5 +59,9 @@ public class Store extends BaseTimeEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
     private List<Menu> menuList = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+    private List<Image> imageList = new ArrayList<>();
 
 }
