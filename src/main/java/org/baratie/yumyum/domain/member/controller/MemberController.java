@@ -1,13 +1,19 @@
 package org.baratie.yumyum.domain.member.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.dto.LoginDto;
+import org.baratie.yumyum.domain.member.dto.LoginResponseDto;
 import org.baratie.yumyum.domain.member.dto.MemberDto;
 import org.baratie.yumyum.domain.member.dto.TokenDto;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.domain.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,11 +39,11 @@ public class MemberController {
      * @return TokenDto
      */
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginDto loginDto) {
         System.out.println("login.....");
-        TokenDto tokenDto = memberService.login(loginDto);
-        System.out.println("Token: " + tokenDto);
-        return ResponseEntity.ok().body(tokenDto);
+        LoginResponseDto loginResponseDtoDto = memberService.login(loginDto);
+        System.out.println("Token: " + loginResponseDtoDto);
+        return ResponseEntity.ok().body(loginResponseDtoDto);
     }
 
     /**
@@ -52,6 +58,13 @@ public class MemberController {
         System.out.println("memberDto: " + memberDto);
         return ResponseEntity.ok().body(memberDto);
     }
+
+//    @GetMapping("/oauth2")
+//    public void oauth2login(HttpServletResponse response) throws IOException {
+//       String redirectUri = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=5Xxn8DYEG64BCrrG25xx&redirect_uri=http://localhost:3000/callbackr&state=test";
+//       response.sendRedirect(redirectUri);
+//
+//    }
 
 
 }
