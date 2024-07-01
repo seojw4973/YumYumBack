@@ -1,13 +1,19 @@
 package org.baratie.yumyum.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.image.domain.Image;
 import org.baratie.yumyum.domain.image.repository.ImageRepository;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
+import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.review.domain.Review;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.UpdateReviewRequestDto;
+import org.baratie.yumyum.domain.review.dto.CreateReviewDto;
 import org.baratie.yumyum.domain.review.exception.ReviewNotFoundException;
 import org.baratie.yumyum.domain.review.repository.ReviewRepository;
+import org.baratie.yumyum.domain.store.domain.Store;
+import org.baratie.yumyum.domain.store.service.StoreService;
 import org.baratie.yumyum.global.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +25,27 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ImageRepository imageRepository;
+    private final MemberService memberService;
+    private final StoreService storeService;
+
+    /**
+     * 리뷰 등록
+     * @param customUserDetails
+     * @param request
+     * 멤버 id 값이 필요한지는 의문, 토론 필요
+     */
+    public void createReview(CustomUserDetails customUserDetails, CreateReviewDto request){
+        Member member = memberService.validationMemberId(customUserDetails.getId());
+        Store store = storeService.validationStoreId(request.getStoreId());
+
+        Review review = request.toEntity(store, member);
+        Review saveReview = reviewRepository.save(review);
+
+        List<Image> imageList = review.getImageList();
+        imageList.forEach(image -> image.addReview(saveReview));
+        imageRepository.saveAll(imageList);
+
+    }
 
     public ReviewDetailDto getReviewDetail(CustomUserDetails customUserDetails, Long reviewId) {
         validationReviewId(reviewId);

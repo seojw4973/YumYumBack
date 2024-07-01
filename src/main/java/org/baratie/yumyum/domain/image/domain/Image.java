@@ -35,4 +35,14 @@ public class Image extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
+
+    public void addStore(Store store) {
+        this.store = store;
+        imageType = ImageType.STORE;
+    }
+
+    public void addReview(Review review) {
+        this.review = review;
+        imageType = ImageType.REVIEW;
+    }
 }
