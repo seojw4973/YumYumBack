@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.favorite.repository.FavoriteRepository;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
+import org.baratie.yumyum.domain.image.domain.Image;
+import org.baratie.yumyum.domain.image.repository.ImageRepository;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.repository.MenuRepository;
 import org.baratie.yumyum.domain.review.repository.ReviewRepository;
@@ -33,6 +35,7 @@ public class StoreService {
     private final MenuRepository menuRepository;
     private final HashtagRepository hashtagRepository;
     private final GeoUtils geoUtils;
+    private final ImageRepository imageRepository;
 
     /**
      * 가게 등록
@@ -56,6 +59,10 @@ public class StoreService {
         List<Hashtag> hashtagList = store.getHashtagList();
         hashtagList.forEach(hashtag -> hashtag.addStore(saveStore));
         hashtagRepository.saveAll(hashtagList);
+
+        List<Image> imageList = store.getImageList();
+        imageList.forEach(image -> image.addStore(saveStore));
+        imageRepository.saveAll(imageList);
     }
 
     /**
