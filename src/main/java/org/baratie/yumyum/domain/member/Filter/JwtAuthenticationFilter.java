@@ -21,9 +21,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = request.getHeader("Authorization");
         String requestURI = request.getRequestURI();
+        System.out.println("requestURI = " + requestURI);
 
-        if (requestURI.equals("/member/login") || requestURI.equals("/member/register")) {
+        if (requestURI.equals("/member/login") || requestURI.equals("/member/register") || requestURI.equals("/login/oauth2/code/naver")) {
             filterChain.doFilter(request, response);
+            System.out.println("필터에 걸림");
             return;
         }
 

@@ -42,7 +42,7 @@ public class JwtService {
     @PostConstruct
     protected void init(){ key = Base64.getEncoder().encodeToString(key.getBytes()); }
 
-    public TokenDto createToken(Authentication authentication){
+    public String createToken(Authentication authentication){
         String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
 
         String atk =  Jwts.builder()
@@ -52,13 +52,17 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + atkLive))
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
+        return atk;
+    }
+
+    public String createRtk(Authentication authentication){
+        String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
 
         String rtk = Jwts.builder()
                 .setExpiration(new Date(System.currentTimeMillis() + rtkLive))
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
-
-        return new TokenDto(atk, rtk);
+        return rtk;
     }
 
     public boolean validateToken(String token) {

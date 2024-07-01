@@ -5,6 +5,7 @@ import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.domain.SocialType;
 import org.baratie.yumyum.domain.member.dto.LoginDto;
+import org.baratie.yumyum.domain.member.dto.LoginResponseDto;
 import org.baratie.yumyum.domain.member.dto.MemberDto;
 import org.baratie.yumyum.domain.member.dto.TokenDto;
 import org.baratie.yumyum.domain.member.exception.MemberNotFoundException;
@@ -15,6 +16,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -61,21 +64,29 @@ public class MemberService {
      * @param loginDto
      * @return
      */
-    public TokenDto login(LoginDto loginDto){
+    public LoginResponseDto login(LoginDto loginDto){
         try {
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
-            System.out.println("authenticationToken : " + authenticationToken);
 
             Authentication auth = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-            System.out.println("auth :" + auth);
+            Optional<Member> member = memberRepository.findByEmail(loginDto.getEmail());
 
-            TokenDto tokenDto = jwtService.createToken(auth);
-            return tokenDto;
+            if(member.get().getSocialType() == SocialType.YUMYUM) {
+                Long id = member.get().getId();
+                String nickname = member.get().getNickname();
+                String imageUrl = member.get().getImageUrl();
+
+                String atk = jwtService.createToken(auth);
+                String rtk = jwtService.createRtk(auth);
+
+                return new LoginResponseDto(id, nickname, imageUrl, atk, rtk);
+            }
         } catch (Exception e) {
             e.printStackTrace(); // 예외 발생 시 스택 트레이스를 출력
             throw new RuntimeException("로그인 실패", e); // 사용자 정의 예외 메시지와 함께 예외를 다시 던짐
         }
+        return null;
     }
 
     /**
