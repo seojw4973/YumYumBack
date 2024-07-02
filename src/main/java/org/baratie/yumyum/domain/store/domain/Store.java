@@ -74,15 +74,12 @@ public class Store extends BaseTimeEntity {
 
         this.hashtagList.clear();
         this.hashtagList.addAll(request.getHashtagList());
-        this.hashtagList.forEach(hashtag -> hashtag.addStore(this));
 
         this.menuList.clear();
         this.menuList.addAll(request.getMenuList());
-        this.menuList.forEach(menu -> menu.addStore(this));
 
         this.imageList.clear();
         this.imageList.addAll(request.getImageList());
-        this.imageList.forEach(image -> image.addStore(this));
 
 
         return this;
