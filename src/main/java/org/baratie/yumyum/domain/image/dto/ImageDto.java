@@ -19,4 +19,10 @@ public class ImageDto {
 
         return image;
     }
+
+    public ImageDto fromEntity(Image image) {
+        return ImageDto.builder()
+                .imageUrl(image.getImageUrl())
+                .build();
+    }
 }

@@ -3,10 +3,14 @@ package org.baratie.yumyum.domain.review.controller;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.service.MemberService;
+import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.UpdateReviewRequestDto;
 import org.baratie.yumyum.domain.review.dto.CreateReviewDto;
 import org.baratie.yumyum.domain.review.service.ReviewService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -51,4 +55,12 @@ public class ReviewController {
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @GetMapping
+    public Slice<ReviewAllDto> getAllReview(@RequestParam("pageNumber") int pageNumber){
+
+        Pageable pageable = PageRequest.of(pageNumber, 5);
+        return reviewService.getAllReview(pageable);
+    }
+
 }

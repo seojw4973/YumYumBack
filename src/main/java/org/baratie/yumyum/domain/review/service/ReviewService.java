@@ -7,6 +7,7 @@ import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.review.domain.Review;
+import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.UpdateReviewRequestDto;
 import org.baratie.yumyum.domain.review.dto.CreateReviewDto;
@@ -15,6 +16,8 @@ import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.service.StoreService;
 import org.baratie.yumyum.global.exception.ErrorCode;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,6 +86,10 @@ public class ReviewService {
         validationReviewId(reviewId);
 
         reviewRepository.deleteById(reviewId);
+    }
+
+    public Slice<ReviewAllDto> getAllReview(Pageable pageable){
+        return reviewRepository.findAllReviews(pageable);
     }
 
     /**
