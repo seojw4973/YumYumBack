@@ -5,6 +5,7 @@ import com.google.maps.model.GeocodingResult;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.store.dto.CreateStoreDto;
 import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
+import org.baratie.yumyum.domain.store.dto.UpdateStoreDto;
 import org.baratie.yumyum.domain.store.service.StoreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,12 @@ public class StoreController {
     public ResponseEntity<Void> registerStore(@RequestBody CreateStoreDto createStoreDto) throws IOException, InterruptedException, ApiException {
         storeService.createStore(createStoreDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PatchMapping("/{storeId}")
+    public ResponseEntity<Void> updateStore(@PathVariable Long storeId, @RequestBody UpdateStoreDto request) {
+        storeService.updateStore(storeId, request);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @PostMapping("/test")

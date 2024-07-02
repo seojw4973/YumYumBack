@@ -13,6 +13,7 @@ import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.CreateStoreDto;
 import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
+import org.baratie.yumyum.domain.store.dto.UpdateStoreDto;
 import org.baratie.yumyum.domain.store.exception.StoreExistException;
 import org.baratie.yumyum.domain.store.exception.StoreNotFoundException;
 import org.baratie.yumyum.domain.store.repository.StoreRepository;
@@ -65,6 +66,7 @@ public class StoreService {
         imageRepository.saveAll(imageList);
     }
 
+
     /**
      * 맛집 상세 조회
      * @param storeId 가게 pk
@@ -77,6 +79,33 @@ public class StoreService {
         int favoriteCount = favoriteRepository.countFavoriteByStoreId(storeId);
 
         return StoreDetailDto.fromEntity(store, reviewCount, favoriteCount);
+    }
+
+    /**
+     * 맛집 정보 수정
+     * @param storeId
+     * @param request
+     */
+    @Transactional
+    public void updateStore(Long storeId, UpdateStoreDto request) {
+        Store findstore = validationStoreId(storeId);
+        Store updateStore = findstore.updateStore(request);
+        System.out.println("updateStore.getMenuList() = " + updateStore.getMenuList());
+
+        Store saveStore = storeRepository.save(updateStore);
+
+        System.out.println("updateStore.getMenuList() = " + updateStore.getMenuList());
+        updateStore.getMenuList().forEach(menu -> menu.addStore(saveStore));
+        menuRepository.saveAll(updateStore.getMenuList());
+
+
+        updateStore.getHashtagList().forEach(hashtag -> hashtag.addStore(saveStore));
+        hashtagRepository.saveAll(updateStore.getHashtagList());
+
+
+        updateStore.getImageList().forEach(image -> image.addStore(saveStore));
+        imageRepository.saveAll(updateStore.getImageList());
+
     }
 
 
