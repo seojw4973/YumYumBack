@@ -88,6 +88,11 @@ public class ReviewService {
         reviewRepository.deleteById(reviewId);
     }
 
+    /**
+     * 리뷰 전체 조회 (이미지 제외)
+     * @param pageable
+     * @return
+     */
     public Slice<ReviewAllDto> getAllReview(Pageable pageable){
         return reviewRepository.findAllReviews(pageable);
     }
