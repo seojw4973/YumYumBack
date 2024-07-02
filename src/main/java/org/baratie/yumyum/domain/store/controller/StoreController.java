@@ -39,7 +39,7 @@ public class StoreController {
     }
 
     @PatchMapping("/{storeId}")
-    public ResponseEntity<Void> updateStore(@PathVariable Long storeId, @RequestBody UpdateStoreDto request) throws IOException, InterruptedException, ApiException {
+    public ResponseEntity<Void> updateStore(@PathVariable Long storeId, @RequestBody UpdateStoreDto request) {
         storeService.updateStore(storeId, request);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }

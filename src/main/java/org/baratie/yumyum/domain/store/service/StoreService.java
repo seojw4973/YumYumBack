@@ -81,33 +81,30 @@ public class StoreService {
         return StoreDetailDto.fromEntity(store, reviewCount, favoriteCount);
     }
 
+    /**
+     * 맛집 정보 수정
+     * @param storeId
+     * @param request
+     */
     @Transactional
-    public void updateStore(Long storeId, UpdateStoreDto request) throws IOException, InterruptedException, ApiException {
+    public void updateStore(Long storeId, UpdateStoreDto request) {
         Store findstore = validationStoreId(storeId);
         Store updateStore = findstore.updateStore(request);
+        System.out.println("updateStore.getMenuList() = " + updateStore.getMenuList());
 
-        if(!findstore.getAddress().equals(updateStore.getAddress())) {
-            BigDecimal[] bigDecimals = geoUtils.findGeoPoint(request.getAddress());
-            BigDecimal lat = bigDecimals[0];
-            BigDecimal lng = bigDecimals[1];
-
-            updateStore.builder()
-                    .latitude(lat)
-                    .longitude(lng)
-                    .build();
-        }
         Store saveStore = storeRepository.save(updateStore);
-        List<Menu> menuList = updateStore.getMenuList();
-        menuList.forEach(menu -> menu.addStore(saveStore));
-        menuRepository.saveAll(menuList);
 
-        List<Hashtag> hashtagList = updateStore.getHashtagList();
-        hashtagList.forEach(hashtag -> hashtag.addStore(saveStore));
-        hashtagRepository.saveAll(hashtagList);
+        System.out.println("updateStore.getMenuList() = " + updateStore.getMenuList());
+        updateStore.getMenuList().forEach(menu -> menu.addStore(saveStore));
+        menuRepository.saveAll(updateStore.getMenuList());
 
-        List<Image> imageList = updateStore.getImageList();
-        imageList.forEach(image -> image.addStore(saveStore));
-        imageRepository.saveAll(imageList);
+
+        updateStore.getHashtagList().forEach(hashtag -> hashtag.addStore(saveStore));
+        hashtagRepository.saveAll(updateStore.getHashtagList());
+
+
+        updateStore.getImageList().forEach(image -> image.addStore(saveStore));
+        imageRepository.saveAll(updateStore.getImageList());
 
     }
 

@@ -10,6 +10,7 @@ import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.dto.MenuDto;
 import org.baratie.yumyum.domain.store.domain.Store;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,8 @@ public class StoreDetailDto {
     private String hours;
     private String calls;
     private int views;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
 
     private List<HashtagDto> hashtagList;
     private List<MenuDto> menuList;
@@ -52,6 +55,8 @@ public class StoreDetailDto {
                 .address(store.getAddress())
                 .hours(store.getHours())
                 .views(store.getViews())
+                .latitude(store.getLatitude())
+                .longitude(store.getLongitude())
                 .reviewCount(reviewCount)
                 .favoriteCount(favoriteCount)
                 .hashtagList(hashtagList)

@@ -22,7 +22,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = {"hashtagList", "menuList"})
+@ToString(exclude = {"hashtagList", "menuList", "imageList"})
 public class Store extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,15 +54,15 @@ public class Store extends BaseTimeEntity {
     private BigDecimal latitude;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Hashtag> hashtagList = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Menu> menuList = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Image> imageList = new ArrayList<>();
 
     public Store updateStore(UpdateStoreDto request){
@@ -70,9 +70,20 @@ public class Store extends BaseTimeEntity {
         this.call = request.getCall();
         this.address = request.getAddress();
         this.hours = request.getHours();
-        this.hashtagList = request.getHashtagList();
-        this.menuList = request.getMenuList();
-        this.imageList = request.getImageList();
+
+
+        this.hashtagList.clear();
+        this.hashtagList.addAll(request.getHashtagList());
+        this.hashtagList.forEach(hashtag -> hashtag.addStore(this));
+
+        this.menuList.clear();
+        this.menuList.addAll(request.getMenuList());
+        this.menuList.forEach(menu -> menu.addStore(this));
+
+        this.imageList.clear();
+        this.imageList.addAll(request.getImageList());
+        this.imageList.forEach(image -> image.addStore(this));
+
 
         return this;
     }
