@@ -43,15 +43,15 @@ public class ReviewController {
     }
 
     @PatchMapping("/{reviewId}")
-    public ResponseEntity<Void> updateReview(@PathVariable Long reviewId, @RequestBody UpdateReviewRequestDto request) {
-        reviewService.updateReview(reviewId, request);
+    public ResponseEntity<Void> updateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long reviewId, @RequestBody UpdateReviewRequestDto request) {
+        reviewService.updateReview(customUserDetails.getId(), reviewId, request);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
-        reviewService.deleteReview(reviewId);
+    public ResponseEntity<Void> deleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long reviewId) {
+        reviewService.deleteReview(customUserDetails.getId(), reviewId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
