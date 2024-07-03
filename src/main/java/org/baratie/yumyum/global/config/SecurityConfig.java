@@ -59,7 +59,7 @@ public class SecurityConfig {
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeRequests(auth -> auth
-                .requestMatchers("/member", "/member/login", "/member/oauth2",
+                .requestMatchers("/member", "/member/login", "/member/oauth2", "/review/**",
                         "/login/oauth2/code/*","/oauth2/**", "/oauth2.0/**",
                         "/swagger-ui/*", "/api/swagger-config", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated());

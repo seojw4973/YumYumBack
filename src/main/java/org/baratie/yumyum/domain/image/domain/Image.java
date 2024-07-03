@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
+import org.baratie.yumyum.domain.image.dto.ImageDto;
 import org.baratie.yumyum.domain.review.domain.Review;
 import org.baratie.yumyum.domain.store.domain.Store;
+
+import java.util.List;
 
 @Entity
 @Getter

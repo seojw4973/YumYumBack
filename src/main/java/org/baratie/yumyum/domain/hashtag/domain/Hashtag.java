@@ -3,8 +3,10 @@ package org.baratie.yumyum.domain.hashtag.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.baratie.yumyum.domain.review.domain.Review;
+import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
 import org.baratie.yumyum.domain.store.domain.Store;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,6 +30,5 @@ public class Hashtag {
 
     public void addStore(Store store){
         this.store = store;
-
     }
 }

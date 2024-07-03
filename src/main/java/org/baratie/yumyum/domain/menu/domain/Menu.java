@@ -3,7 +3,10 @@ package org.baratie.yumyum.domain.menu.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.baratie.yumyum.domain.menu.dto.MenuDto;
 import org.baratie.yumyum.domain.store.domain.Store;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,6 +33,5 @@ public class Menu {
 
     public void addStore(Store store){
         this.store = store;
-
     }
 }

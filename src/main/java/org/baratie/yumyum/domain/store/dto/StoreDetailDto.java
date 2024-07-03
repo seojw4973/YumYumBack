@@ -54,6 +54,7 @@ public class StoreDetailDto {
                 .name(store.getName())
                 .address(store.getAddress())
                 .hours(store.getHours())
+                .calls(store.getCall())
                 .views(store.getViews())
                 .latitude(store.getLatitude())
                 .longitude(store.getLongitude())

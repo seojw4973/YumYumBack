@@ -1,10 +1,9 @@
 package org.baratie.yumyum.domain.store.dto;
 
 import lombok.*;
-import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
-import org.baratie.yumyum.domain.image.domain.Image;
-import org.baratie.yumyum.domain.menu.domain.Menu;
-import org.baratie.yumyum.domain.store.domain.Store;
+import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
+import org.baratie.yumyum.domain.image.dto.ImageDto;
+import org.baratie.yumyum.domain.menu.dto.MenuDto;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class UpdateStoreDto {
     private String address;
     private String hours;
 
-    List<Image> imageList;
-    List<Hashtag> hashtagList;
-    List<Menu> menuList;
+    List<ImageDto> imageList;
+    List<HashtagDto> hashtagList;
+    List<MenuDto> menuList;
 }

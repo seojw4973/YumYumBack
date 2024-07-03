@@ -7,13 +7,13 @@ import org.baratie.yumyum.domain.BaseTimeEntity;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
 import org.baratie.yumyum.domain.image.domain.Image;
-import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.image.domain.ImageType;
+import org.baratie.yumyum.domain.image.dto.ImageDto;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.dto.MenuDto;
 import org.baratie.yumyum.domain.store.dto.UpdateStoreDto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,35 +54,62 @@ public class Store extends BaseTimeEntity {
     private BigDecimal latitude;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Hashtag> hashtagList = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Menu> menuList = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> imageList = new ArrayList<>();
 
-    public Store updateStore(UpdateStoreDto request){
+    public Store updateStore(UpdateStoreDto request) {
         this.name = request.getName();
         this.call = request.getCall();
         this.address = request.getAddress();
         this.hours = request.getHours();
 
-
-        this.hashtagList.clear();
-        this.hashtagList.addAll(request.getHashtagList());
-
-        this.menuList.clear();
-        this.menuList.addAll(request.getMenuList());
-
-        this.imageList.clear();
-        this.imageList.addAll(request.getImageList());
-
+        updateMenuList(request.getMenuList());
+        updateHashtagList(request.getHashtagList());
+        updateImageList(request.getImageList());
 
         return this;
     }
 
+    private void updateMenuList(List<MenuDto> menuDtos) {
+        this.menuList.clear();
+        for (MenuDto menuDto : menuDtos) {
+            Menu menu = Menu.builder()
+                    .name(menuDto.getName())
+                    .price(menuDto.getPrice())
+                    .store(this)
+                    .build();
+            this.menuList.add(menu);
+        }
+    }
+
+    private void updateHashtagList(List<HashtagDto> hashtagDtos) {
+        this.hashtagList.clear();
+        for (HashtagDto hashtagDto : hashtagDtos) {
+            Hashtag hashtag = Hashtag.builder()
+                    .content(hashtagDto.getContent())
+                    .store(this)
+                    .build();
+            this.hashtagList.add(hashtag);
+        }
+    }
+
+    private void updateImageList(List<ImageDto> imageDtos) {
+        this.imageList.clear();
+        for (ImageDto imageDto : imageDtos) {
+            Image image = Image.builder()
+                    .imageUrl(imageDto.getImageUrl())
+                    .imageType(ImageType.STORE)
+                    .store(this)
+                    .build();
+            this.imageList.add(image);
+        }
+    }
 }
