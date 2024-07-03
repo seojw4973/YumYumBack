@@ -11,6 +11,7 @@ import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.UpdateReviewRequestDto;
 import org.baratie.yumyum.domain.review.dto.CreateReviewDto;
+import org.baratie.yumyum.domain.member.exception.MemberIdNotEqualException;
 import org.baratie.yumyum.domain.review.exception.ReviewNotFoundException;
 import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
@@ -76,8 +77,9 @@ public class ReviewService {
      * @param request 수정 내용
      */
     @Transactional
-    public void updateReview(Long reviewId, UpdateReviewRequestDto request) {
+    public void updateReview(Long memberId, Long reviewId, UpdateReviewRequestDto request) {
         validationReviewId(reviewId);
+        isLoginMember(memberId, reviewId);
 
         Review findReview = getReview(reviewId);
         Review updateReview = findReview.updateReview(request);
@@ -90,8 +92,9 @@ public class ReviewService {
      * @param reviewId 삭제할 리뷰
      */
     @Transactional
-    public void deleteReview(Long reviewId) {
+    public void deleteReview(Long memberId, Long reviewId) {
         validationReviewId(reviewId);
+        isLoginMember(memberId, reviewId);
 
         reviewRepository.deleteById(reviewId);
     }
@@ -113,11 +116,21 @@ public class ReviewService {
     public boolean validationReviewId(Long reviewId) {
 
         boolean exists = reviewRepository.existsById(reviewId);
+
         if (!exists) {
             throw new ReviewNotFoundException(ErrorCode.REVIEW_NOT_FOUND);
         }
 
         return true;
+    }
+
+    /**
+     * 로그인한 멤버인지 확인
+     */
+    private void isLoginMember(Long memberId, Long reviewId) {
+        if (reviewRepository.findMemberIdByReviewId(reviewId) != memberId) {
+            throw new MemberIdNotEqualException(ErrorCode.MEMBER_NOT_EQUAL);
+        }
     }
 
     /**
