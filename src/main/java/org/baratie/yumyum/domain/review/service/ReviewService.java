@@ -53,10 +53,16 @@ public class ReviewService {
 
     }
 
-    public ReviewDetailDto getReviewDetail(CustomUserDetails customUserDetails, Long reviewId) {
+    /**
+     * 리뷰 상세조회
+     * @param reviewId
+     * @return 리뷰 상세페이지 데이터
+     */
+    public ReviewDetailDto getReviewDetail(Long reviewId) {
         validationReviewId(reviewId);
 
-        ReviewDetailDto reviewDetail = reviewRepository.findReviewDetail(customUserDetails.getId(), reviewId);
+        Long memberId = reviewRepository.findMemberIdByReviewId(reviewId);
+        ReviewDetailDto reviewDetail = reviewRepository.findReviewDetail(memberId, reviewId);
         List<String> images = imageRepository.findByReviewId(reviewId);
         
         ReviewDetailDto reviewDetailDto = reviewDetail.tranceDto(reviewDetail, images);
@@ -69,6 +75,7 @@ public class ReviewService {
      * @param reviewId 수정할 리뷰
      * @param request 수정 내용
      */
+    @Transactional
     public void updateReview(Long reviewId, UpdateReviewRequestDto request) {
         validationReviewId(reviewId);
 
@@ -82,6 +89,7 @@ public class ReviewService {
      * 리뷰 삭제
      * @param reviewId 삭제할 리뷰
      */
+    @Transactional
     public void deleteReview(Long reviewId) {
         validationReviewId(reviewId);
 
