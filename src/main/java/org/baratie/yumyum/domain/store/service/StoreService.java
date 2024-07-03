@@ -51,19 +51,17 @@ public class StoreService {
         BigDecimal lng = bigDecimals[1];
 
         Store store = createStoreDto.toEntity(lat, lng);
-        Store saveStore = storeRepository.save(store);
 
         List<Menu> menuList = store.getMenuList();
-        menuList.forEach(menu -> menu.addStore(saveStore));
-        menuRepository.saveAll(menuList);
+        menuList.forEach(menu -> menu.addStore(store));
 
         List<Hashtag> hashtagList = store.getHashtagList();
-        hashtagList.forEach(hashtag -> hashtag.addStore(saveStore));
-        hashtagRepository.saveAll(hashtagList);
+        hashtagList.forEach(hashtag -> hashtag.addStore(store));
 
         List<Image> imageList = store.getImageList();
-        imageList.forEach(image -> image.addStore(saveStore));
-        imageRepository.saveAll(imageList);
+        imageList.forEach(image -> image.addStore(store));
+
+        storeRepository.save(store);
     }
 
 
@@ -89,23 +87,22 @@ public class StoreService {
     @Transactional
     public void updateStore(Long storeId, UpdateStoreDto request) {
         Store findstore = validationStoreId(storeId);
-        Store updateStore = findstore.updateStore(request);
-        System.out.println("updateStore.getMenuList() = " + updateStore.getMenuList());
+        Store updatedStore = findstore.updateStore(request);
+        System.out.println(updatedStore);
 
-        Store saveStore = storeRepository.save(updateStore);
+        storeRepository.save(updatedStore);
 
-        System.out.println("updateStore.getMenuList() = " + updateStore.getMenuList());
-        updateStore.getMenuList().forEach(menu -> menu.addStore(saveStore));
-        menuRepository.saveAll(updateStore.getMenuList());
+        List<Menu> menuList = updatedStore.getMenuList();
+        menuList.forEach(menu -> menu.addStore(updatedStore));
+        menuRepository.saveAll(menuList);
 
+        List<Hashtag> hashtagList = updatedStore.getHashtagList();
+        hashtagList.forEach(hashtag -> hashtag.addStore(updatedStore));
+        hashtagRepository.saveAll(hashtagList);
 
-        updateStore.getHashtagList().forEach(hashtag -> hashtag.addStore(saveStore));
-        hashtagRepository.saveAll(updateStore.getHashtagList());
-
-
-        updateStore.getImageList().forEach(image -> image.addStore(saveStore));
-        imageRepository.saveAll(updateStore.getImageList());
-
+        List<Image> imageList = updatedStore.getImageList();
+        imageList.forEach(image -> image.addStore(updatedStore));
+        imageRepository.saveAll(imageList);
     }
 
 

@@ -73,7 +73,7 @@ public class ReplyService {
     public boolean validateReply(Long replyId){
         boolean existReply = reviewRepository.existsById(replyId);
         if(!existReply){
-            throw new ReplyNotFoundException(ErrorCode.REPLY_NOT_FOUNT);
+            throw new ReplyNotFoundException(ErrorCode.REPLY_NOT_FOUND);
         }
         return true;
     }
