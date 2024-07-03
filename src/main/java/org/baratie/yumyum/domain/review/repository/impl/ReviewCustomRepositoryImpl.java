@@ -5,6 +5,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.image.domain.QImage;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 import static org.baratie.yumyum.domain.member.domain.QMember.*;
 import static org.baratie.yumyum.domain.review.domain.QReview.*;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
+import static org.baratie.yumyum.domain.store.domain.QStore.*;
 import static org.baratie.yumyum.domain.store.domain.QStore.store;
 
 @RequiredArgsConstructor
@@ -37,12 +39,13 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     public ReviewDetailDto findReviewDetail(Long memberId, Long reviewId) {
 
         /**
-         * 멤버가 작성한 전체 리뷰 갯수
+         * 멤버가 작성한 리뷰 갯수
          */
         JPQLQuery<Long> reviewTotalCount = JPAExpressions
                 .select(review.count())
                 .from(review)
                 .where(memberIdEq(memberId));
+
         /**
          * 멤버가 작성한 전체 리뷰 평균
          */
@@ -52,7 +55,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .where(memberIdEq(memberId));
 
         ReviewDetailDto reviewDetailDto = query
-                .select(Projections.constructor(ReviewDetailDto.class,
+                .select(
+                        Projections.constructor(ReviewDetailDto.class,
                         member.imageUrl.as("profileImage"),
                         member.nickname,
                         ExpressionUtils.as(reviewTotalCount, "totalReviewCount"),
@@ -60,7 +64,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                         store.name.as("storeName"),
                         store.address,
                         review.grade,
-                        review.content))
+                        review.content)
+                )
                 .from(review)
                 .join(review.member, member)
                 .join(review.store, store)
@@ -72,10 +77,6 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 
     @Override
     public Slice<ReviewAllDto> findAllReviews(Pageable pageable) {
-        QReview review = QReview.review;
-        QMember member = QMember.member;
-        QStore store = QStore.store;
-        QImage image = QImage.image;
 
         /**
          * 멤버가 작성한 리뷰 갯수
@@ -121,6 +122,19 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         }
 
         return new SliceImpl<>(results, pageable, hasNext);
+    }
+
+    /**
+     * 멤버 ID 조회
+     * @param reviewId
+     * @return 리뷰 작성자의 ID값
+     */
+    @Override
+    public Long findMemberIdByReviewId(Long reviewId) {
+        return query.select(review.member.id)
+                .from(review)
+                .where(reviewIdEq(reviewId))
+                .fetchOne();
     }
 
     /**

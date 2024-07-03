@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReviewCustomRepository {
 
-    ReviewDetailDto findReviewDetail(Long storeId, Long reviewId);
+    ReviewDetailDto findReviewDetail(Long memberId, Long reviewId);
 
     Slice<ReviewAllDto> findAllReviews(Pageable pageable);
+
+    Long findMemberIdByReviewId(Long reviewId);
 }
