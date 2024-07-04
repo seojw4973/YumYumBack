@@ -67,8 +67,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                         review.content)
                 )
                 .from(review)
-                .join(review.member, member)
-                .join(review.store, store)
+                .leftJoin(review.member, member)
                 .where(reviewIdEq(reviewId).and(memberIdEq(memberId)))
                 .fetchOne();
 
