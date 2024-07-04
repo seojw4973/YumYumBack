@@ -21,8 +21,18 @@ public class Likes {
     private boolean isLikes;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id", nullable = false)
     private Review review;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    public static Likes insertLikes(Member member, Review review) {
+        return Likes.builder().member(member).review(review).build();
+    }
+
+    public void changeReviewLikes(boolean isLikes){
+        this.isLikes = isLikes;
+    }
 }
