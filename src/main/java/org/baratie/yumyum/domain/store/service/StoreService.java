@@ -12,6 +12,7 @@ import org.baratie.yumyum.domain.menu.repository.MenuRepository;
 import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.CreateStoreDto;
+import org.baratie.yumyum.domain.store.dto.MainStoreDto;
 import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
 import org.baratie.yumyum.domain.store.dto.UpdateStoreDto;
 import org.baratie.yumyum.domain.store.exception.StoreExistException;
@@ -103,6 +104,11 @@ public class StoreService {
         List<Image> imageList = updatedStore.getImageList();
         imageList.forEach(image -> image.addStore(updatedStore));
         imageRepository.saveAll(imageList);
+    }
+
+
+    public List<MainStoreDto> getTop10(String local) {
+        return storeRepository.findTo10(local);
     }
 
 
