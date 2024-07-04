@@ -6,12 +6,17 @@ import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.reply.domain.Reply;
 import org.baratie.yumyum.domain.reply.dto.CreateReplyDto;
+import org.baratie.yumyum.domain.reply.dto.ReplyResponseDto;
 import org.baratie.yumyum.domain.reply.dto.UpdateRelyDto;
 import org.baratie.yumyum.domain.reply.exception.ReplyNotFoundException;
 import org.baratie.yumyum.domain.reply.repository.ReplyRepository;
 import org.baratie.yumyum.domain.review.domain.Review;
+import org.baratie.yumyum.domain.review.exception.ReviewNotFoundException;
 import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -36,6 +41,24 @@ public class ReplyService {
 
         Reply reply = request.toEntity(review.get(), member);
         replyRepository.save(reply);
+    }
+
+    public Slice<ReplyResponseDto> getReplyOnReview(Long reviewId, Pageable pageable) {
+        return replyRepository.getReplyOnReview(reviewId, pageable);
+    }
+
+    private Long getReviewId(Long replyId) {
+        return replyRepository.findReviewByReplyId(replyId);
+    }
+
+    private boolean validationReplyId(Long replyId) {
+        boolean exists = replyRepository.existsById(replyId);
+
+        if (!exists) {
+            throw new ReplyNotFoundException(ErrorCode.REPLY_NOT_FOUND);
+        }
+
+        return true;
     }
 
     /**
