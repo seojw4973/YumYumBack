@@ -6,5 +6,6 @@ import lombok.Getter;
 @Getter
 public class FavoriteDto {
     private Long storeId;
-    private boolean isFavorite;
+    private Boolean isFavorite;
+
 }
