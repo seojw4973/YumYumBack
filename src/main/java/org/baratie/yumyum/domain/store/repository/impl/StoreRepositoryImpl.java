@@ -1,10 +1,7 @@
 package org.baratie.yumyum.domain.store.repository.impl;
 
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.store.domain.Store;
@@ -14,6 +11,7 @@ import org.baratie.yumyum.domain.store.repository.StoreCustomRepository;
 import java.util.List;
 import java.util.Optional;
 
+import static org.baratie.yumyum.domain.image.domain.QImage.image;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.*;
 import static org.baratie.yumyum.domain.favorite.domain.QFavorite.favorite;
@@ -39,34 +37,27 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
 
     @Override
     public List<MainStoreDto> findTo10(String local) {
-        JPQLQuery<Long> reviewCount = JPAExpressions
-                .select(review.count())
-                .from(review)
-                .where(review.store.id.eq(store.id));
+        // 메인 쿼리 작성
+        List<MainStoreDto> results = query
+                .select(Projections.constructor(MainStoreDto.class,
+                        store.id,
+                        store.name,
+                        image.imageUrl,
+                        review.grade.avg().as("avgGrade"),
+                        review.countDistinct().as("reviewCount"),
+                        favorite.countDistinct().as("favoriteCount")
+                ))
+                .from(store)
+                .leftJoin(review).on(review.store.id.eq(store.id))
+                .leftJoin(favorite).on(favorite.store.id.eq(store.id))
+                .leftJoin(image).on(image.store.id.eq(store.id))
+                .where(store.address.contains(local))
+                .groupBy(store.id, image.imageUrl)  // 그룹화 필드 지정
+                .orderBy(review.grade.avg().desc(), favorite.count().desc())  // 정렬 조건 추가
+                .limit(10L)
+                .fetch();
 
-        JPQLQuery<Double> avgGrade = JPAExpressions
-                .select(review.grade.avg())
-                .from(review)
-                .where(review.store.id.eq(store.id));
-
-        JPQLQuery<Long> favoriteCount = JPAExpressions
-                .select(favorite.count())
-                .from(favorite)
-                .where(favorite.store.id.eq(store.id));
-
-//        List<MainStoreDto> results = query
-//                .select(Projections.constructor(MainStoreDto.class,
-//                        store.name,
-//                        ExpressionUtils.as(avgGrade, "avgGrade"),
-//                        ExpressionUtils.as(reviewCount, "reviewCount"),
-//                        ExpressionUtils.as(favoriteCount, "favoriteCount")
-//                                ))
-//                .from(store)
-//                .leftJoin(store.review, review)
-//                .leftJoin(store.favorite, favorite)
-//                .
-
-        return List.of();
+        return results;
     }
 
     /**

@@ -42,14 +42,14 @@ public class StoreController {
     @PatchMapping("/{storeId}")
     public ResponseEntity<Void> updateStore(@PathVariable Long storeId, @RequestBody UpdateStoreDto request) {
         storeService.updateStore(storeId, request);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/top10")
     public ResponseEntity<List<MainStoreDto>> findTop10(@RequestParam String local) {
-        storeService.getTop10(local);
+        List<MainStoreDto> Top10List = storeService.getTop10(local);
 
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(Top10List);
     }
 
     @PostMapping("/test")

@@ -107,10 +107,8 @@ public class StoreService {
     }
 
 
-    public MainStoreDto getTop10(String local) {
-
-
-        return null;
+    public List<MainStoreDto> getTop10(String local) {
+        return storeRepository.findTo10(local);
     }
 
 
