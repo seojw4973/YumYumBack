@@ -106,9 +106,23 @@ public class StoreService {
         imageRepository.saveAll(imageList);
     }
 
-
+    /**
+     * 지역에 따른 Top10 가게 조회
+     * @param local
+     * @return 해당 지역에 조건에 맞는 Top10 가게 리턴
+     */
     public List<MainStoreDto> getTop10(String local) {
         return storeRepository.findTo10(local);
+    }
+
+    /**
+     * 관리자 페이지 맛집 전체 조회
+     * @param pageable
+     * @return 맛집 전체 데이터 Page 정보와 함께 리턴
+     */
+    public Page<AdminStoreDto> getAdminStores(Pageable pageable) {
+        Page<Store> pageStore = storeRepository.findAll(pageable);
+        return pageStore.map(m -> new AdminStoreDto(m.getId(), m.getName(), m.getCall(), m.getAddress(), m.isClosed()));
     }
 
 

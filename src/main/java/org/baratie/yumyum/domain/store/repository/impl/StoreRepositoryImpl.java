@@ -5,9 +5,12 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.store.domain.Store;
+import org.baratie.yumyum.domain.store.dto.AdminStoreDto;
 import org.baratie.yumyum.domain.store.dto.MainStoreDto;
 import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
 import org.baratie.yumyum.domain.store.repository.StoreCustomRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +85,23 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .leftJoin(favorite).on(favorite.store.id.eq(store.id))
                 .where(reviewIdEq(storeId))
                 .fetchOne();
+    }
+
+    @Override
+    public Page<AdminStoreDto> findAdminStore(Pageable pageable) {
+        List<AdminStoreDto> results = query.select(Projections.constructor(AdminStoreDto.class,
+                store.id,
+                store.name,
+                store.call,
+                store.address,
+                store.isClosed))
+                .from(store)
+                .fetch();
+
+
+
+
+        return null;
     }
 
     /**
