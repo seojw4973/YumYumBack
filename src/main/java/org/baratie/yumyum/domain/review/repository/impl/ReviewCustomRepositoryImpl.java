@@ -57,11 +57,12 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
          */
         List<ReviewAllDto> results = query
                 .select(Projections.constructor(ReviewAllDto.class,
+                        member.imageUrl,
                         store.name,
                         store.address,
                         member.nickname,
                         review.grade,
-                        ExpressionUtils.as(getReviewTotalCount(), "reviewTotalCount"),
+                        ExpressionUtils.as(getReviewTotalCount(), "totalReviewCount"),
                         ExpressionUtils.as(getAvgGrade(), "avgGrade"),
                         review.content)
                 )

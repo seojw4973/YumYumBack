@@ -5,9 +5,11 @@ import jakarta.persistence.OneToMany;
 import lombok.*;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
+import org.baratie.yumyum.domain.image.domain.Image;
 import org.baratie.yumyum.domain.image.dto.ImageDto;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.dto.MenuDto;
+import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.store.domain.Store;
 
 import java.math.BigDecimal;
@@ -15,55 +17,62 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class StoreDetailDto {
 
+    private Long storeId;
     private String name;
     private String address;
     private String hours;
     private String calls;
     private int views;
+    private Double avgGrade;
     private BigDecimal latitude;
     private BigDecimal longitude;
 
-    private List<HashtagDto> hashtagList;
-    private List<MenuDto> menuList;
-    private List<ImageDto> imageList;
+    private List<Hashtag> hashtagList;
+    private List<Menu> menuList;
+    private List<String> imageList;
 
-    private int reviewCount;
-    private int favoriteCount;
+    private Long reviewCount;
+    private Long favoriteCount;
 
-    public static StoreDetailDto fromEntity(Store store, int reviewCount, int favoriteCount) {
-        List<MenuDto> menuList = store.getMenuList().stream().map(menu -> MenuDto.builder()
-                .name(menu.getName())
-                .price(menu.getPrice())
-                .build()).toList();
-
-        List<HashtagDto> hashtagList = store.getHashtagList().stream().map(hashtag -> HashtagDto.builder()
-                .content(hashtag.getContent())
-                .build()).toList();
-
-        List<ImageDto> imageList = store.getImageList().stream().map(image -> ImageDto.builder()
-                .imageUrl(image.getImageUrl())
-                .build()).toList();
-
-        return StoreDetailDto.builder()
-                .name(store.getName())
-                .address(store.getAddress())
-                .hours(store.getHours())
-                .calls(store.getCall())
-                .views(store.getViews())
-                .latitude(store.getLatitude())
-                .longitude(store.getLongitude())
-                .reviewCount(reviewCount)
-                .favoriteCount(favoriteCount)
-                .hashtagList(hashtagList)
-                .menuList(menuList)
-                .imageList(imageList)
+    public StoreDetailDto tranceDto(StoreDetailDto storeDetail, List<Hashtag> hashtagList, List<Menu> menuList, List<String> imageList) {
+        StoreDetailDto result = StoreDetailDto.builder()
+                .storeId(storeDetail.getStoreId())
+                .name(storeDetail.getName())
+                .address(storeDetail.getAddress())
+                .hours(storeDetail.getHours())
+                .calls(storeDetail.getCalls())
+                .views(storeDetail.getViews())
+                .avgGrade(Math.round(storeDetail.getAvgGrade()*10.0)/10.0)
+                .latitude(storeDetail.getLatitude())
+                .longitude(storeDetail.getLongitude())
+                .reviewCount(storeDetail.getReviewCount())
+                .favoriteCount(storeDetail.getFavoriteCount())
                 .build();
+
+        result.imageList = imageList;
+        result.hashtagList = hashtagList;
+        result.menuList = menuList;
+
+        return result;
     }
 
+    @Builder
+    public StoreDetailDto(Long storeId, String name, String address, String hours, String calls, int views, double avgGrade, BigDecimal latitude, BigDecimal longitude, Long reviewCount, Long favoriteCount) {
+        this.storeId = storeId;
+        this.name = name;
+        this.address = address;
+        this.hours = hours;
+        this.calls = calls;
+        this.views = views;
+        this.avgGrade = avgGrade;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.reviewCount = reviewCount;
+        this.favoriteCount = favoriteCount;
+
+    }
 }

@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.MainStoreDto;
+import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
 import org.baratie.yumyum.domain.store.repository.StoreCustomRepository;
 
 import java.util.List;
@@ -60,6 +61,29 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
         return results;
     }
 
+    @Override
+    public StoreDetailDto findStoreDetail(Long storeId) {
+
+        return query
+                .select(Projections.constructor(StoreDetailDto.class,
+                        store.id,
+                        store.name,
+                        store.address,
+                        store.hours,
+                        store.call,
+                        store.views,
+                        review.grade.avg().as("avgGrade"),
+                        store.latitude,
+                        store.longitude,
+                        review.id.countDistinct(),
+                        favorite.id.countDistinct()))
+                .from(store)
+                .leftJoin(review).on(review.store.id.eq(store.id))
+                .leftJoin(favorite).on(favorite.store.id.eq(store.id))
+                .where(reviewIdEq(storeId))
+                .fetchOne();
+    }
+
     /**
      * 가게가 있는지 확인
      * @param storeId 조회할 가게 id
@@ -68,4 +92,6 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
     private BooleanExpression storeIdEq(Long storeId) {
         return store.id.eq(storeId);
     }
+
+    private BooleanExpression reviewIdEq(Long storeId) { return review.store.id.eq(storeId);}
 }

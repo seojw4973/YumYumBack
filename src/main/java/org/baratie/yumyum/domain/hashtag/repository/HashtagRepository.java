@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
 
-    List<HashtagDto> findByStoreId(Long stordid);
+    List<Hashtag> findByStoreId(Long storeId);
 }
