@@ -6,6 +6,7 @@ import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.domain.SocialType;
 import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.exception.MemberNotFoundException;
+import org.baratie.yumyum.domain.member.exception.PasswordNotEqualException;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -97,6 +98,21 @@ public class MemberService {
     }
 
     /**
+     * 내 정보 수정
+     * @param member 수정할 멤버
+     * @param updateMemberDto 수정 요청한 정보
+     */
+    public void updateMember(Member member, UpdateMemberDto updateMemberDto) {
+        if (updateMemberDto.getPassword() != updateMemberDto.getCheckPassword()) {
+            new PasswordNotEqualException(ErrorCode.PASSWORD_NOT_EQUAL);
+        }
+
+        Member updateMember = member.updateInfo(updateMemberDto);
+
+        memberRepository.save(updateMember);
+    }
+
+    /**
      * 회원 존재 여부 확인
      * @param memberId
      * @return 조회한 멤버
@@ -117,5 +133,4 @@ public class MemberService {
         }
 
     }
-
 }

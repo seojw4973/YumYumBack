@@ -3,6 +3,7 @@ package org.baratie.yumyum.domain.member.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
+import org.baratie.yumyum.domain.member.dto.UpdateMemberDto;
 
 @Entity
 @Getter
@@ -42,4 +43,28 @@ public class Member {
     @Column(name = "social_type")
     private SocialType socialType;
 
+    /**
+     * 회원 정보 수정
+     */
+    public Member updateInfo(UpdateMemberDto updateMemberDto) {
+
+        if (updateMemberDto.getProfileImage() != null) {
+            this.imageUrl = updateMemberDto.getProfileImage();
+        }
+
+        if (updateMemberDto.getNickname() != null) {
+            this.nickname = updateMemberDto.getNickname();
+
+        }
+
+        if (updateMemberDto.getPassword() != null) {
+            this.password = updateMemberDto.getPassword();
+        }
+
+        if(updateMemberDto.getPhoneNumber() != null) {
+            this.phoneNumber = updateMemberDto.getPhoneNumber();
+        }
+
+        return this;
+    }
 }
