@@ -40,7 +40,7 @@ public class LikesCustomRepositoryImpl implements LikesCustomRepository {
      * @param memberId 로그인한 멤버 id
      * @return BooleanExpression
      */
-    private BooleanExpression memberIdEq(Long memberId) {
+    public BooleanExpression memberIdEq(Long memberId) {
         return likes.member.id.eq(memberId);
     }
 

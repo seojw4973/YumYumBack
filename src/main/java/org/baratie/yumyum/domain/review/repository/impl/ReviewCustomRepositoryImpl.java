@@ -5,18 +5,15 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.image.domain.QImage;
 import org.baratie.yumyum.domain.image.dto.ImageDto;
-import org.baratie.yumyum.domain.member.domain.QMember;
-import org.baratie.yumyum.domain.review.domain.QReview;
+import org.baratie.yumyum.domain.member.dto.LikeReviewDto;
 import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 
 import org.baratie.yumyum.domain.review.repository.ReviewCustomRepository;
-import org.baratie.yumyum.domain.store.domain.QStore;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -24,11 +21,11 @@ import org.springframework.data.domain.SliceImpl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.baratie.yumyum.domain.likes.domain.QLikes.likes;
 import static org.baratie.yumyum.domain.member.domain.QMember.*;
-import static org.baratie.yumyum.domain.review.domain.QReview.*;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
-import static org.baratie.yumyum.domain.store.domain.QStore.*;
 import static org.baratie.yumyum.domain.store.domain.QStore.store;
+import static org.baratie.yumyum.domain.favorite.domain.QFavorite.favorite;
 
 @RequiredArgsConstructor
 public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
@@ -136,6 +133,34 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .fetchOne();
     }
 
+    @Override
+    public Slice<LikeReviewDto> findLikeReviewsByMemberId(Long memberId, Pageable pageable) {
+        List<LikeReviewDto> results = query.select(Projections.constructor(LikeReviewDto.class,
+                review.id,
+                member.imageUrl.as("profileImage"),
+                member.nickname,
+                review.grade,
+                likes.isLikes,
+                review.content,
+                review.createdAt))
+                .from(review)
+                .leftJoin(review.member, member)
+                .leftJoin(likes).on(likes.review.id.eq(review.id))
+                .where(likesMemberIdEq(memberId))
+                .orderBy(review.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() +1)
+                .fetch();
+
+        boolean hasNext = results.size() > pageable.getPageSize();
+        if (hasNext) {
+            results.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(results, pageable, hasNext);
+
+    }
+
     /**
      * 리뷰를 작성한 멤버만 조회
      * @param memberId 특정 멤버 조회
@@ -152,5 +177,9 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     public BooleanExpression reviewIdEq(Long reviewId) {
         return review.id.eq(reviewId);
     }
+
+    public BooleanExpression likesMemberIdEq(Long memberId) { return likes.member.id.eq(memberId); }
+
+
 
 }
