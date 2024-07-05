@@ -25,7 +25,7 @@ public class FavoriteController {
     @PostMapping
     public ResponseEntity<Void> addFavorite(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody FavoriteDto request) {
 
-        Member member = memberService.validationMemberId(customUserDetails.getId());
+        Member member = memberService.getMember(customUserDetails.getId());
         Store store = storeService.validationStoreId(request.getStoreId());
 
         favoriteService.addFavorite(member, store, request);
