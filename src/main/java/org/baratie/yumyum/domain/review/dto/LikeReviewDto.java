@@ -1,4 +1,4 @@
-package org.baratie.yumyum.domain.member.dto;
+package org.baratie.yumyum.domain.review.dto;
 
 import lombok.*;
 

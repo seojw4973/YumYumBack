@@ -51,25 +51,9 @@ public class MemberController {
         return ResponseEntity.ok().body(myInfoDto);
     }
 
-    /**
-     * 내 댓글 보기
-     * @param memberId 로그인한 유저 id
-     * @param pageNumber 페이지 번호
-     * @return 로그인한 유저 id의 댓글 조회
-     */
-    @GetMapping("/{memberId}/reply")
-    public ResponseEntity<Slice<MyReplyDto>> getMyReply(@PathVariable Long memberId, @RequestParam int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, 5);
-        Slice<MyReplyDto> myReplyDto = memberService.getMyReply(memberId, pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(myReplyDto);
-    }
 
-    @GetMapping("/{memberId}/review/star")
-    public ResponseEntity<Slice<LikeReviewDto>> getLikeReview(@PathVariable Long memberId, @RequestParam int pageNumber){
-        Pageable pageable = PageRequest.of(pageNumber, 5);
-        Slice<LikeReviewDto> likeReviewDto = memberService.getMyLikeReview(memberId, pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(likeReviewDto);
-    }
+
+
 
 //    @GetMapping("/oauth2")
 //    public void oauth2login(HttpServletResponse response) throws IOException {

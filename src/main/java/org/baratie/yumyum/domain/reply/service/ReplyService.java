@@ -3,6 +3,7 @@ package org.baratie.yumyum.domain.reply.service;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.member.dto.MyReplyDto;
 import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.reply.domain.Reply;
 import org.baratie.yumyum.domain.reply.dto.CreateReplyDto;
@@ -49,6 +50,16 @@ public class ReplyService {
      */
     public Slice<ReplyResponseDto> getReplyOnReview(Long reviewId, Pageable pageable) {
         return replyRepository.getReplyOnReview(reviewId, pageable);
+    }
+
+    /**
+     * 내가 쓴 댓글 보기
+     * @param memberId
+     * @param pageable
+     * @return Slice객체로 내가 쓴 댓글 리턴
+     */
+    public Slice<MyReplyDto> getMyReply(Long memberId, Pageable pageable) {
+        return replyRepository.findByMemberId(memberId, pageable);
     }
 
     /**

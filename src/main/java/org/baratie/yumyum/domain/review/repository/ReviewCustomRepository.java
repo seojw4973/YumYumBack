@@ -1,6 +1,6 @@
 package org.baratie.yumyum.domain.review.repository;
 
-import org.baratie.yumyum.domain.member.dto.LikeReviewDto;
+import org.baratie.yumyum.domain.review.dto.LikeReviewDto;
 import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
