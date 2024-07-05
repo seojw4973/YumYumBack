@@ -116,8 +116,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     @Override
     public Slice<MyReviewDto> getMyReview(Long memberId, Pageable pageable) {
         List<MyReviewDto> results = query.select(Projections.constructor(MyReviewDto.class,
-                        review.store.name,
-                        review.store.address,
+                        store.name,
+                        store.address,
                         member.nickname,
                         review.grade,
                         getReviewTotalCount(memberId),
@@ -127,6 +127,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 ))
                 .from(review)
                 .leftJoin(review.member, member)
+                .leftJoin(review.store, store)
                 .leftJoin(likes).on(likes.review.id.eq(review.id))
                 .orderBy(review.createdAt.desc())
                 .offset(pageable.getOffset())
