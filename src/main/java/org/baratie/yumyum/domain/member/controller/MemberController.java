@@ -1,19 +1,15 @@
 package org.baratie.yumyum.domain.member.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.member.domain.Member;
-import org.baratie.yumyum.domain.member.dto.LoginDto;
-import org.baratie.yumyum.domain.member.dto.LoginResponseDto;
-import org.baratie.yumyum.domain.member.dto.MemberDto;
-import org.baratie.yumyum.domain.member.dto.TokenDto;
+import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.domain.member.service.MemberService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,39 +20,48 @@ public class MemberController {
 
     /**
      * 회원가입
-     * @param memberDTO
-     * @return response
+     * @param signUpDto 회원가입 정보
+     * @return response 회원가입 완료 여부
      */
     @PostMapping
-    public ResponseEntity<String> registerMember(@RequestBody MemberDto memberDTO) {
-        String response = memberService.register(memberDTO);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<String> registerMember(@RequestBody SignUpDto signUpDto) {
+        String response = memberService.register(signUpDto);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     /**
      * 로그인
-     * @param loginDto
-     * @return TokenDto
+     * @param loginDto 이메일과 비밀먼호
+     * @return LoginResponseDto 로그인한 유저의 정보 및 jwt 리턴
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginDto loginDto) {
-        System.out.println("login.....");
         LoginResponseDto loginResponseDtoDto = memberService.login(loginDto);
-        System.out.println("Token: " + loginResponseDtoDto);
-        return ResponseEntity.ok().body(loginResponseDtoDto);
+        return ResponseEntity.status(HttpStatus.OK).body(loginResponseDtoDto);
     }
 
     /**
      * 내 정보 보기
-     * @param memberId
-     * @return
+     * @param memberId 로그인한 유저 id
+     * @return 로그인한 유저의 상세 정보
      */
     @GetMapping("/{memberId}")
-    public ResponseEntity<MemberDto> getMember(@PathVariable Long memberId) {
-        System.out.println("getMember...");
-        MemberDto memberDto = memberService.getMyInfo(memberId);
-        System.out.println("memberDto: " + memberDto);
-        return ResponseEntity.ok().body(memberDto);
+    public ResponseEntity<MyInfoDto> getMember(@PathVariable Long memberId) {
+        MyInfoDto myInfoDto = memberService.getMyInfo(memberId);
+        return ResponseEntity.ok().body(myInfoDto);
+    }
+
+    /**
+     * 내 댓글 보기
+     * @param memberId 로그인한 유저 id
+     * @param pageNumber 페이지 번호
+     * @return 로그인한 유저 id의 댓글 조회
+     */
+    @GetMapping("/{memberId}/reply")
+    public ResponseEntity<Slice<MyReplyDto>> getMyReply(@PathVariable Long memberId, @RequestParam int pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, 5);
+        Slice<MyReplyDto> myReplyDto = memberService.getMyReply(memberId, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(myReplyDto);
     }
 
 //    @GetMapping("/oauth2")
