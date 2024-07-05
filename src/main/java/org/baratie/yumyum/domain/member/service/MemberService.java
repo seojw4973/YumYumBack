@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.domain.SocialType;
-import org.baratie.yumyum.domain.member.dto.LoginDto;
-import org.baratie.yumyum.domain.member.dto.LoginResponseDto;
-import org.baratie.yumyum.domain.member.dto.MemberDto;
-import org.baratie.yumyum.domain.member.dto.TokenDto;
+import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.exception.MemberNotFoundException;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
+import org.baratie.yumyum.domain.reply.repository.ReplyRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -27,23 +27,24 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final ReplyRepository replyRepository;
 
     /**
-     *
-     * @param memberDTO
+     * 회원가입
+     * @param signUpDto
      * @return
      */
-    public String register(MemberDto memberDTO){
+    public String register(SignUpDto signUpDto){
         String response = null;
         try{
-            if(!memberRepository.existsByNickname(memberDTO.getNickName())){
-                String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
+            if(!memberRepository.existsByNickname(signUpDto.getNickName())){
+                String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
                 Member member = new Member().builder()
-                        .nickname(memberDTO.getNickName())
-                        .email(memberDTO.getEmail())
+                        .nickname(signUpDto.getNickName())
+                        .email(signUpDto.getEmail())
                         .password(encodedPassword)
-                        .phoneNumber(memberDTO.getPhoneNumber())
-                        .imageUrl(memberDTO.getImageUrl())
+                        .phoneNumber(signUpDto.getPhoneNumber())
+                        .imageUrl(signUpDto.getImageUrl())
                         .role(Role.USER)
                         .isDeleted(false)
                         .socialType(SocialType.YUMYUM).build();
@@ -60,7 +61,7 @@ public class MemberService {
     }
 
     /**
-     *
+     * 로그인
      * @param loginDto
      * @return
      */
@@ -90,20 +91,17 @@ public class MemberService {
     }
 
     /**
-     *
+     * 내 정보 보기
      * @param memberId
      * @return
      */
-    public MemberDto getMyInfo(Long memberId){
+    public MyInfoDto getMyInfo(Long memberId){
         Member member = memberRepository.findById(memberId).orElseThrow();
+        return MyInfoDto.fromEntity(member);
+    }
 
-        MemberDto memberDto = new MemberDto().builder()
-                .email(member.getEmail())
-                .nickName(member.getNickname())
-                .phoneNumber(member.getPhoneNumber())
-                .imageUrl(member.getImageUrl()).build();
-
-        return memberDto;
+    public Slice<MyReplyDto> getMyReply(Long memberId, Pageable pageable) {
+        return replyRepository.findByMemberId(memberId, pageable);
     }
 
     /**

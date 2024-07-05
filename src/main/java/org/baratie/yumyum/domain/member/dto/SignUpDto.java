@@ -7,19 +7,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class MemberDto {
+public class SignUpDto {
 
     private String email;
     private String password;
     private String phoneNumber;
     private String nickName;
     private String imageUrl;
-
-    public MemberDto(String email, String phoneNumber, String nickName, String imageUrl) {
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.nickName = nickName;
-        this.imageUrl = imageUrl;
-    }
-
 }

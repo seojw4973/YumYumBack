@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.member.dto.MyReplyDto;
 import org.baratie.yumyum.domain.reply.dto.ReplyResponseDto;
 import org.baratie.yumyum.domain.reply.repository.ReplyCustomRepository;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +49,33 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
         boolean hasNext = results.size() > pageable.getPageSize();
 
         if (hasNext) {
+            results.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(results, pageable, hasNext);
+    }
+
+    @Override
+    public Slice<MyReplyDto> findByMemberId(Long memberId, Pageable pageable) {
+
+        List<MyReplyDto> results = query.select(Projections.constructor(MyReplyDto.class,
+                                reply.id,
+                                member.nickname,
+                                reply.content,
+                                reply.createdAt,
+                                reply.review.id)
+                )
+                .from(reply)
+                .leftJoin(reply.member, member)
+                .where(reply.member.id.eq(memberId))
+                .orderBy(reply.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize()+1)
+                .fetch();
+
+        boolean hasNext = results.size() > pageable.getPageSize();
+
+        if(hasNext){
             results.remove(pageable.getPageSize());
         }
 
