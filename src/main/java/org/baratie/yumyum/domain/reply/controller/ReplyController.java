@@ -2,10 +2,13 @@ package org.baratie.yumyum.domain.reply.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
+import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.reply.dto.CreateReplyDto;
 import org.baratie.yumyum.domain.reply.dto.ReplyResponseDto;
 import org.baratie.yumyum.domain.reply.dto.UpdateRelyDto;
 import org.baratie.yumyum.domain.reply.service.ReplyService;
+import org.baratie.yumyum.domain.review.domain.Review;
 import org.baratie.yumyum.domain.review.service.ReviewService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reply")
@@ -22,6 +26,7 @@ public class ReplyController {
 
     private final ReplyService replyService;
     private final ReviewService reviewService;
+    private final MemberService memberService;
 
     @GetMapping("/{reviewId}")
     public ResponseEntity<Slice<ReplyResponseDto>> getReplyOnReview(@PathVariable Long reviewId, @RequestParam int pageNumber) {
@@ -35,7 +40,10 @@ public class ReplyController {
 
     @PostMapping
     public ResponseEntity<Void> createReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody CreateReplyDto request){
-        replyService.createReply(customUserDetails, request);
+        Member member = memberService.validationMemberId(customUserDetails.getId());
+        Review review = reviewService.getReview(request.getReviewId());
+
+        replyService.createReply(member, review, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

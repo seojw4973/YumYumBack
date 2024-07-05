@@ -65,10 +65,8 @@ public class ReviewService {
         Long memberId = reviewRepository.findMemberIdByReviewId(reviewId);
         ReviewDetailDto reviewDetail = reviewRepository.findReviewDetail(memberId, reviewId);
         List<String> images = imageRepository.findByReviewId(reviewId);
-        
-        ReviewDetailDto reviewDetailDto = reviewDetail.tranceDto(reviewDetail, images);
 
-        return reviewDetailDto;
+        return reviewDetail.tranceDto(reviewDetail, images);
     }
 
     /**
@@ -78,10 +76,10 @@ public class ReviewService {
      */
     @Transactional
     public void updateReview(Long memberId, Long reviewId, UpdateReviewRequestDto request) {
-        validationReviewId(reviewId);
+        Review findReview = getReview(reviewId);
+
         isLoginMember(memberId, reviewId);
 
-        Review findReview = getReview(reviewId);
         Review updateReview = findReview.updateReview(request);
 
         reviewRepository.save(updateReview);
@@ -110,10 +108,10 @@ public class ReviewService {
 
     /**
      * 리뷰가 존재하는지 확인
+     *
      * @param reviewId 검증할 reviewId
-     * @return Review
      */
-    public boolean validationReviewId(Long reviewId) {
+    public void validationReviewId(Long reviewId) {
 
         boolean exists = reviewRepository.existsById(reviewId);
 
@@ -121,14 +119,13 @@ public class ReviewService {
             throw new ReviewNotFoundException(ErrorCode.REVIEW_NOT_FOUND);
         }
 
-        return true;
     }
 
     /**
      * 로그인한 멤버인지 확인
      */
     private void isLoginMember(Long memberId, Long reviewId) {
-        if (reviewRepository.findMemberIdByReviewId(reviewId) != memberId) {
+        if (!reviewRepository.findMemberIdByReviewId(reviewId).equals(memberId)) {
             throw new MemberIdNotEqualException(ErrorCode.MEMBER_NOT_EQUAL);
         }
     }
@@ -138,7 +135,9 @@ public class ReviewService {
      * @return Review
      */
     public Review getReview(Long reviewId) {
-        return reviewRepository.findById(reviewId).get();
+        return reviewRepository.findById(reviewId).orElseThrow(
+                () -> new ReviewNotFoundException(ErrorCode.REVIEW_NOT_FOUND)
+        );
     }
 
 }
