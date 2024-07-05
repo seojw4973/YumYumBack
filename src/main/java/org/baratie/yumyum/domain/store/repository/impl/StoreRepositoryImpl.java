@@ -87,23 +87,6 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .fetchOne();
     }
 
-    @Override
-    public Page<AdminStoreDto> findAdminStore(Pageable pageable) {
-        List<AdminStoreDto> results = query.select(Projections.constructor(AdminStoreDto.class,
-                store.id,
-                store.name,
-                store.call,
-                store.address,
-                store.isClosed))
-                .from(store)
-                .fetch();
-
-
-
-
-        return null;
-    }
-
     /**
      * 가게가 있는지 확인
      * @param storeId 조회할 가게 id

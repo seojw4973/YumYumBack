@@ -20,6 +20,4 @@ public interface StoreCustomRepository {
 
     StoreDetailDto findStoreDetail(Long storeId);
 
-    Page<AdminStoreDto> findAdminStore(Pageable pageable);
-
 }
