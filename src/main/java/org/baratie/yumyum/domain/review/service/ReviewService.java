@@ -7,10 +7,7 @@ import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.review.domain.Review;
-import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
-import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
-import org.baratie.yumyum.domain.review.dto.UpdateReviewRequestDto;
-import org.baratie.yumyum.domain.review.dto.CreateReviewDto;
+import org.baratie.yumyum.domain.review.dto.*;
 import org.baratie.yumyum.domain.member.exception.MemberIdNotEqualException;
 import org.baratie.yumyum.domain.review.exception.ReviewNotFoundException;
 import org.baratie.yumyum.domain.review.repository.ReviewRepository;
@@ -51,7 +48,10 @@ public class ReviewService {
         List<Image> imageList = review.getImageList();
         imageList.forEach(image -> image.addReview(saveReview));
         imageRepository.saveAll(imageList);
+    }
 
+    public Slice<StoreReviewDto> getStoreReviewList(Long storeId, Pageable pageable) {
+        return reviewRepository.findReviewByStoreId(storeId, pageable);
     }
 
     /**

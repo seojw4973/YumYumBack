@@ -2,12 +2,9 @@ package org.baratie.yumyum.domain.review.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
-import org.baratie.yumyum.domain.member.service.MemberService;
-import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
-import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
-import org.baratie.yumyum.domain.review.dto.UpdateReviewRequestDto;
-import org.baratie.yumyum.domain.review.dto.CreateReviewDto;
+import org.baratie.yumyum.domain.review.dto.*;
 import org.baratie.yumyum.domain.review.service.ReviewService;
+import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.service.StoreService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +39,20 @@ public class ReviewController {
         ReviewDetailDto reviewDetail = reviewService.getReviewDetail(reviewId);
 
         return new ResponseEntity<>(reviewDetail, HttpStatus.OK);
+    }
+
+    /**
+     * 가게에 작성된 리뷰 리스트
+     */
+    @GetMapping("/store/{storeId}/review")
+    public ResponseEntity<Slice<StoreReviewDto>> getStoreReviewList(@PathVariable Long storeId, @RequestParam int pageNumber) {
+        Store store = storeService.validationStoreId(storeId);
+
+        Pageable pageable = PageRequest.of(pageNumber, 5);
+
+        Slice<StoreReviewDto> storeReviewList = reviewService.getStoreReviewList(store.getId(), pageable);
+
+        return new ResponseEntity<>(storeReviewList, HttpStatus.ACCEPTED);
     }
 
     /**
