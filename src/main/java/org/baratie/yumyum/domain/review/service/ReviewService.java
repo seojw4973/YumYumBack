@@ -5,6 +5,7 @@ import org.baratie.yumyum.domain.image.domain.Image;
 import org.baratie.yumyum.domain.image.repository.ImageRepository;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.review.dto.LikeReviewDto;
 import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.review.domain.Review;
 import org.baratie.yumyum.domain.review.dto.*;
@@ -57,7 +58,7 @@ public class ReviewService {
     /**
      * 리뷰 상세조회
      * @param reviewId
-     * @return 리뷰 상세페이지 데이터
+     * @return 리뷰 상세정보 리턴
      */
     public ReviewDetailDto getReviewDetail(Long reviewId) {
         validationReviewId(reviewId);
@@ -67,6 +68,16 @@ public class ReviewService {
         List<String> images = imageRepository.findByReviewId(reviewId);
 
         return reviewDetail.tranceDto(reviewDetail, images);
+    }
+
+    /**
+     * 좋아요한 리뷰 조회
+     * @param memberId
+     * @param pageable
+     * @return 좋아요한 리뷰 리스트 리턴
+     */
+    public Slice<LikeReviewDto> getMyLikeReview(Long memberId, Pageable pageable) {
+        return reviewRepository.findLikeReviewsByMemberId(memberId, pageable);
     }
 
     /**

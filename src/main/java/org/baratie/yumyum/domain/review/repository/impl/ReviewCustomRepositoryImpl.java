@@ -8,9 +8,7 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
-import org.baratie.yumyum.domain.image.domain.QImage;
-import org.baratie.yumyum.domain.image.dto.ImageDto;
-import org.baratie.yumyum.domain.member.dto.LikeReviewDto;
+import org.baratie.yumyum.domain.review.dto.LikeReviewDto;
 import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
@@ -25,7 +23,6 @@ import static org.baratie.yumyum.domain.likes.domain.QLikes.likes;
 import static org.baratie.yumyum.domain.member.domain.QMember.*;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.store;
-import static org.baratie.yumyum.domain.favorite.domain.QFavorite.favorite;
 
 @RequiredArgsConstructor
 public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
