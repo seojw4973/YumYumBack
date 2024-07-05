@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 public class LikeReviewDto {
-    private Long id;
+    private Long reviewId;
     private String imageUrl;
     private String nickName;
     private double grade;
-    private Boolean isLikes;
+    private Boolean likeStatus;
     private String content;
     private LocalDateTime createdAt;
 }

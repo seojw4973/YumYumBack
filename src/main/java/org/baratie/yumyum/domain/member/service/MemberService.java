@@ -71,14 +71,14 @@ public class MemberService {
             Optional<Member> member = memberRepository.findByEmail(loginDto.getEmail());
 
             if(member.get().getSocialType() == SocialType.YUMYUM) {
-                Long id = member.get().getId();
+                Long memberId = member.get().getId();
                 String nickname = member.get().getNickname();
                 String imageUrl = member.get().getImageUrl();
 
                 String atk = jwtService.createToken(auth);
                 String rtk = jwtService.createRtk(auth);
 
-                return new LoginResponseDto(id, nickname, imageUrl, atk, rtk);
+                return new LoginResponseDto(memberId, nickname, imageUrl, atk, rtk);
             }
         } catch (Exception e) {
             e.printStackTrace(); // 예외 발생 시 스택 트레이스를 출력
@@ -113,7 +113,7 @@ public class MemberService {
     }
 
     /**
-     * 회원 존재 여부 확인
+     * id 값에 해당하는 멤버 가져오기
      * @param memberId
      * @return 조회한 멤버
      */
@@ -132,5 +132,17 @@ public class MemberService {
             throw new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
         }
 
+    }
+
+    /**
+     * 회원 존재 여부 확인
+     * @param memberId
+     * @return Member
+     */
+    public void exists(Long memberId){
+        boolean existMember = memberRepository.existsById(memberId);
+        if(!existMember){
+            throw new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
+        }
     }
 }
