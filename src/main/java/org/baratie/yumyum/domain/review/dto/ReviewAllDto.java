@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewAllDto {
-
+    private Long reviewId;
     private String profileImage;
     private String storeName;
     private String address;

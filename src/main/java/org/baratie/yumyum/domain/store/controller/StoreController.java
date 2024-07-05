@@ -2,11 +2,13 @@ package org.baratie.yumyum.domain.store.controller;
 
 import com.google.maps.errors.ApiException;
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.store.dto.CreateStoreDto;
-import org.baratie.yumyum.domain.store.dto.MainStoreDto;
-import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
-import org.baratie.yumyum.domain.store.dto.UpdateStoreDto;
+import org.baratie.yumyum.domain.store.dto.*;
 import org.baratie.yumyum.domain.store.service.StoreService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +59,16 @@ public class StoreController {
     public ResponseEntity<Void> updateStore(@PathVariable Long storeId, @RequestBody UpdateStoreDto request) {
         storeService.updateStore(storeId, request);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * 관리자 페이지 맛집 전체 조회
+     */
+    @GetMapping("/admin")
+    public ResponseEntity<Page<AdminStoreDto>> findAllAdmin(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Page<AdminStoreDto> adminStoreDto = storeService.getAdminStores(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(adminStoreDto);
     }
 
 }

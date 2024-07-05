@@ -5,9 +5,12 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.store.domain.Store;
+import org.baratie.yumyum.domain.store.dto.AdminStoreDto;
 import org.baratie.yumyum.domain.store.dto.MainStoreDto;
 import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
 import org.baratie.yumyum.domain.store.repository.StoreCustomRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
