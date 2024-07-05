@@ -7,11 +7,7 @@ import org.baratie.yumyum.domain.member.domain.SocialType;
 import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.exception.MemberNotFoundException;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
-import org.baratie.yumyum.domain.reply.repository.ReplyRepository;
-import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -28,8 +24,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final ReplyRepository replyRepository;
-    private final ReviewRepository reviewRepository;
 
     /**
      * 회원가입
@@ -102,17 +96,26 @@ public class MemberService {
         return MyInfoDto.fromEntity(member);
     }
 
-
-
     /**
      * 회원 존재 여부 확인
      * @param memberId
-     * @return Member
+     * @return 조회한 멤버
      */
-    public Member validationMemberId(Long memberId){
+    public Member getMember(Long memberId){
         return memberRepository.findById(memberId).orElseThrow(
                 () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND)
         );
+    }
+
+    /**
+     * 탈퇴한 회원인지 확인
+     */
+    public void validationMemberId(Long memberId) {
+
+        if (memberRepository.checkDeletedMember(memberId)) {
+            throw new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+
     }
 
 }
