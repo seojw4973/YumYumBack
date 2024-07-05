@@ -7,19 +7,19 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+
 import org.baratie.yumyum.domain.image.domain.QImage;
 import org.baratie.yumyum.domain.image.dto.ImageDto;
 import org.baratie.yumyum.domain.member.dto.LikeReviewDto;
 import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
-
+import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
 import org.baratie.yumyum.domain.review.repository.ReviewCustomRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.baratie.yumyum.domain.likes.domain.QLikes.likes;
 import static org.baratie.yumyum.domain.member.domain.QMember.*;
@@ -35,29 +35,13 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     @Override
     public ReviewDetailDto findReviewDetail(Long memberId, Long reviewId) {
 
-        /**
-         * 멤버가 작성한 리뷰 갯수
-         */
-        JPQLQuery<Long> reviewTotalCount = JPAExpressions
-                .select(review.count())
-                .from(review)
-                .where(memberIdEq(memberId));
-
-        /**
-         * 멤버가 작성한 전체 리뷰 평균
-         */
-        JPQLQuery<Double> avgGrade = JPAExpressions
-                .select(review.grade.avg())
-                .from(review)
-                .where(memberIdEq(memberId));
-
         ReviewDetailDto reviewDetailDto = query
                 .select(
                         Projections.constructor(ReviewDetailDto.class,
                         member.imageUrl.as("profileImage"),
                         member.nickname,
-                        ExpressionUtils.as(reviewTotalCount, "totalReviewCount"),
-                        ExpressionUtils.as(avgGrade, "avgGrade"),
+                        ExpressionUtils.as(getReviewTotalCount(memberId), "totalReviewCount"),
+                        ExpressionUtils.as(getAvgGrade(memberId), "avgGrade"),
                         store.name.as("storeName"),
                         store.address,
                         review.grade,
@@ -75,23 +59,6 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     public Slice<ReviewAllDto> findAllReviews(Pageable pageable) {
 
         /**
-         * 멤버가 작성한 리뷰 갯수
-         */
-        JPQLQuery<Long> reviewCount = JPAExpressions
-                .select(review.count())
-                .from(review)
-                .where(review.member.id.eq(member.id));
-
-
-        /**
-         * 멤버의 평균 평점
-         */
-        JPQLQuery<Double> avgGrade = JPAExpressions
-                .select(review.grade.avg())
-                .from(review)
-                .where(review.member.id.eq(member.id));
-
-        /**
          * 무한스크롤로 리뷰 전체리스트 조회
          */
         List<ReviewAllDto> results = query
@@ -100,13 +67,40 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                         store.address,
                         member.nickname,
                         review.grade,
-                        ExpressionUtils.as(reviewCount, "reviewCount"),
-                        ExpressionUtils.as(avgGrade, "avgGrade"),
+                        ExpressionUtils.as(getReviewTotalCount(), "reviewTotalCount"),
+                        ExpressionUtils.as(getAvgGrade(), "avgGrade"),
                         review.content)
                 )
                 .from(review)
                 .leftJoin(review.store, store)
                 .leftJoin(review.member, member)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        boolean hasNext = results.size() > pageable.getPageSize();
+
+        if (hasNext) {
+            results.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(results, pageable, hasNext);
+    }
+
+    @Override
+    public Slice<StoreReviewDto> findReviewByStoreId(Long storeId, Pageable pageable) {
+
+        List<StoreReviewDto> results = query.select(Projections.constructor(StoreReviewDto.class,
+                        member.imageUrl,
+                        member.nickname,
+                        review.grade,
+                        ExpressionUtils.as(getReviewTotalCount(), "totalReviewCount"),
+                        ExpressionUtils.as(getAvgGrade(), "avgGrade"),
+                        review.content
+                ))
+                .from(review)
+                .leftJoin(review.member, member)
+                .where(storeIdEq(storeId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -162,24 +156,65 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     }
 
     /**
-     * 리뷰를 작성한 멤버만 조회
-     * @param memberId 특정 멤버 조회
-     * @return
+     * 리뷰 총 갯수
+     * @return 멤버가 작성한 리뷰 갯수
      */
+    private JPQLQuery<Long> getReviewTotalCount() {
+        return JPAExpressions
+                .select(review.count())
+                .from(review)
+                .where(review.member.id.eq(member.id));
+    }
+
+    /**
+     * 리뷰 총 갯수
+     * @param memberId 조회할 멤버
+     * @return 멤버가 작성한 리뷰 갯수
+     */
+    private JPQLQuery<Long> getReviewTotalCount(Long memberId) {
+        return JPAExpressions
+                .select(review.count())
+                .from(review)
+                .where(memberIdEq(memberId));
+    }
+
+    /**
+     * 리뷰 총 갯수
+     * @return 멤버가 작성한 평균 리뷰 점수
+     */
+    private JPQLQuery<Double> getAvgGrade() {
+        return JPAExpressions
+                .select(review.grade.avg())
+                .from(review)
+                .where(review.member.id.eq(member.id));
+    }
+
+    /**
+     * 평균 별점
+     * @param memberId 조회할 멤버
+     * @return 멤버가 작성한 평균 리뷰 점수
+     */
+    private JPQLQuery<Double> getAvgGrade(Long memberId) {
+        return JPAExpressions
+                .select(review.grade.avg())
+                .from(review)
+                .where(memberIdEq(memberId));
+    }
+
     public BooleanExpression memberIdEq(Long memberId) {
         return review.member.id.eq(memberId);
     }
 
-    /**
-     * @param reviewId 특정 리뷰 조회
-     * @return
-     */
     public BooleanExpression reviewIdEq(Long reviewId) {
         return review.id.eq(reviewId);
     }
 
-    public BooleanExpression likesMemberIdEq(Long memberId) { return likes.member.id.eq(memberId); }
-
-
+    public BooleanExpression storeIdEq(Long storeId) {
+        return review.store.id.eq(storeId);
+    }
+  
+    public BooleanExpression likesMemberIdEq(Long memberId) { 
+      return likes.member.id.eq(memberId); 
+   }
 
 }

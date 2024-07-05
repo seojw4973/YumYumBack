@@ -12,7 +12,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 
     /**
      * @param reviewId 갖고올 이미지의 review id
-     * @return
+     * @return 이미지 Url
      */
     @Query("SELECT i.imageUrl FROM Image i WHERE i.review.id = :reviewId")
     List<String> findByReviewId(Long reviewId);
