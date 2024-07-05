@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/review")
 @RequiredArgsConstructor
 public class ReviewController {
 
@@ -26,7 +27,7 @@ public class ReviewController {
     /**
      * 리뷰 전체 조회
      */
-    @GetMapping("/review")
+    @GetMapping
     public Slice<ReviewAllDto> getAllReview(@RequestParam("pageNumber") int pageNumber){
         Pageable pageable = PageRequest.of(pageNumber, 5);
 
@@ -36,7 +37,7 @@ public class ReviewController {
     /**
      * 리뷰 상세 조회
      */
-    @GetMapping("/review/{reviewId}")
+    @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewDetailDto> getReviewDetail(@PathVariable Long reviewId) {
         ReviewDetailDto reviewDetail = reviewService.getReviewDetail(reviewId);
 
@@ -60,7 +61,7 @@ public class ReviewController {
     /**
      * 가게에 작성된 리뷰 리스트
      */
-    @GetMapping("/store/{storeId}/review")
+    @GetMapping("/store/{storeId}")
     public ResponseEntity<Slice<StoreReviewDto>> getStoreReviewList(@PathVariable Long storeId, @RequestParam int pageNumber) {
         Store store = storeService.validationStoreId(storeId);
 
@@ -74,7 +75,7 @@ public class ReviewController {
     /**
      * 리뷰 작성
      */
-    @PostMapping("/review")
+    @PostMapping
     public ResponseEntity<Void> writeReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody CreateReviewDto createReviewDto){
         reviewService.createReview(customUserDetails, createReviewDto);
 
@@ -84,7 +85,7 @@ public class ReviewController {
     /**
      * 리뷰 수정
      */
-    @PatchMapping("/review/{reviewId}")
+    @PatchMapping("/{reviewId}")
     public ResponseEntity<Void> updateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long reviewId, @RequestBody UpdateReviewRequestDto request) {
         reviewService.updateReview(customUserDetails.getId(), reviewId, request);
 
@@ -94,7 +95,7 @@ public class ReviewController {
     /**
      * 리뷰 삭제
      */
-    @DeleteMapping("/review/{reviewId}")
+    @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long reviewId) {
         reviewService.deleteReview(customUserDetails.getId(), reviewId);
 
