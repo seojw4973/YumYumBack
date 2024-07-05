@@ -1,6 +1,8 @@
 package org.baratie.yumyum.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
+import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.domain.member.service.MemberService;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +23,7 @@ public class MemberController {
 
     /**
      * 회원가입
+     *
      * @param signUpDto 회원가입 정보
      * @return response 회원가입 완료 여부
      */
@@ -31,6 +35,7 @@ public class MemberController {
 
     /**
      * 로그인
+     *
      * @param loginDto 이메일과 비밀먼호
      * @return LoginResponseDto 로그인한 유저의 정보 및 jwt 리턴
      */
@@ -42,6 +47,7 @@ public class MemberController {
 
     /**
      * 내 정보 보기
+     *
      * @param memberId 로그인한 유저 id
      * @return 로그인한 유저의 상세 정보
      */
@@ -51,8 +57,17 @@ public class MemberController {
         return ResponseEntity.ok().body(myInfoDto);
     }
 
+    /**
+     * 내 정보 수정
+     */
+    @PatchMapping
+    public ResponseEntity<Void> updateMember(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody UpdateMemberDto updateMemberDto) {
+        Member member = memberService.getMember(customUserDetails.getId());
 
+        memberService.updateMember(member, updateMemberDto);
 
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 
 
 //    @GetMapping("/oauth2")
