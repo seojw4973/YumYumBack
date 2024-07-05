@@ -8,6 +8,7 @@ import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.exception.MemberNotFoundException;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.domain.reply.repository.ReplyRepository;
+import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -28,6 +29,7 @@ public class MemberService {
     private final JwtService jwtService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final ReplyRepository replyRepository;
+    private final ReviewRepository reviewRepository;
 
     /**
      * 회원가입
@@ -100,8 +102,18 @@ public class MemberService {
         return MyInfoDto.fromEntity(member);
     }
 
+    /**
+     * 내가 쓴 댓글 보기
+     * @param memberId
+     * @param pageable
+     * @return Slice객체로 내가 쓴 댓글 리턴
+     */
     public Slice<MyReplyDto> getMyReply(Long memberId, Pageable pageable) {
         return replyRepository.findByMemberId(memberId, pageable);
+    }
+
+    public Slice<LikeReviewDto> getMyLikeReview(Long memberId, Pageable pageable) {
+        return reviewRepository.findLikeReviewsByMemberId(memberId, pageable);
     }
 
     /**

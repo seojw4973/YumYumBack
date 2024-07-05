@@ -7,6 +7,10 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+
+import org.baratie.yumyum.domain.image.domain.QImage;
+import org.baratie.yumyum.domain.image.dto.ImageDto;
+import org.baratie.yumyum.domain.member.dto.LikeReviewDto;
 import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
@@ -17,9 +21,11 @@ import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 
+import static org.baratie.yumyum.domain.likes.domain.QLikes.likes;
 import static org.baratie.yumyum.domain.member.domain.QMember.*;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.store;
+import static org.baratie.yumyum.domain.favorite.domain.QFavorite.favorite;
 
 @RequiredArgsConstructor
 public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
@@ -121,6 +127,34 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .fetchOne();
     }
 
+    @Override
+    public Slice<LikeReviewDto> findLikeReviewsByMemberId(Long memberId, Pageable pageable) {
+        List<LikeReviewDto> results = query.select(Projections.constructor(LikeReviewDto.class,
+                review.id,
+                member.imageUrl.as("profileImage"),
+                member.nickname,
+                review.grade,
+                likes.isLikes,
+                review.content,
+                review.createdAt))
+                .from(review)
+                .leftJoin(review.member, member)
+                .leftJoin(likes).on(likes.review.id.eq(review.id))
+                .where(likesMemberIdEq(memberId))
+                .orderBy(review.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() +1)
+                .fetch();
+
+        boolean hasNext = results.size() > pageable.getPageSize();
+        if (hasNext) {
+            results.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(results, pageable, hasNext);
+
+    }
+
     /**
      * 리뷰 총 갯수
      * @return 멤버가 작성한 리뷰 갯수
@@ -178,5 +212,9 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     public BooleanExpression storeIdEq(Long storeId) {
         return review.store.id.eq(storeId);
     }
+  
+    public BooleanExpression likesMemberIdEq(Long memberId) { 
+      return likes.member.id.eq(memberId); 
+   }
 
 }
