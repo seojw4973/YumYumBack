@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtService {
 
-    private final MemberDetails memberDetails;
+    private final MemberDetailsService memberDetailsService;
 
     @Value("${spring.jwt.key}")
     private String key;
@@ -87,7 +87,7 @@ public class JwtService {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        CustomUserDetails userDetails = memberDetails.loadUserByUsername(claims.getSubject());
+        CustomUserDetails userDetails = memberDetailsService.loadUserByUsername(claims.getSubject());
 
         return new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
     }

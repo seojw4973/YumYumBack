@@ -3,6 +3,7 @@ package org.baratie.yumyum.domain.reply.controller;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.member.dto.MyReplyDto;
 import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.reply.dto.CreateReplyDto;
 import org.baratie.yumyum.domain.reply.dto.ReplyResponseDto;
@@ -36,6 +37,20 @@ public class ReplyController {
         Slice<ReplyResponseDto> replyOnReview = replyService.getReplyOnReview(reviewId, pageable);
 
         return new ResponseEntity<>(replyOnReview, HttpStatus.OK);
+    }
+
+    /**
+     * 내 댓글 보기
+     * @param customUserDetails 로그인한 유저
+     * @param pageNumber 페이지 번호
+     * @return 로그인한 유저 id의 댓글 리턴
+     */
+    @GetMapping("/myreply")
+    public ResponseEntity<Slice<MyReplyDto>> getMyReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber) {
+        Long memberId = customUserDetails.getId();
+        Pageable pageable = PageRequest.of(pageNumber, 5);
+        Slice<MyReplyDto> myReplyDto = replyService.getMyReply(memberId, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(myReplyDto);
     }
 
     @PostMapping

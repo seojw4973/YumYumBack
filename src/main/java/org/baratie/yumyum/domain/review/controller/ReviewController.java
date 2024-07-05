@@ -2,6 +2,8 @@ package org.baratie.yumyum.domain.review.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
+import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.review.dto.LikeReviewDto;
 import org.baratie.yumyum.domain.review.dto.*;
 import org.baratie.yumyum.domain.review.service.ReviewService;
 import org.baratie.yumyum.domain.store.domain.Store;
@@ -39,6 +41,20 @@ public class ReviewController {
         ReviewDetailDto reviewDetail = reviewService.getReviewDetail(reviewId);
 
         return new ResponseEntity<>(reviewDetail, HttpStatus.OK);
+    }
+
+    /**
+     * 좋아요한 리뷰 보기
+     * @param customUserDetails
+     * @param pageNumber
+     * @return 로그인한 유저 id가 좋아요한 리뷰 리턴
+     */
+    @GetMapping("/review/likeReview")
+    public ResponseEntity<Slice<LikeReviewDto>> getLikeReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber){
+        Long memberId = customUserDetails.getId();
+        Pageable pageable = PageRequest.of(pageNumber, 5);
+        Slice<LikeReviewDto> likeReviewDto = reviewService.getMyLikeReview(memberId, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(likeReviewDto);
     }
 
     /**

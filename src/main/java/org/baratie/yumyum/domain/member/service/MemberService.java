@@ -102,19 +102,7 @@ public class MemberService {
         return MyInfoDto.fromEntity(member);
     }
 
-    /**
-     * 내가 쓴 댓글 보기
-     * @param memberId
-     * @param pageable
-     * @return Slice객체로 내가 쓴 댓글 리턴
-     */
-    public Slice<MyReplyDto> getMyReply(Long memberId, Pageable pageable) {
-        return replyRepository.findByMemberId(memberId, pageable);
-    }
 
-    public Slice<LikeReviewDto> getMyLikeReview(Long memberId, Pageable pageable) {
-        return reviewRepository.findLikeReviewsByMemberId(memberId, pageable);
-    }
 
     /**
      * 회원 존재 여부 확인
