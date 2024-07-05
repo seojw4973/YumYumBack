@@ -26,7 +26,7 @@ public class CreateReviewDto {
     public Review toEntity(Store store, Member member) {
         List<Image> images = this.imageList.stream().map(ImageDto::toEntity).collect(Collectors.toList());
 
-        Review review = new Review().builder()
+        return Review.builder()
                 .content(content)
                 .grade(grade)
                 .imageList(images)
@@ -34,7 +34,7 @@ public class CreateReviewDto {
                 .member(member)
                 .build();
 
-        return review;
+
     }
 
 }

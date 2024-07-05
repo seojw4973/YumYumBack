@@ -64,6 +64,13 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(myReplyDto);
     }
 
+    @GetMapping("/{memberId}/review/star")
+    public ResponseEntity<Slice<LikeReviewDto>> getLikeReview(@PathVariable Long memberId, @RequestParam int pageNumber){
+        Pageable pageable = PageRequest.of(pageNumber, 5);
+        Slice<LikeReviewDto> likeReviewDto = memberService.getMyLikeReview(memberId, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(likeReviewDto);
+    }
+
 //    @GetMapping("/oauth2")
 //    public void oauth2login(HttpServletResponse response) throws IOException {
 //       String redirectUri = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=5Xxn8DYEG64BCrrG25xx&redirect_uri=http://localhost:3000/callbackr&state=test";
