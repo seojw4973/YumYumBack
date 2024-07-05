@@ -1,9 +1,6 @@
 package org.baratie.yumyum.domain.review.repository;
 
-import org.baratie.yumyum.domain.review.dto.LikeReviewDto;
-import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
-import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
-import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
+import org.baratie.yumyum.domain.review.dto.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
@@ -20,4 +17,6 @@ public interface ReviewCustomRepository {
     Slice<StoreReviewDto> findReviewByStoreId(Long storeId, Pageable pageable);
 
     Slice<LikeReviewDto> findLikeReviewsByMemberId(Long memberId, Pageable pageable);
+
+    Slice<MyReviewDto> getMyReview(Long memberId, Pageable pageable);
 }
