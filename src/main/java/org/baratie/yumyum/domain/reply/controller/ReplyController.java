@@ -55,7 +55,7 @@ public class ReplyController {
 
     @PostMapping
     public ResponseEntity<Void> createReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody CreateReplyDto request){
-        Member member = memberService.validationMemberId(customUserDetails.getId());
+        Member member = memberService.getMember(customUserDetails.getId());
         Review review = reviewService.getReview(request.getReviewId());
 
         replyService.createReply(member, review, request);

@@ -8,10 +8,7 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
-import org.baratie.yumyum.domain.review.dto.LikeReviewDto;
-import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
-import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
-import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
+import org.baratie.yumyum.domain.review.dto.*;
 import org.baratie.yumyum.domain.review.repository.ReviewCustomRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -112,16 +109,37 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     }
 
     /**
-     * 멤버 ID 조회
-     * @param reviewId
-     * @return 리뷰 작성자의 ID값
+     * 내가 작성한 리뷰
+     * @param memberId 로그인한 사용자 ID
+     * @return 로그인한 사용자가 작성한 리뷰
      */
     @Override
-    public Long findMemberIdByReviewId(Long reviewId) {
-        return query.select(review.member.id)
+    public Slice<MyReviewDto> getMyReview(Long memberId, Pageable pageable) {
+        List<MyReviewDto> results = query.select(Projections.constructor(MyReviewDto.class,
+                        review.store.name,
+                        review.store.address,
+                        member.nickname,
+                        review.grade,
+                        getReviewTotalCount(memberId),
+                        getAvgGrade(memberId),
+                        review.content,
+                        likes.isLikes
+                ))
                 .from(review)
-                .where(reviewIdEq(reviewId))
-                .fetchOne();
+                .leftJoin(review.member, member)
+                .leftJoin(likes).on(likes.review.id.eq(review.id))
+                .orderBy(review.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .where(memberIdEq(memberId))
+                .fetch();
+
+        boolean hasNext = results.size() > pageable.getPageSize();
+        if (hasNext) {
+            results.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(results, pageable, hasNext);
     }
 
     @Override
@@ -150,6 +168,19 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 
         return new SliceImpl<>(results, pageable, hasNext);
 
+    }
+
+    /**
+     * 멤버 ID 조회
+     * @param reviewId
+     * @return 리뷰 작성자의 ID값
+     */
+    @Override
+    public Long findMemberIdByReviewId(Long reviewId) {
+        return query.select(review.member.id)
+                .from(review)
+                .where(reviewIdEq(reviewId))
+                .fetchOne();
     }
 
     /**

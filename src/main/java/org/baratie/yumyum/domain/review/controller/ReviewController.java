@@ -2,7 +2,7 @@ package org.baratie.yumyum.domain.review.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
-import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.review.dto.LikeReviewDto;
 import org.baratie.yumyum.domain.review.dto.*;
 import org.baratie.yumyum.domain.review.service.ReviewService;
@@ -23,6 +23,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final StoreService storeService;
+    private final MemberService memberService;
 
     /**
      * 리뷰 전체 조회
@@ -46,16 +47,26 @@ public class ReviewController {
 
     /**
      * 좋아요한 리뷰 보기
-     * @param customUserDetails
-     * @param pageNumber
-     * @return 로그인한 유저 id가 좋아요한 리뷰 리턴
      */
-    @GetMapping("/review/likeReview")
+    @GetMapping("/likeReview")
     public ResponseEntity<Slice<LikeReviewDto>> getLikeReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber){
         Long memberId = customUserDetails.getId();
         Pageable pageable = PageRequest.of(pageNumber, 5);
         Slice<LikeReviewDto> likeReviewDto = reviewService.getMyLikeReview(memberId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(likeReviewDto);
+    }
+
+    /**
+     * 내가 작성한 리뷰
+     */
+    @GetMapping("/myReview")
+    public ResponseEntity<Slice<MyReviewDto>> getMyReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber) {
+        memberService.validationMemberId(customUserDetails.getId());
+        Pageable pageable = PageRequest.of(pageNumber, 5);
+
+        Slice<MyReviewDto> myReview = reviewService.getMyReview(customUserDetails.getId(), pageable);
+
+        return new ResponseEntity<>(myReview, HttpStatus.OK);
     }
 
     /**

@@ -40,7 +40,7 @@ public class ReviewService {
      */
     @Transactional
     public void createReview(CustomUserDetails customUserDetails, CreateReviewDto request){
-        Member member = memberService.validationMemberId(customUserDetails.getId());
+        Member member = memberService.getMember(customUserDetails.getId());
         Store store = storeService.validationStoreId(request.getStoreId());
 
         Review review = request.toEntity(store, member);
@@ -51,6 +51,12 @@ public class ReviewService {
         imageRepository.saveAll(imageList);
     }
 
+    /**
+     * 가게 상세페이지 리뷰 조회
+     * @param storeId
+     * @param pageable
+     * @return 가게에 달린 리뷰
+     */
     public Slice<StoreReviewDto> getStoreReviewList(Long storeId, Pageable pageable) {
         return reviewRepository.findReviewByStoreId(storeId, pageable);
     }
@@ -78,6 +84,13 @@ public class ReviewService {
      */
     public Slice<LikeReviewDto> getMyLikeReview(Long memberId, Pageable pageable) {
         return reviewRepository.findLikeReviewsByMemberId(memberId, pageable);
+    }
+
+    /**
+     * 내가 쓴 리뷰
+     */
+    public Slice<MyReviewDto> getMyReview(Long memberId, Pageable pageable) {
+        return reviewRepository.getMyReview(memberId, pageable);
     }
 
     /**
