@@ -49,20 +49,19 @@ public class Member {
      */
     public Member updateInfo(UpdateMemberDto updateMemberDto) {
 
-        if (updateMemberDto.getProfileImage() != null) {
+        if (updateMemberDto.getProfileImage() != null && !updateMemberDto.getProfileImage().isBlank()) {
             this.imageUrl = updateMemberDto.getProfileImage();
         }
 
-        if (updateMemberDto.getNickname() != null) {
+        if (updateMemberDto.getNickname() != null && !updateMemberDto.getNickname().isBlank()) {
             this.nickname = updateMemberDto.getNickname();
-
         }
 
-        if (updateMemberDto.getPassword() != null) {
+        if (updateMemberDto.getPassword() != null && !updateMemberDto.getPassword().isBlank()) {
             this.password = updateMemberDto.getPassword();
         }
 
-        if(updateMemberDto.getPhoneNumber() != null) {
+        if(updateMemberDto.getPhoneNumber() != null && !updateMemberDto.getPhoneNumber().isBlank()) {
             this.phoneNumber = updateMemberDto.getPhoneNumber();
         }
 

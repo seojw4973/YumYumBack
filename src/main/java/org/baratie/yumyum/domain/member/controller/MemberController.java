@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.member.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
@@ -60,7 +61,7 @@ public class MemberController {
      * 내 정보 수정
      */
     @PatchMapping
-    public ResponseEntity<Void> updateMember(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody UpdateMemberDto updateMemberDto) {
+    public ResponseEntity<Void> updateMember(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody UpdateMemberDto updateMemberDto) {
         Member member = memberService.getMember(customUserDetails.getId());
 
         memberService.updateMember(member, updateMemberDto);
