@@ -4,21 +4,23 @@ import com.google.maps.errors.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.favorite.repository.FavoriteRepository;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
+import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
 import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
 import org.baratie.yumyum.domain.image.domain.Image;
+import org.baratie.yumyum.domain.image.dto.ImageDto;
 import org.baratie.yumyum.domain.image.repository.ImageRepository;
 import org.baratie.yumyum.domain.menu.domain.Menu;
+import org.baratie.yumyum.domain.menu.dto.MenuDto;
 import org.baratie.yumyum.domain.menu.repository.MenuRepository;
 import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
-import org.baratie.yumyum.domain.store.dto.CreateStoreDto;
-import org.baratie.yumyum.domain.store.dto.MainStoreDto;
-import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
-import org.baratie.yumyum.domain.store.dto.UpdateStoreDto;
+import org.baratie.yumyum.domain.store.dto.*;
 import org.baratie.yumyum.domain.store.exception.StoreExistException;
 import org.baratie.yumyum.domain.store.exception.StoreNotFoundException;
 import org.baratie.yumyum.domain.store.repository.StoreRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +34,6 @@ import java.util.List;
 public class StoreService {
 
     private final StoreRepository storeRepository;
-    private final ReviewRepository reviewRepository;
-    private final FavoriteRepository favoriteRepository;
     private final MenuRepository menuRepository;
     private final HashtagRepository hashtagRepository;
     private final GeoUtils geoUtils;
@@ -72,12 +72,12 @@ public class StoreService {
      * @return StoreDetailDto
      */
     public StoreDetailDto StoreDetail(Long storeId){
-        Store store = validationStoreId(storeId);
+        StoreDetailDto storeDetailDto = storeRepository.findStoreDetail(storeId);
+        List<String> images = imageRepository.findByStoreId(storeId);
+        List<Hashtag> hashtags = hashtagRepository.findByStoreId(storeId);
+        List<Menu> menus = menuRepository.findByStoreId(storeId);
 
-        int reviewCount = reviewRepository.countReviewByStoreId(storeId);
-        int favoriteCount = favoriteRepository.countFavoriteByStoreId(storeId);
-
-        return StoreDetailDto.fromEntity(store, reviewCount, favoriteCount);
+        return storeDetailDto.tranceDto(storeDetailDto, hashtags, menus, images);
     }
 
     /**
@@ -106,9 +106,23 @@ public class StoreService {
         imageRepository.saveAll(imageList);
     }
 
-
+    /**
+     * 지역에 따른 Top10 가게 조회
+     * @param local
+     * @return 해당 지역에 조건에 맞는 Top10 가게 리턴
+     */
     public List<MainStoreDto> getTop10(String local) {
         return storeRepository.findTo10(local);
+    }
+
+    /**
+     * 관리자 페이지 맛집 전체 조회
+     * @param pageable
+     * @return 맛집 전체 데이터 Page 정보와 함께 리턴
+     */
+    public Page<AdminStoreDto> getAdminStores(Pageable pageable) {
+        Page<Store> pageStore = storeRepository.findAll(pageable);
+        return pageStore.map(m -> new AdminStoreDto(m.getId(), m.getName(), m.getCall(), m.getAddress(), m.isClosed()));
     }
 
 

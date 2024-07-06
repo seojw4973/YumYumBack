@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class MainStoreDto {
-    private Long id;
+    private Long StoreId;
     private String name;
     private String imageUrl;
     private Double avgGrade;
