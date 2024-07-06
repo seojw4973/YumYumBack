@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
 import org.baratie.yumyum.domain.member.dto.UpdateMemberDto;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
