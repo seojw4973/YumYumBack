@@ -19,6 +19,7 @@ public class ReviewDetailDto {
     private String address;
     private double grade;
     private String content;
+    private Boolean likeStatus;
     private List<String> images;
 
     public ReviewDetailDto tranceDto(ReviewDetailDto reviewDetail, List<String> images) {
@@ -34,6 +35,7 @@ public class ReviewDetailDto {
                 .address(reviewDetail.getAddress())
                 .grade(reviewDetail.getGrade())
                 .content(reviewDetail.getContent())
+                .likeStatus(reviewDetail.getLikeStatus())
                 .build();
 
         result.images = images;
@@ -42,7 +44,7 @@ public class ReviewDetailDto {
     }
 
     @Builder
-    public ReviewDetailDto(Long reviewId, Long memberId, String imageUrl, String nickname, Long totalReviewCount, double avgGrade, String storeName, String address, double grade, String content) {
+    public ReviewDetailDto(Long reviewId, Long memberId, String imageUrl, String nickname, Long totalReviewCount, double avgGrade, String storeName, String address, double grade, String content, Boolean likeStatus) {
         this.reviewId = reviewId;
         this.memberId = memberId;
         this.imageUrl = imageUrl;
@@ -53,6 +55,7 @@ public class ReviewDetailDto {
         this.address = address;
         this.grade = grade;
         this.content = content;
+        this.likeStatus = likeStatus;
     }
 }
 
