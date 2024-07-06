@@ -18,7 +18,9 @@ public interface StoreCustomRepository {
 
     Optional<Store> existAndDeletedStore(Long storeId);
 
-    List<MainStoreDto> findTo10(String local);
+    List<MainStoreDto> findTop10(String local);
+
+    List<MainStoreDto> findTop10OnFavorite(String local);
 
     StoreDetailDto findStoreDetail(Long storeId);
 

@@ -114,13 +114,17 @@ public class StoreService {
         imageRepository.saveAll(imageList);
     }
 
+    public List<MainStoreDto> getTop10OnFavorite(String local) {
+        return storeRepository.findTop10OnFavorite(local);
+    }
+
     /**
      * 지역에 따른 Top10 가게 조회
      * @param local
      * @return 해당 지역에 조건에 맞는 Top10 가게 리턴
      */
     public List<MainStoreDto> getTop10(String local) {
-        return storeRepository.findTo10(local);
+        return storeRepository.findTop10(local);
     }
 
     /**
@@ -162,5 +166,4 @@ public class StoreService {
         BigDecimal[] latlng =  geoUtils.findGeoPoint(address);
         return latlng;
     }
-
 }
