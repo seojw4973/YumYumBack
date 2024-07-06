@@ -31,26 +31,29 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     @Override
     public ReviewDetailDto findReviewDetail(Long memberId, Long reviewId) {
 
-        ReviewDetailDto reviewDetailDto = query
-                .select(
+        JPQLQuery<Boolean> likeStatus = JPAExpressions.select(likes.isLikes)
+                .from(likes)
+                .where(likes.review.id.eq(reviewId), likes.member.id.eq(memberId));
+
+        return query.select(
                         Projections.constructor(ReviewDetailDto.class,
                                 review.id,
                                 member.id,
-                        member.imageUrl.as("profileImage"),
-                        member.nickname,
-                        ExpressionUtils.as(getReviewTotalCount(memberId), "totalReviewCount"),
-                        ExpressionUtils.as(getAvgGrade(memberId), "avgGrade"),
-                        store.name.as("storeName"),
-                        store.address,
-                        review.grade,
-                        review.content)
+                                member.imageUrl.as("profileImage"),
+                                member.nickname,
+                                ExpressionUtils.as(getReviewTotalCount(memberId), "totalReviewCount"),
+                                ExpressionUtils.as(getAvgGrade(memberId), "avgGrade"),
+                                store.name.as("storeName"),
+                                store.address,
+                                review.grade,
+                                review.content,
+                                likeStatus
+                        )
                 )
                 .from(review)
                 .leftJoin(review.member, member)
                 .where(reviewIdEq(reviewId).and(memberIdEq(memberId)))
                 .fetchOne();
-
-        return reviewDetailDto;
     }
 
     @Override
