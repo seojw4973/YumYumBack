@@ -32,30 +32,11 @@ public class MemberService {
      * @param signUpDto
      * @return
      */
-    public String register(SignUpDto signUpDto){
-        String response = null;
-        try{
-            if(!memberRepository.existsByNickname(signUpDto.getNickName())){
-                String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
-                Member member = new Member().builder()
-                        .nickname(signUpDto.getNickName())
-                        .email(signUpDto.getEmail())
-                        .password(encodedPassword)
-                        .phoneNumber(signUpDto.getPhoneNumber())
-                        .imageUrl(signUpDto.getImageUrl())
-                        .role(Role.USER)
-                        .isDeleted(false)
-                        .socialType(SocialType.YUMYUM).build();
-
-                memberRepository.save(member);
-                response = "회원가입에 성공하였습니다.";
-            }else{
-                response = "닉네임이 중복됩니다.";
-            }
-        } catch (Exception e) {
-            response = "회원가입에 실패하였습니다.";
-        }
-        return response;
+    public void register(SignUpDto signUpDto){
+        nicknameDuplicateCheck(signUpDto.getNickName());
+        String password = passwordEncoder.encode(signUpDto.getPassword());
+        Member member = signUpDto.toEntity(password);
+        memberRepository.save(member);
     }
 
     /**
@@ -69,17 +50,18 @@ public class MemberService {
                     new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
 
             Authentication auth = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-            Optional<Member> member = memberRepository.findByEmail(loginDto.getEmail());
+            Member member = getMemberByEmail(loginDto.getEmail());
 
-            if(member.get().getSocialType() == SocialType.YUMYUM) {
-                Long memberId = member.get().getId();
-                String nickname = member.get().getNickname();
-                String imageUrl = member.get().getImageUrl();
+            if(member.getSocialType() == SocialType.YUMYUM) {
+                Long memberId = member.getId();
+                String nickname = member.getNickname();
+                String imageUrl = member.getImageUrl();
+                String phoneNumber = member.getPhoneNumber();
 
                 String atk = jwtService.createToken(auth);
                 String rtk = jwtService.createRtk(auth);
 
-                return new LoginResponseDto(memberId, nickname, imageUrl, atk, rtk);
+                return new LoginResponseDto(memberId, nickname, imageUrl, phoneNumber, atk, rtk);
             }
         } catch (Exception e) {
             e.printStackTrace(); // 예외 발생 시 스택 트레이스를 출력
@@ -94,7 +76,7 @@ public class MemberService {
      * @return
      */
     public MyInfoDto getMyInfo(Long memberId){
-        Member member = memberRepository.findById(memberId).orElseThrow();
+        Member member = getMember(memberId);
         return MyInfoDto.fromEntity(member);
     }
 
@@ -123,8 +105,10 @@ public class MemberService {
         }
     }
 
+    /**
+     * 비밀번호 동일 체크
+     */
     private void passwordCheck(UpdateMemberDto updateMemberDto) {
-
         if (!updateMemberDto.getPassword().equals(updateMemberDto.getCheckPassword())) {
             throw new PasswordNotEqualException(ErrorCode.PASSWORD_NOT_EQUAL);
         }
@@ -136,11 +120,20 @@ public class MemberService {
 
     /**
      * id 값에 해당하는 멤버 가져오기
-     * @param memberId
-     * @return 조회한 멤버
      */
     public Member getMember(Long memberId){
+        exists(memberId);
+        validationMemberId(memberId);
         return memberRepository.findById(memberId).orElseThrow(
+                () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+    }
+
+    /**
+     * email 값에 해당하는 멤버 가져오기
+     */
+    public Member getMemberByEmail(String email){
+        return memberRepository.findByEmail(email).orElseThrow(
                 () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND)
         );
     }
@@ -158,8 +151,6 @@ public class MemberService {
 
     /**
      * 회원 존재 여부 확인
-     * @param memberId
-     * @return Member
      */
     public void exists(Long memberId){
         boolean existMember = memberRepository.existsById(memberId);

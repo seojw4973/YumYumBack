@@ -9,6 +9,6 @@ import lombok.*;
 @ToString
 public class LikesDto {
     private Long reviewId;
-    private Boolean isLikes;
+    private Boolean status;
 
 }

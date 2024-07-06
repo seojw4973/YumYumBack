@@ -6,11 +6,10 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
+import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
 import org.baratie.yumyum.domain.store.domain.Store;
-import org.baratie.yumyum.domain.store.dto.AdminStoreDto;
-import org.baratie.yumyum.domain.store.dto.MainStoreDto;
-import org.baratie.yumyum.domain.store.dto.MyFavoriteStoreDto;
-import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
+import org.baratie.yumyum.domain.store.dto.*;
 import org.baratie.yumyum.domain.store.repository.StoreCustomRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +23,8 @@ import static org.baratie.yumyum.domain.image.domain.QImage.image;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.*;
 import static org.baratie.yumyum.domain.favorite.domain.QFavorite.favorite;
+import static org.baratie.yumyum.domain.category.domain.QCategory.category;
+import static org.baratie.yumyum.domain.hashtag.domain.QHashtag.*;
 
 @RequiredArgsConstructor
 public class StoreRepositoryImpl implements StoreCustomRepository {
@@ -125,7 +126,8 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         store.latitude,
                         store.longitude,
                         review.id.countDistinct(),
-                        favorite.id.countDistinct()))
+                        favorite.id.countDistinct(),
+                        favorite.isFavorite))
                 .from(store)
                 .leftJoin(review).on(review.store.id.eq(store.id))
                 .leftJoin(favorite).on(favorite.store.id.eq(store.id))
@@ -174,6 +176,43 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
         return new SliceImpl<>(results, pageable, hasNext);
     }
 
+    @Override
+    public List<SearchStoreDto> findSearchStore(Long memberId,String keyword) {
+        JPQLQuery<Long> favoriteCount = JPAExpressions
+                .select(favorite.count())
+                .from(favorite)
+                .where(favorite.store.id.eq(store.id).and(favorite.isFavorite.eq(true)));
+
+        JPQLQuery<Long> totalReviewCount = JPAExpressions
+                .select(review.count())
+                .from(review)
+                .where(review.store.id.eq(store.id));
+
+        return query.select(Projections.constructor(SearchStoreDto.class,
+                store.id,
+                store.name,
+                image.imageUrl,
+                store.address,
+                store.views,
+                review.grade.avg().coalesce(0.0),
+                totalReviewCount,
+                favoriteCount,
+                favorite.isFavorite,
+                Projections.list(hashtag),
+                category.name
+                ))
+                .from(store)
+                .leftJoin(favorite).on(favorite.store.id.eq(store.id).and(favorite.member.id.eq(memberId)))
+                .leftJoin(review).on(review.store.id.eq(store.id))
+                .leftJoin(category).on(category.store.id.eq(store.id))
+                .leftJoin(image).on(image.store.id.eq(store.id))
+                .leftJoin(hashtag).on(hashtag.store.id.eq(store.id))
+                .where(nameContain(keyword))
+                .groupBy(store.id, store.name, image.imageUrl, store.address, category.name)
+                .limit(30L)
+                .fetch();
+    }
+
     /**
      * 가게가 있는지 확인
      * @param storeId 조회할 가게 id
@@ -188,5 +227,13 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
     private BooleanExpression memberIdEq(Long memberId) { return favorite.member.id.eq(memberId);}
 
     private BooleanExpression favoriteEq(boolean status) { return favorite.isFavorite.eq(status);}
+
+    private BooleanExpression nameContain(String keyword){return store.name.contains(keyword).or(addressContain(keyword));}
+
+    private BooleanExpression addressContain(String keyword) {return store.address.contains(keyword).or(categoryContain(keyword));}
+
+    private BooleanExpression categoryContain(String keyword){ return category.name.contains(keyword).or(hashtagContain(keyword));}
+
+    private BooleanExpression hashtagContain(String keyword){return hashtag.content.contains(keyword);}
 
 }

@@ -80,6 +80,7 @@ public class StoreService {
      * @return StoreDetailDto
      */
     public StoreDetailDto StoreDetail(Long storeId){
+        validationStoreId(storeId);
         StoreDetailDto storeDetailDto = storeRepository.findStoreDetail(storeId);
         List<String> images = imageRepository.findByStoreId(storeId);
         List<Hashtag> hashtags = hashtagRepository.findByStoreId(storeId);
@@ -139,6 +140,10 @@ public class StoreService {
     public Page<AdminStoreDto> getAdminStores(Pageable pageable) {
         Page<Store> pageStore = storeRepository.findAll(pageable);
         return pageStore.map(m -> new AdminStoreDto(m.getId(), m.getName(), m.getCall(), m.getAddress(), m.isClosed()));
+    }
+
+    public List<SearchStoreDto> getSearchStores(Long memberId, String keyword) {
+        return storeRepository.findSearchStore(memberId, keyword);
     }
 
 

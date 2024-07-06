@@ -37,6 +37,7 @@ public class StoreDetailDto {
 
     private Long reviewCount;
     private Long favoriteCount;
+    private Boolean isFavorite;
 
     public StoreDetailDto tranceDto(StoreDetailDto storeDetail, List<Hashtag> hashtagList, List<Menu> menuList, List<String> imageList) {
         StoreDetailDto result = StoreDetailDto.builder()
@@ -51,6 +52,7 @@ public class StoreDetailDto {
                 .longitude(storeDetail.getLongitude())
                 .reviewCount(storeDetail.getReviewCount())
                 .favoriteCount(storeDetail.getFavoriteCount())
+                .isFavorite(storeDetail.getIsFavorite())
                 .build();
 
         result.imageList = imageList;
@@ -61,7 +63,7 @@ public class StoreDetailDto {
     }
 
     @Builder
-    public StoreDetailDto(Long storeId, String name, String address, String hours, String calls, int views, double avgGrade, BigDecimal latitude, BigDecimal longitude, Long reviewCount, Long favoriteCount) {
+    public StoreDetailDto(Long storeId, String name, String address, String hours, String calls, int views, double avgGrade, BigDecimal latitude, BigDecimal longitude, Long reviewCount, Long favoriteCount, Boolean isFavorite) {
         this.storeId = storeId;
         this.name = name;
         this.address = address;
@@ -73,6 +75,7 @@ public class StoreDetailDto {
         this.longitude = longitude;
         this.reviewCount = reviewCount;
         this.favoriteCount = favoriteCount;
+        this.isFavorite = isFavorite;
 
     }
 }
