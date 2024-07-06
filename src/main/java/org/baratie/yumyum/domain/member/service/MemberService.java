@@ -6,6 +6,7 @@ import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.domain.SocialType;
 import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.exception.MemberNotFoundException;
+import org.baratie.yumyum.domain.member.exception.NicknameAlreadyUsing;
 import org.baratie.yumyum.domain.member.exception.PasswordNotEqualException;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
@@ -103,13 +104,33 @@ public class MemberService {
      * @param updateMemberDto 수정 요청한 정보
      */
     public void updateMember(Member member, UpdateMemberDto updateMemberDto) {
-        if (updateMemberDto.getPassword() != updateMemberDto.getCheckPassword()) {
-            new PasswordNotEqualException(ErrorCode.PASSWORD_NOT_EQUAL);
-        }
+
+        nicknameDuplicateCheck(updateMemberDto.getNickname());
+        passwordCheck(updateMemberDto);
 
         Member updateMember = member.updateInfo(updateMemberDto);
 
         memberRepository.save(updateMember);
+    }
+
+    /**
+     * 닉네임 중복 체크
+     * @param nickname 변경할 닉네임
+     */
+    private void nicknameDuplicateCheck(String nickname) {
+        if (memberRepository.existsByNickname(nickname)) {
+            new NicknameAlreadyUsing(ErrorCode.EXIST_MEMBER_NICKNAME);
+        }
+    }
+
+    private void passwordCheck(UpdateMemberDto updateMemberDto) {
+        if (updateMemberDto.getPassword() != updateMemberDto.getCheckPassword()) {
+            new PasswordNotEqualException(ErrorCode.PASSWORD_NOT_EQUAL);
+        }
+
+        String encodingPassword = passwordEncoder.encode(updateMemberDto.getPassword());
+
+        updateMemberDto.setPassword(encodingPassword);
     }
 
     /**
