@@ -20,6 +20,8 @@ public interface StoreCustomRepository {
 
     List<MainStoreDto> findTop10(String local);
 
+    List<MainStoreDto> findTop10OnViews(String local);
+
     List<MainStoreDto> findTop10OnFavorite(String local);
 
     StoreDetailDto findStoreDetail(Long storeId);

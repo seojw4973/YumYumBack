@@ -47,7 +47,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
     @Override
     public List<MainStoreDto> findTop10(String local) {
         // 메인 쿼리 작성
-        List<MainStoreDto> results = query
+        return query
                 .select(Projections.constructor(MainStoreDto.class,
                         store.id,
                         store.name,
@@ -65,8 +65,27 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .orderBy(review.grade.avg().desc(), favorite.count().desc())  // 정렬 조건 추가
                 .limit(10L)
                 .fetch();
+    }
 
-        return results;
+    @Override
+    public List<MainStoreDto> findTop10OnViews(String local) {
+        return query.select(Projections.constructor(MainStoreDto.class,
+                        store.id,
+                        store.name,
+                        image.imageUrl,
+                        review.grade.avg().as("avgGrade"),
+                        review.countDistinct().as("reviewCount"),
+                        favorite.countDistinct().as("favoriteCount")
+                ))
+                .from(store)
+                .leftJoin(review).on(review.store.id.eq(store.id))
+                .leftJoin(favorite).on(favorite.store.id.eq(store.id))
+                .leftJoin(image).on(image.store.id.eq(store.id))
+                .where(store.address.contains(local))
+                .groupBy(store.id)  // 그룹화 필드 지정
+                .orderBy(store.views.desc())  // 정렬 조건 추가
+                .limit(10L)
+                .fetch();
     }
 
     @Override
@@ -89,7 +108,6 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .orderBy(favorite.count().desc())  // 정렬 조건 추가
                 .limit(10L)
                 .fetch();
-
     }
 
     @Override
