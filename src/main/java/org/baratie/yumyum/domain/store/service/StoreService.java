@@ -118,6 +118,10 @@ public class StoreService {
         return storeRepository.findTop10OnFavorite(local);
     }
 
+    public List<MainStoreDto> getTop10OnViews(String local) {
+        return storeRepository.findTop10OnViews(local);
+    }
+
     /**
      * 지역에 따른 Top10 가게 조회
      * @param local

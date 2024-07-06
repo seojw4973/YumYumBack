@@ -37,12 +37,22 @@ public class StoreController {
      * 즐겨찾기 기준 top10 맛집
      */
     @GetMapping("/top10/favorite")
-    public ResponseEntity<List<MainStoreDto>> findTop10WithFavorite(@RequestParam String local) {
-        System.out.println("@@@@@@@@@@@@@@@@@@");
+    public ResponseEntity<List<MainStoreDto>> findTop10OnFavorite(@RequestParam String local) {
         List<MainStoreDto> top10List = storeService.getTop10OnFavorite(local);
 
         return new ResponseEntity(top10List, HttpStatus.OK);
     }
+
+    /**
+     * 조회수 기준 top10 맛집
+     */
+    @GetMapping("/top10/views")
+    public ResponseEntity<List<MainStoreDto>> findTop10OnViews(@RequestParam String local) {
+        List<MainStoreDto> top10List = storeService.getTop10OnViews(local);
+
+        return new ResponseEntity(top10List, HttpStatus.OK);
+    }
+
 
     /**
      * 가게 상세 정보
