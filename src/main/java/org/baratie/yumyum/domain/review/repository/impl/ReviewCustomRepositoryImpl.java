@@ -34,6 +34,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         ReviewDetailDto reviewDetailDto = query
                 .select(
                         Projections.constructor(ReviewDetailDto.class,
+                                review.id,
+                                member.id,
                         member.imageUrl.as("profileImage"),
                         member.nickname,
                         ExpressionUtils.as(getReviewTotalCount(memberId), "totalReviewCount"),

@@ -8,6 +8,9 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class ReviewDetailDto {
+
+    private Long reviewId;
+    private Long memberId;
     private String imageUrl;
     private String nickname;
     private Long totalReviewCount;
@@ -21,6 +24,8 @@ public class ReviewDetailDto {
     public ReviewDetailDto tranceDto(ReviewDetailDto reviewDetail, List<String> images) {
 
         ReviewDetailDto result = ReviewDetailDto.builder()
+                .reviewId(reviewDetail.getReviewId())
+                .memberId(reviewDetail.getMemberId())
                 .imageUrl(reviewDetail.getImageUrl())
                 .nickname(reviewDetail.getNickname())
                 .totalReviewCount(reviewDetail.getTotalReviewCount())
@@ -37,7 +42,9 @@ public class ReviewDetailDto {
     }
 
     @Builder
-    public ReviewDetailDto(String imageUrl, String nickname, Long totalReviewCount, double avgGrade, String storeName, String address, double grade, String content) {
+    public ReviewDetailDto(Long reviewId, Long memberId, String imageUrl, String nickname, Long totalReviewCount, double avgGrade, String storeName, String address, double grade, String content) {
+        this.reviewId = reviewId;
+        this.memberId = memberId;
         this.imageUrl = imageUrl;
         this.nickname = nickname;
         this.totalReviewCount = totalReviewCount;
