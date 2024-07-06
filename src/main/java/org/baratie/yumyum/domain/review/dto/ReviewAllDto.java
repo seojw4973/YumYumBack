@@ -13,16 +13,18 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewAllDto {
-
-    private String name;
+    private Long reviewId;
+    private String profileImage;
+    private String storeName;
     private String address;
 
     private String nickname;
     private double grade;
 
-    private Long reviewCount;
+    private Long totalReviewCount;
     private double avgGrade;
 
     private String content;
+    private List<ImageDto> images;
 
 }

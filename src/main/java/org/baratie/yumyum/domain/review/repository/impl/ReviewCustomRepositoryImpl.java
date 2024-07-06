@@ -3,6 +3,8 @@ package org.baratie.yumyum.domain.review.repository.impl;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -56,12 +58,14 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
          * 무한스크롤로 리뷰 전체리스트 조회
          */
         List<ReviewAllDto> results = query
-                .select(Projections.constructor(ReviewAllDto.class,
-                        store.name,
-                        store.address,
-                        member.nickname,
+                .select(Projections.fields(ReviewAllDto.class,
+                        review.id.as("reviewId"),
+                        member.imageUrl.as("profileImage"),
+                        store.name.as("storeName"),
+                        store.address.as("address"),
+                        member.nickname.as("nickname"),
                         review.grade,
-                        ExpressionUtils.as(getReviewTotalCount(), "reviewTotalCount"),
+                        ExpressionUtils.as(getReviewTotalCount(), "totalReviewCount"),
                         ExpressionUtils.as(getAvgGrade(), "avgGrade"),
                         review.content)
                 )
@@ -212,8 +216,10 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
      * @return 멤버가 작성한 평균 리뷰 점수
      */
     private JPQLQuery<Double> getAvgGrade() {
+
+        NumberTemplate<Double> roundedAvgGrade = Expressions.numberTemplate(Double.class, "ROUND({0}, 2)", review.grade.avg());
         return JPAExpressions
-                .select(review.grade.avg())
+                .select(roundedAvgGrade)
                 .from(review)
                 .where(review.member.id.eq(member.id));
     }

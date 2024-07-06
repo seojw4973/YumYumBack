@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class LoginResponseDto {
-    Long id;
+    Long memberId;
     String nickName;
     String imageUrl;
     String atk;
