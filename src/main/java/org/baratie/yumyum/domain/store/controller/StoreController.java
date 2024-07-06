@@ -24,13 +24,24 @@ public class StoreController {
     private final StoreService storeService;
 
     /**
-     * 평점 asc 즐겨찾기 asc top10 맛집
+     * 평점 asc top10 맛집
      */
     @GetMapping("/top10")
     public ResponseEntity<List<MainStoreDto>> findTop10(@RequestParam String local) {
         List<MainStoreDto> Top10List = storeService.getTop10(local);
 
         return ResponseEntity.status(HttpStatus.OK).body(Top10List);
+    }
+
+    /**
+     * 즐겨찾기 기준 top10 맛집
+     */
+    @GetMapping("/top10/favorite")
+    public ResponseEntity<List<MainStoreDto>> findTop10WithFavorite(@RequestParam String local) {
+        System.out.println("@@@@@@@@@@@@@@@@@@");
+        List<MainStoreDto> top10List = storeService.getTop10OnFavorite(local);
+
+        return new ResponseEntity(top10List, HttpStatus.OK);
     }
 
     /**
