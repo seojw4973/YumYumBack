@@ -21,6 +21,7 @@ import org.baratie.yumyum.domain.store.repository.StoreRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +66,13 @@ public class StoreService {
         storeRepository.save(store);
     }
 
+    /**
+     * 내가 즐겨찾기 한 맛집 조회
+     * @param memberId
+     */
+    public Slice<MyFavoriteStoreDto> getMyFavoriteStore(Long memberId, Pageable pageable) {
+        return storeRepository.findFavoriteStore(memberId, pageable);
+    }
 
     /**
      * 맛집 상세 조회

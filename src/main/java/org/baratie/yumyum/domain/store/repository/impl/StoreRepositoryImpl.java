@@ -2,15 +2,20 @@ package org.baratie.yumyum.domain.store.repository.impl;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.AdminStoreDto;
 import org.baratie.yumyum.domain.store.dto.MainStoreDto;
+import org.baratie.yumyum.domain.store.dto.MyFavoriteStoreDto;
 import org.baratie.yumyum.domain.store.dto.StoreDetailDto;
 import org.baratie.yumyum.domain.store.repository.StoreCustomRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -87,6 +92,47 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .fetchOne();
     }
 
+    @Override
+    public Slice<MyFavoriteStoreDto> findFavoriteStore(Long memberId, Pageable pageable) {
+
+        JPQLQuery<Long> favoriteCount = JPAExpressions
+                .select(favorite.count())
+                .from(favorite)
+                .where(favorite.store.id.eq(store.id));
+
+        JPQLQuery<Long> totalReviewCount = JPAExpressions
+                .select(review.count())
+                .from(review)
+                .where(review.store.id.eq(store.id));
+
+        List<MyFavoriteStoreDto> results = query.select(Projections.constructor(MyFavoriteStoreDto.class,
+                        image.imageUrl,
+                        store.name,
+                        store.hours,
+                        store.address,
+                        store.call,
+                        totalReviewCount,
+                        favoriteCount,
+                        favorite.isFavorite
+                ))
+                .from(favorite)
+                .leftJoin(favorite.store, store)
+                .leftJoin(store.imageList, image)
+                .groupBy(store.name)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .where(memberIdEq(memberId), favoriteEq(true))
+                .fetch();
+
+        boolean hasNext = results.size() > pageable.getPageSize();
+
+        if (hasNext) {
+            results.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(results, pageable, hasNext);
+    }
+
     /**
      * 가게가 있는지 확인
      * @param storeId 조회할 가게 id
@@ -97,4 +143,9 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
     }
 
     private BooleanExpression reviewIdEq(Long storeId) { return review.store.id.eq(storeId);}
+
+    private BooleanExpression memberIdEq(Long memberId) { return favorite.member.id.eq(memberId);}
+
+    private BooleanExpression favoriteEq(boolean status) { return favorite.isFavorite.eq(status);}
+
 }
