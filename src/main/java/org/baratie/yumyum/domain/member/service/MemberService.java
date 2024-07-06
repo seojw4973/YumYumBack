@@ -119,13 +119,14 @@ public class MemberService {
      */
     private void nicknameDuplicateCheck(String nickname) {
         if (memberRepository.existsByNickname(nickname)) {
-            new NicknameAlreadyUsing(ErrorCode.EXIST_MEMBER_NICKNAME);
+            throw new NicknameAlreadyUsing(ErrorCode.EXIST_MEMBER_NICKNAME);
         }
     }
 
     private void passwordCheck(UpdateMemberDto updateMemberDto) {
-        if (updateMemberDto.getPassword() != updateMemberDto.getCheckPassword()) {
-            new PasswordNotEqualException(ErrorCode.PASSWORD_NOT_EQUAL);
+
+        if (!updateMemberDto.getPassword().equals(updateMemberDto.getCheckPassword())) {
+            throw new PasswordNotEqualException(ErrorCode.PASSWORD_NOT_EQUAL);
         }
 
         String encodingPassword = passwordEncoder.encode(updateMemberDto.getPassword());
