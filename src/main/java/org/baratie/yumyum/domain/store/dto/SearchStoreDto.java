@@ -9,9 +9,6 @@ import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class SearchStoreDto {
 
     private Long storeId;
@@ -23,20 +20,25 @@ public class SearchStoreDto {
     private Long totalReviewCount;
     private Long totalFavoriteCount;
     private Boolean favoriteStatus;
-    private List<Hashtag> hashtags;
+    private List<String> hashtags;
     private String categoryName;
 
-//    public SearchStoreDto(Long storeId, String name, String imageUrl, String address, int views, Double avgGrade, Long totalReviewCount, Long totalFavoriteCount, Boolean favoriteStatus, String categoryName){
-//        this.storeId = storeId;
-//        this.name = name;
-//        this.imageUrl = imageUrl;
-//        this.address = address;
-//        this.views = views;
-//        this.avgGrade = avgGrade;
-//        this.totalReviewCount = totalReviewCount;
-//        this.totalFavoriteCount = totalFavoriteCount;
-//        this.favoriteStatus = favoriteStatus;
-//        this.categoryName = categoryName;
-//
-//    }
+
+    public void addHashtagList(List<String> hashtags) {
+        this.hashtags = hashtags;
+    }
+
+    public SearchStoreDto(Long storeId, String name, String imageUrl, String address, int views, Double avgGrade, Long totalReviewCount, Long totalFavoriteCount, Boolean favoriteStatus, String categoryName){
+        this.storeId = storeId;
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.address = address;
+        this.views = views;
+        this.avgGrade = avgGrade;
+        this.totalReviewCount = totalReviewCount;
+        this.totalFavoriteCount = totalFavoriteCount;
+        this.favoriteStatus = favoriteStatus;
+        this.categoryName = categoryName;
+
+    }
 }

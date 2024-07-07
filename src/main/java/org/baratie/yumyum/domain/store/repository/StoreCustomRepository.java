@@ -21,7 +21,7 @@ public interface StoreCustomRepository {
 
     List<MainStoreDto> findTop10OnFavorite(String local);
 
-    StoreDetailDto findStoreDetail(Long storeId);
+    StoreDetailDto findStoreDetail(Long memberId, Long storeId);
 
     Slice<MyFavoriteStoreDto> findFavoriteStore(Long memberId, Pageable pageable);
 

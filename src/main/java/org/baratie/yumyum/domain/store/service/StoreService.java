@@ -79,9 +79,13 @@ public class StoreService {
      * @param storeId 가게 pk
      * @return StoreDetailDto
      */
-    public StoreDetailDto StoreDetail(Long storeId){
-        validationStoreId(storeId);
-        StoreDetailDto storeDetailDto = storeRepository.findStoreDetail(storeId);
+    @Transactional
+    public StoreDetailDto StoreDetail(Long memberId, Long storeId){
+        Store store = validationStoreId(storeId);
+        store.incrementViews();
+        storeRepository.save(store);
+
+        StoreDetailDto storeDetailDto = storeRepository.findStoreDetail(memberId, storeId);
         List<String> images = imageRepository.findByStoreId(storeId);
         List<Hashtag> hashtags = hashtagRepository.findByStoreId(storeId);
         List<Menu> menus = menuRepository.findByStoreId(storeId);
@@ -142,6 +146,12 @@ public class StoreService {
         return pageStore.map(m -> new AdminStoreDto(m.getId(), m.getName(), m.getCall(), m.getAddress(), m.isClosed()));
     }
 
+    /**
+     * 검색 시 맛집 리스트 조회
+     * @param memberId 로그인한 유저 id값
+     * @param keyword 검색어
+     * @return 검색 조건에 맞는 맛집 리스트 30개 제한으로 출력
+     */
     public List<SearchStoreDto> getSearchStores(Long memberId, String keyword) {
         return storeRepository.findSearchStore(memberId, keyword);
     }

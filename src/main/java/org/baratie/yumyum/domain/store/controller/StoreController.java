@@ -58,8 +58,9 @@ public class StoreController {
      * 가게 상세 정보
      */
     @GetMapping("/{storeId}")
-    public ResponseEntity<StoreDetailDto> findStore(@PathVariable("storeId") Long storeId) {
-        StoreDetailDto storeDetailDto = storeService.StoreDetail(storeId);
+    public ResponseEntity<StoreDetailDto> findStore(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("storeId") Long storeId) {
+        Long memberId = customUserDetails.getId();
+        StoreDetailDto storeDetailDto = storeService.StoreDetail(memberId, storeId);
         return ResponseEntity.ok(storeDetailDto);
     }
 
@@ -75,6 +76,9 @@ public class StoreController {
         return new ResponseEntity<>(myFavoriteStore, HttpStatus.ACCEPTED);
     }
 
+    /**
+     * 검색한 가게 리스트
+     */
     @GetMapping("/search/{filter}")
     public ResponseEntity<List<SearchStoreDto>> searchStore(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable String filter) {
         List<SearchStoreDto> searchStoreDtos = storeService.getSearchStores(customUserDetails.getId(), filter);

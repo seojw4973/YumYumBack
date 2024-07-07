@@ -112,7 +112,10 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
-    public StoreDetailDto findStoreDetail(Long storeId) {
+    public StoreDetailDto findStoreDetail(Long memberId, Long storeId) {
+        JPQLQuery<Boolean> favoriteStatus = JPAExpressions.select(favorite.isFavorite)
+                .from(favorite)
+                .where(favorite.store.id.eq(storeId), favorite.member.id.eq(memberId));
 
         return query
                 .select(Projections.constructor(StoreDetailDto.class,
@@ -127,11 +130,11 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         store.longitude,
                         review.id.countDistinct(),
                         favorite.id.countDistinct(),
-                        favorite.isFavorite))
+                        favoriteStatus))
                 .from(store)
                 .leftJoin(review).on(review.store.id.eq(store.id))
                 .leftJoin(favorite).on(favorite.store.id.eq(store.id))
-                .where(reviewIdEq(storeId))
+                .where(storeIdEq(storeId))
                 .fetchOne();
     }
 
@@ -188,7 +191,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .from(review)
                 .where(review.store.id.eq(store.id));
 
-        return query.select(Projections.constructor(SearchStoreDto.class,
+        List<SearchStoreDto> searchStoreList = query.select(Projections.constructor(SearchStoreDto.class,
                 store.id,
                 store.name,
                 image.imageUrl,
@@ -198,7 +201,6 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 totalReviewCount,
                 favoriteCount,
                 favorite.isFavorite,
-                Projections.list(hashtag),
                 category.name
                 ))
                 .from(store)
@@ -211,6 +213,16 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .groupBy(store.id, store.name, image.imageUrl, store.address, category.name)
                 .limit(30L)
                 .fetch();
+
+        for (SearchStoreDto dto : searchStoreList) {
+            List<String> hashtags = query.select(hashtag.content)
+                    .from(hashtag)
+                    .where(hashtag.store.id.eq(dto.getStoreId()))
+                    .limit(3L)
+                    .fetch();
+            dto.addHashtagList(hashtags);
+        }
+        return searchStoreList;
     }
 
     /**
