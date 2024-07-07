@@ -19,7 +19,7 @@ public class LikesService {
     public void checkLikes(Member member, Review review,LikesDto likesDto){
         likesRepository.exist(member.getId(), review.getId()).ifPresentOrElse(
                 likes -> {
-                    likes.changeReviewLikes(likesDto.getIsLikes());
+                    likes.changeReviewLikes(likesDto.getStatus());
                     likesRepository.save(likes);
                 },
                 () -> likesRepository.save(Likes.insertLikes(member, review))
