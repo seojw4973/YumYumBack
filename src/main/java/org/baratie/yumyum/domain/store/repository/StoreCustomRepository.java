@@ -28,4 +28,5 @@ public interface StoreCustomRepository {
 
     Slice<MyFavoriteStoreDto> findFavoriteStore(Long memberId, Pageable pageable);
 
+    List<MainStoreDto> findTop10OnMonth(String local, int year, int month);
 }
