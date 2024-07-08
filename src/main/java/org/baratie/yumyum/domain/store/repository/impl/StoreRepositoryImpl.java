@@ -2,20 +2,20 @@ package org.baratie.yumyum.domain.store.repository.impl;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
-import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.*;
 import org.baratie.yumyum.domain.store.repository.StoreCustomRepository;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,7 +62,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .leftJoin(favorite).on(favorite.store.id.eq(store.id))
                 .leftJoin(image).on(image.store.id.eq(store.id))
                 .where(store.address.contains(local))
-                .groupBy(store.id, image.imageUrl)  // 그룹화 필드 지정
+                .groupBy(store.id)  // 그룹화 필드 지정
                 .orderBy(review.grade.avg().desc(), favorite.count().desc())  // 정렬 조건 추가
                 .limit(10L)
                 .fetch();
@@ -125,7 +125,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         store.hours,
                         store.call,
                         store.views,
-                        review.grade.avg().as("avgGrade"),
+                        Expressions.numberTemplate(Double.class, "round({0}, 2)", review.grade.avg().coalesce(0.0)).as("avgGrade"),
                         store.latitude,
                         store.longitude,
                         review.id.countDistinct(),
@@ -197,7 +197,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 image.imageUrl,
                 store.address,
                 store.views,
-                review.grade.avg().coalesce(0.0),
+                        Expressions.numberTemplate(Double.class, "round({0}, 2)", review.grade.avg().coalesce(0.0)),
                 totalReviewCount,
                 favoriteCount,
                 favorite.isFavorite,
@@ -210,7 +210,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .leftJoin(image).on(image.store.id.eq(store.id))
                 .leftJoin(hashtag).on(hashtag.store.id.eq(store.id))
                 .where(nameContain(keyword))
-                .groupBy(store.id, store.name, image.imageUrl, store.address, category.name)
+                .groupBy(store.id, store.name, store.address, category.name)
                 .limit(30L)
                 .fetch();
 
@@ -223,6 +223,51 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
             dto.addHashtagList(hashtags);
         }
         return searchStoreList;
+    }
+
+    @Override
+    public List<SearchStoreDto> findNearByStore(Double lng, Double lat) {
+        // Favorite count subquery
+        JPQLQuery<Long> favoriteCount = JPAExpressions
+                .select(favorite.count())
+                .from(favorite)
+                .where(favorite.store.id.eq(store.id).and(favorite.isFavorite.eq(true)));
+
+        // Total review count subquery
+        JPQLQuery<Long> totalReviewCount = JPAExpressions
+                .select(review.count())
+                .from(review)
+                .where(review.store.id.eq(store.id));
+
+        // Distance calculation expression
+        NumberTemplate<Double> distanceExpr = Expressions.numberTemplate(Double.class,
+                "ST_Distance_Sphere(Point({0}, {1}), Point({2}, {3}))",
+                store.longitude, store.latitude, lng, lat);
+
+        // Main query
+
+        return query.select(Projections.constructor(SearchStoreDto.class,
+                        store.id,
+                        store.name,
+                        image.imageUrl,
+                        store.address,
+                        store.views,
+                        Expressions.numberTemplate(Double.class, "round({0}, 2)", review.grade.avg().coalesce(0.0)),
+                        totalReviewCount,
+                        favoriteCount,
+                        favorite.isFavorite,
+                        category.name))
+                .from(store)
+                .leftJoin(favorite).on(favorite.store.id.eq(store.id))
+                .leftJoin(review).on(review.store.id.eq(store.id))
+                .leftJoin(category).on(category.store.id.eq(store.id))
+                .leftJoin(image).on(image.store.id.eq(store.id))
+                .leftJoin(hashtag).on(hashtag.store.id.eq(store.id))
+                .where(distanceExpr.loe(5000))  // Distance filter
+                .groupBy(store.id, store.name, store.address, category.name)
+                .orderBy(distanceExpr.asc())  // Order by distance
+                .limit(30L)
+                .fetch();
     }
 
     /**

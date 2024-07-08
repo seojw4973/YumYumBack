@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,4 +28,5 @@ public interface StoreCustomRepository {
 
     List<SearchStoreDto> findSearchStore(Long memberId, String keyword);
 
+    List<SearchStoreDto> findNearByStore(Double lng, Double lat);
 }

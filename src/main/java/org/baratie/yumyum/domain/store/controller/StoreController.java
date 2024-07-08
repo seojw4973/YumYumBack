@@ -53,6 +53,12 @@ public class StoreController {
         return new ResponseEntity(top10List, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<List<SearchStoreDto>> findNearbyStore(@RequestParam Double lng, @RequestParam Double lat) {
+        List<SearchStoreDto> nearByStoreList = storeService.getNearByStore(lng, lat);
+        return ResponseEntity.status(HttpStatus.OK).body(nearByStoreList);
+    }
+
 
     /**
      * 가게 상세 정보

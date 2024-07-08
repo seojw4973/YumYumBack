@@ -156,6 +156,10 @@ public class StoreService {
         return storeRepository.findSearchStore(memberId, keyword);
     }
 
+    public List<SearchStoreDto> getNearByStore(Double lng, Double lat) {
+        return storeRepository.findNearByStore(lng, lat);
+    }
+
 
     /**
      * 가게가 존재하는지와 폐업한 가게인지 확인
@@ -185,4 +189,6 @@ public class StoreService {
         BigDecimal[] latlng =  geoUtils.findGeoPoint(address);
         return latlng;
     }
+
+
 }
