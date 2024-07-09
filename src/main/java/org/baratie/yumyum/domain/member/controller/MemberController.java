@@ -48,11 +48,12 @@ public class MemberController {
     /**
      * 내 정보 보기
      *
-     * @param memberId 로그인한 유저 id
+     * @param customUserDetails 로그인한 유저 정보
      * @return 로그인한 유저의 상세 정보
      */
-    @GetMapping("/{memberId}")
-    public ResponseEntity<MyInfoDto> getMember(@PathVariable Long memberId) {
+    @GetMapping
+    public ResponseEntity<MyInfoDto> getMember(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Long memberId = customUserDetails.getId();
         MyInfoDto myInfoDto = memberService.getMyInfo(memberId);
         return ResponseEntity.ok().body(myInfoDto);
     }
