@@ -109,6 +109,42 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
+    public List<MainStoreDto> findTop10OnMonth(String local, int year, int month) {
+
+        JPQLQuery<Long> reviewCount = JPAExpressions.select(review.count())
+                .from(review);
+
+        JPQLQuery<Double> totalReviewGradeAvg = JPAExpressions.select(review.grade.avg())
+                .from(review);
+
+        return query.select(Projections.constructor(MainStoreDto.class,
+                        store.id,
+                        store.name,
+                        image.imageUrl,
+                        review.grade.avg().as("avgGrade"),
+                        review.countDistinct().as("reviewCount"),
+                        favorite.countDistinct().as("favoriteCount")
+                ))
+                .from(store)
+                .leftJoin(review).on(review.store.id.eq(store.id))
+                .leftJoin(favorite).on(favorite.store.id.eq(store.id))
+                .leftJoin(image).on(image.store.id.eq(store.id))
+                .where(
+                        store.address.contains(local),
+                        yearEq(year), monthEq(month)
+                )
+                .groupBy(store.id)  // 그룹화 필드 지정
+                .having(
+                        review.count().goe(reviewCount),
+                        review.grade.goe(totalReviewGradeAvg)
+                )
+                .orderBy(review.grade.avg().desc())  // 정렬 조건 추가
+                .limit(10L)
+                .fetch();
+    }
+
+
+    @Override
     public StoreDetailDto findStoreDetail(Long memberId, Long storeId) {
         JPQLQuery<Boolean> favoriteStatus = JPAExpressions.select(favorite.isFavorite)
                 .from(favorite)
@@ -284,5 +320,13 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
     private BooleanExpression categoryContain(String keyword){ return category.name.contains(keyword).or(hashtagContain(keyword));}
 
     private BooleanExpression hashtagContain(String keyword){return hashtag.content.contains(keyword);}
+
+    private BooleanExpression yearEq(int year) {
+        return review.createdAt.year().eq(year);
+    }
+
+    private BooleanExpression monthEq(int month) {
+        return review.createdAt.month().eq(month);
+    }
 
 }

@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 @ToString
 public class MyReviewDto {
 
+    private Long reviewId;
     private String storeName;
     private String address;
     private String nickname;

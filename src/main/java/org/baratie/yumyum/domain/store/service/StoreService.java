@@ -75,8 +75,8 @@ public class StoreService {
      * @param storeId 가게 pk
      * @return StoreDetailDto
      */
-    public StoreDetailDto StoreDetail(Long storeId){
-        StoreDetailDto storeDetailDto = storeRepository.findStoreDetail(storeId);
+    public StoreDetailDto StoreDetail(Long memberId, Long storeId){
+        StoreDetailDto storeDetailDto = storeRepository.findStoreDetail(memberId, storeId);
         List<String> images = imageRepository.findByStoreId(storeId);
         List<Hashtag> hashtags = hashtagRepository.findByStoreId(storeId);
         List<Menu> menus = menuRepository.findByStoreId(storeId);
@@ -198,7 +198,5 @@ public class StoreService {
         BigDecimal[] latlng =  geoUtils.findGeoPoint(address);
         return latlng;
     }
-
-
 
 }
