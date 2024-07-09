@@ -46,6 +46,7 @@ dependencies {
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
 	implementation 'com.google.maps:google-maps-services:2.2.0'
+	implementation 'org.locationtech.jts:jts-core:1.19.0'
 	implementation 'org.slf4j:slf4j-simple:1.7.25'
 
 	compileOnly 'org.projectlombok:lombok'
