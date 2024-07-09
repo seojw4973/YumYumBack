@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.baratie.yumyum.domain.image.domain.QImage.image;
+import static org.baratie.yumyum.domain.member.domain.QMember.member;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.*;
 import static org.baratie.yumyum.domain.favorite.domain.QFavorite.favorite;
@@ -167,8 +168,16 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .fetchOne();
     }
 
+    /**
+     * 즐겨찾기한 맛집
+     */
     @Override
     public Slice<MyFavoriteStoreDto> findFavoriteStore(Long memberId, Pageable pageable) {
+
+        JPQLQuery<Double> avgGrade = JPAExpressions
+                .select(review.grade.avg())
+                .from(review)
+                .where(review.store.id.eq(store.id));
 
         JPQLQuery<Long> favoriteCount = JPAExpressions
                 .select(favorite.count())
@@ -180,24 +189,38 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .from(review)
                 .where(review.store.id.eq(store.id));
 
-        List<MyFavoriteStoreDto> results = query.select(Projections.constructor(MyFavoriteStoreDto.class,
-                        image.imageUrl,
+        List<MyFavoriteStoreDto> results = query.select(
+                Projections.constructor(MyFavoriteStoreDto.class,
+                        store.id,
                         store.name,
-                        store.hours,
+                        image.imageUrl,
                         store.address,
-                        store.call,
+                        store.views,
+                        avgGrade,
                         totalReviewCount,
                         favoriteCount,
-                        favorite.isFavorite
+                        favorite.isFavorite,
+                        category.name
                 ))
-                .from(favorite)
-                .leftJoin(favorite.store, store)
+                .from(store)
+                .leftJoin(store.reviewList, review)
+                .leftJoin(store.favoriteList, favorite)
                 .leftJoin(store.imageList, image)
-                .groupBy(store.name)
+                .leftJoin(store.categoryList, category)
+                .where(memberIdEq(memberId), favoriteEq(true))
+                .groupBy(store.id)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
-                .where(memberIdEq(memberId), favoriteEq(true))
                 .fetch();
+
+        for (MyFavoriteStoreDto dto : results) {
+            List<String> hashtags = query.select(hashtag.content)
+                    .from(hashtag)
+                    .where(hashtag.store.id.eq(dto.getStoreId()))
+                    .limit(3L)
+                    .fetch();
+            dto.addHashtagList(hashtags);
+        }
 
         boolean hasNext = results.size() > pageable.getPageSize();
 

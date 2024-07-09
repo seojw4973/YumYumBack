@@ -226,10 +226,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
      * @return 멤버가 작성한 평균 리뷰 점수
      */
     private JPQLQuery<Double> getAvgGrade() {
-
-        NumberTemplate<Double> roundedAvgGrade = Expressions.numberTemplate(Double.class, "ROUND({0}, 2)", review.grade.avg());
         return JPAExpressions
-                .select(roundedAvgGrade)
+                .select(review.grade.avg())
                 .from(review)
                 .where(review.member.id.eq(member.id));
     }
