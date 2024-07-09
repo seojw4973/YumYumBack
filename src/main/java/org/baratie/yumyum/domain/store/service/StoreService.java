@@ -8,6 +8,7 @@ import org.baratie.yumyum.domain.image.domain.Image;
 import org.baratie.yumyum.domain.image.repository.ImageRepository;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.repository.MenuRepository;
+import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.*;
 import org.baratie.yumyum.domain.store.exception.StoreExistException;
@@ -35,6 +36,7 @@ public class StoreService {
     private final HashtagRepository hashtagRepository;
     private final GeoUtils geoUtils;
     private final ImageRepository imageRepository;
+    private final ReviewRepository reviewRepository;
 
     /**
      * 가게 등록
@@ -129,7 +131,9 @@ public class StoreService {
     }
 
     public List<MainStoreDto> getTop10OnMonth(String local) {
+
         LocalDateTime now = LocalDateTime.now();
+
         int year = now.getYear();
         int month = now.getMonthValue();
 
