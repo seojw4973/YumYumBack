@@ -59,8 +59,8 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .leftJoin(store.favoriteList, favorite)
                 .leftJoin(store.imageList, image)
                 .where(store.address.contains(local))
-                .groupBy(store.id)  // 그룹화 필드 지정
-                .orderBy(review.grade.avg().desc(), favorite.count().desc())  // 정렬 조건 추가
+                .groupBy(store.id)
+                .orderBy(review.grade.avg().desc(), favorite.count().desc())
                 .limit(10L)
                 .fetch();
     }
@@ -80,8 +80,8 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .leftJoin(store.favoriteList, favorite)
                 .leftJoin(store.imageList, image)
                 .where(store.address.contains(local))
-                .groupBy(store.id)  // 그룹화 필드 지정
-                .orderBy(store.views.desc())  // 정렬 조건 추가
+                .groupBy(store.id)
+                .orderBy(store.views.desc())
                 .limit(10L)
                 .fetch();
     }
@@ -101,17 +101,14 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .leftJoin(store.favoriteList, favorite)
                 .leftJoin(store.imageList, image)
                 .where(store.address.contains(local))
-                .groupBy(store.id)  // 그룹화 필드 지정
-                .orderBy(favorite.count().desc())  // 정렬 조건 추가
+                .groupBy(store.id)
+                .orderBy(favorite.count().desc())
                 .limit(10L)
                 .fetch();
     }
 
     @Override
     public List<MainStoreDto> findTop10OnMonth(String local, int year, int month) {
-
-        JPQLQuery<Long> reviewCount = JPAExpressions.select(review.count())
-                .from(review);
 
         JPQLQuery<Double> totalReviewGradeAvg = JPAExpressions.select(review.grade.avg())
                 .from(review);
@@ -126,18 +123,18 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 ))
                 .from(store)
                 .leftJoin(store.reviewList, review)
-                .leftJoin(store.favoriteList, favorite)
-                .leftJoin(store.imageList, image)
-                .where(
+                .on(
                         store.address.contains(local),
                         yearEq(year), monthEq(month)
                 )
-                .groupBy(store.id)  // 그룹화 필드 지정
+                .leftJoin(store.favoriteList, favorite)
+                .leftJoin(store.imageList, image)
+                .groupBy(review.store.id)
                 .having(
-                        review.count().goe(reviewCount),
-                        review.grade.goe(totalReviewGradeAvg)
+                        review.countDistinct().goe(10),
+                        review.grade.avg().goe(totalReviewGradeAvg)
                 )
-                .orderBy(review.grade.avg().desc())  // 정렬 조건 추가
+                .orderBy(review.grade.avg().desc(), store.name.desc())
                 .limit(10L)
                 .fetch();
     }
@@ -320,6 +317,10 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
 
     private BooleanExpression hashtagContain(String keyword){return hashtag.content.contains(keyword);}
 
+    private BooleanExpression reviewCount(Long reviewCount) {
+        return review.count().goe(reviewCount);
+    }
+
     private BooleanExpression yearEq(int year) {
         return review.createdAt.year().eq(year);
     }
@@ -327,5 +328,6 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
     private BooleanExpression monthEq(int month) {
         return review.createdAt.month().eq(month);
     }
+
 
 }
