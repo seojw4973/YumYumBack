@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
+import org.baratie.yumyum.domain.category.domain.Category;
+import org.baratie.yumyum.domain.favorite.domain.Favorite;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
 import org.baratie.yumyum.domain.image.domain.Image;
@@ -11,6 +13,7 @@ import org.baratie.yumyum.domain.image.domain.ImageType;
 import org.baratie.yumyum.domain.image.dto.ImageDto;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.dto.MenuDto;
+import org.baratie.yumyum.domain.review.domain.Review;
 import org.baratie.yumyum.domain.store.dto.UpdateStoreDto;
 
 import java.math.BigDecimal;
@@ -55,11 +58,23 @@ public class Store extends BaseTimeEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviewList = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Favorite> favoriteList = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Hashtag> hashtagList = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Menu> menuList = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Category> categoryList = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
