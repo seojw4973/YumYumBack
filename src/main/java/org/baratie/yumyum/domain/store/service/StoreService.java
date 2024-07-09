@@ -2,17 +2,12 @@ package org.baratie.yumyum.domain.store.service;
 
 import com.google.maps.errors.ApiException;
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.favorite.repository.FavoriteRepository;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
-import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
 import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
 import org.baratie.yumyum.domain.image.domain.Image;
-import org.baratie.yumyum.domain.image.dto.ImageDto;
 import org.baratie.yumyum.domain.image.repository.ImageRepository;
 import org.baratie.yumyum.domain.menu.domain.Menu;
-import org.baratie.yumyum.domain.menu.dto.MenuDto;
 import org.baratie.yumyum.domain.menu.repository.MenuRepository;
-import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.*;
 import org.baratie.yumyum.domain.store.exception.StoreExistException;
@@ -160,6 +155,20 @@ public class StoreService {
         return pageStore.map(m -> new AdminStoreDto(m.getId(), m.getName(), m.getCall(), m.getAddress(), m.isClosed()));
     }
 
+    /**
+     * 검색 시 맛집 리스트 조회
+     * @param memberId 로그인한 유저 id값
+     * @param keyword 검색어
+     * @return 검색 조건에 맞는 맛집 리스트 30개 제한으로 출력
+     */
+    public List<SearchStoreDto> getSearchStores(Long memberId, String keyword) {
+        return storeRepository.findSearchStore(memberId, keyword);
+    }
+
+    public List<SearchStoreDto> getNearByStore(Double lng, Double lat) {
+        return storeRepository.findNearByStore(lng, lat);
+    }
+
 
     /**
      * 가게가 존재하는지와 폐업한 가게인지 확인
@@ -189,5 +198,7 @@ public class StoreService {
         BigDecimal[] latlng =  geoUtils.findGeoPoint(address);
         return latlng;
     }
+
+
 
 }

@@ -50,7 +50,7 @@ public class StoreController {
     public ResponseEntity<List<MainStoreDto>> findTop10OnFavorite(@RequestParam String local) {
         List<MainStoreDto> top10List = storeService.getTop10OnFavorite(local);
 
-        return new ResponseEntity(top10List, HttpStatus.OK);
+        return new ResponseEntity<>(top10List, HttpStatus.OK);
     }
 
     /**
@@ -63,13 +63,20 @@ public class StoreController {
         return new ResponseEntity(top10List, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<List<SearchStoreDto>> findNearbyStore(@RequestParam Double lng, @RequestParam Double lat) {
+        List<SearchStoreDto> nearByStoreList = storeService.getNearByStore(lng, lat);
+        return ResponseEntity.status(HttpStatus.OK).body(nearByStoreList);
+    }
+
 
     /**
      * 가게 상세 정보
      */
     @GetMapping("/{storeId}")
-    public ResponseEntity<StoreDetailDto> findStore(@PathVariable("storeId") Long storeId) {
-        StoreDetailDto storeDetailDto = storeService.StoreDetail(storeId);
+    public ResponseEntity<StoreDetailDto> findStore(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("storeId") Long storeId) {
+        Long memberId = customUserDetails.getId();
+        StoreDetailDto storeDetailDto = storeService.StoreDetail(memberId, storeId);
         return ResponseEntity.ok(storeDetailDto);
     }
 
@@ -83,6 +90,15 @@ public class StoreController {
         Slice<MyFavoriteStoreDto> myFavoriteStore = storeService.getMyFavoriteStore(customUserDetails.getId(), pageable);
 
         return new ResponseEntity<>(myFavoriteStore, HttpStatus.ACCEPTED);
+    }
+
+    /**
+     * 검색한 가게 리스트
+     */
+    @GetMapping("/search/{filter}")
+    public ResponseEntity<List<SearchStoreDto>> searchStore(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable String filter) {
+        List<SearchStoreDto> searchStoreDtos = storeService.getSearchStores(customUserDetails.getId(), filter);
+        return ResponseEntity.status(HttpStatus.OK).body(searchStoreDtos);
     }
 
     /**

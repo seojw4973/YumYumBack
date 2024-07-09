@@ -77,6 +77,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .from(review)
                 .leftJoin(review.store, store)
                 .leftJoin(review.member, member)
+                .orderBy(review.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -165,7 +166,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .from(review)
                 .leftJoin(review.member, member)
                 .leftJoin(likes).on(likes.review.id.eq(review.id))
-                .where(likesMemberIdEq(memberId))
+                .where(likesMemberIdEq(memberId).and(likes.isLikes.eq(true)))
                 .orderBy(review.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() +1)

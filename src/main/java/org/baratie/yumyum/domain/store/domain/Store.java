@@ -65,6 +65,10 @@ public class Store extends BaseTimeEntity {
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> imageList = new ArrayList<>();
 
+    public void incrementViews(){
+        this.views++;
+    }
+
     public Store updateStore(UpdateStoreDto request) {
         this.name = request.getName();
         this.call = request.getCall();

@@ -29,8 +29,8 @@ public class MemberController {
      */
     @PostMapping
     public ResponseEntity<String> registerMember(@RequestBody SignUpDto signUpDto) {
-        String response = memberService.register(signUpDto);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        memberService.register(signUpDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
