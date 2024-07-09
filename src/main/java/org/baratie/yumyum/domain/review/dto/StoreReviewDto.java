@@ -3,8 +3,6 @@ package org.baratie.yumyum.domain.review.dto;
 import lombok.*;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StoreReviewDto {
 
@@ -14,4 +12,14 @@ public class StoreReviewDto {
     private Long totalReviewCount;
     private double avgGrade;
     private String content;
+
+    @Builder
+    public StoreReviewDto(String profileImage, String nickname, double grade, Long totalReviewCount, double avgGrade, String content) {
+        this.profileImage = profileImage;
+        this.nickname = nickname;
+        this.grade = grade;
+        this.totalReviewCount = totalReviewCount;
+        this.avgGrade =  Math.round(avgGrade * 10.0) / 10.0;
+        this.content = content;
+    }
 }
