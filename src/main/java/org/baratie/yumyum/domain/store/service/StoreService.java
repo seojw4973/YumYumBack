@@ -77,7 +77,12 @@ public class StoreService {
      * @param storeId 가게 pk
      * @return StoreDetailDto
      */
+    @Transactional
     public StoreDetailDto StoreDetail(Long memberId, Long storeId){
+        Store store = validationStoreId(storeId);
+        store.incrementViews();
+        storeRepository.save(store);
+
         StoreDetailDto storeDetailDto = storeRepository.findStoreDetail(memberId, storeId);
         List<String> images = imageRepository.findByStoreId(storeId);
         List<Hashtag> hashtags = hashtagRepository.findByStoreId(storeId);
