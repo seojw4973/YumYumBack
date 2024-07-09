@@ -2,17 +2,12 @@ package org.baratie.yumyum.domain.store.service;
 
 import com.google.maps.errors.ApiException;
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.favorite.repository.FavoriteRepository;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
-import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
 import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
 import org.baratie.yumyum.domain.image.domain.Image;
-import org.baratie.yumyum.domain.image.dto.ImageDto;
 import org.baratie.yumyum.domain.image.repository.ImageRepository;
 import org.baratie.yumyum.domain.menu.domain.Menu;
-import org.baratie.yumyum.domain.menu.dto.MenuDto;
 import org.baratie.yumyum.domain.menu.repository.MenuRepository;
-import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.*;
 import org.baratie.yumyum.domain.store.exception.StoreExistException;
@@ -27,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -79,12 +75,7 @@ public class StoreService {
      * @param storeId 가게 pk
      * @return StoreDetailDto
      */
-    @Transactional
     public StoreDetailDto StoreDetail(Long memberId, Long storeId){
-        Store store = validationStoreId(storeId);
-        store.incrementViews();
-        storeRepository.save(store);
-
         StoreDetailDto storeDetailDto = storeRepository.findStoreDetail(memberId, storeId);
         List<String> images = imageRepository.findByStoreId(storeId);
         List<Hashtag> hashtags = hashtagRepository.findByStoreId(storeId);
@@ -119,12 +110,30 @@ public class StoreService {
         imageRepository.saveAll(imageList);
     }
 
+    /**
+     * 즐겨찾기 기준 top 10
+     * @param local 지역
+     * @return 지역에 따른 즐겨찾기 기준 top10
+     */
     public List<MainStoreDto> getTop10OnFavorite(String local) {
         return storeRepository.findTop10OnFavorite(local);
     }
 
+    /**
+     * 조회수 기준 top 10
+     * @param local 지역
+     * @return 조회수에 따른 즐겨찾기 기준 top10
+     */
     public List<MainStoreDto> getTop10OnViews(String local) {
         return storeRepository.findTop10OnViews(local);
+    }
+
+    public List<MainStoreDto> getTop10OnMonth(String local) {
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        int month = now.getMonthValue();
+
+        return storeRepository.findTop10OnMonth(local, year, month);
     }
 
     /**
@@ -189,6 +198,5 @@ public class StoreService {
         BigDecimal[] latlng =  geoUtils.findGeoPoint(address);
         return latlng;
     }
-
 
 }

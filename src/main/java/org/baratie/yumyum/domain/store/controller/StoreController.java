@@ -24,13 +24,23 @@ public class StoreController {
     private final StoreService storeService;
 
     /**
-     * 평점 asc top10 맛집
+     * 평점 기준 top10 맛집
      */
     @GetMapping("/top10")
     public ResponseEntity<List<MainStoreDto>> findTop10(@RequestParam String local) {
         List<MainStoreDto> Top10List = storeService.getTop10(local);
 
         return ResponseEntity.status(HttpStatus.OK).body(Top10List);
+    }
+
+    /**
+     * 이달의 맛집
+     */
+    @GetMapping("/top10/month")
+    public ResponseEntity<List<MainStoreDto>> findTop10OnMonth(@RequestParam String local) {
+        List<MainStoreDto> top10List = storeService.getTop10OnMonth(local);
+
+        return new ResponseEntity(top10List, HttpStatus.OK);
     }
 
     /**

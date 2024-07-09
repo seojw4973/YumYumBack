@@ -126,6 +126,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     @Override
     public Slice<MyReviewDto> getMyReview(Long memberId, Pageable pageable) {
         List<MyReviewDto> results = query.select(Projections.constructor(MyReviewDto.class,
+                        review.id,
                         store.name,
                         store.address,
                         member.nickname,
