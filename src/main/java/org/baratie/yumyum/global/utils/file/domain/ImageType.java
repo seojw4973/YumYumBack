@@ -1,4 +1,4 @@
-package org.baratie.yumyum.domain.image.domain;
+package org.baratie.yumyum.global.utils.file.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

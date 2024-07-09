@@ -18,13 +18,12 @@ import org.springframework.data.domain.SliceImpl;
 import java.util.List;
 import java.util.Optional;
 
-import static org.baratie.yumyum.domain.image.domain.QImage.image;
-import static org.baratie.yumyum.domain.member.domain.QMember.member;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.*;
 import static org.baratie.yumyum.domain.favorite.domain.QFavorite.favorite;
 import static org.baratie.yumyum.domain.category.domain.QCategory.category;
 import static org.baratie.yumyum.domain.hashtag.domain.QHashtag.*;
+import static org.baratie.yumyum.global.utils.file.domain.QImage.image;
 
 @RequiredArgsConstructor
 public class StoreRepositoryImpl implements StoreCustomRepository {

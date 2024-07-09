@@ -1,7 +1,6 @@
-package org.baratie.yumyum.domain.image.repository;
+package org.baratie.yumyum.global.utils.file.repository;
 
-import org.baratie.yumyum.domain.image.domain.Image;
-import org.baratie.yumyum.domain.image.dto.ImageDto;
+import org.baratie.yumyum.global.utils.file.domain.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -1,8 +1,7 @@
-package org.baratie.yumyum.domain.image.dto;
+package org.baratie.yumyum.global.utils.file.dto;
 
 import lombok.*;
-import org.baratie.yumyum.domain.image.domain.Image;
-import org.baratie.yumyum.domain.image.domain.ImageType;
+import org.baratie.yumyum.global.utils.file.domain.Image;
 
 @Getter
 @Builder

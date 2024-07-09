@@ -2,7 +2,7 @@ package org.baratie.yumyum.domain.store.dto;
 
 import lombok.*;
 import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
-import org.baratie.yumyum.domain.image.dto.ImageDto;
+import org.baratie.yumyum.global.utils.file.dto.ImageDto;
 import org.baratie.yumyum.domain.menu.dto.MenuDto;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.baratie.yumyum.domain.image.controller;
+package org.baratie.yumyum.global.utils.file.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;

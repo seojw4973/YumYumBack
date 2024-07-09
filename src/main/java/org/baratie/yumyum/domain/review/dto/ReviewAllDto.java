@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.baratie.yumyum.domain.image.dto.ImageDto;
+import org.baratie.yumyum.global.utils.file.dto.ImageDto;
 
 import java.util.List;
 

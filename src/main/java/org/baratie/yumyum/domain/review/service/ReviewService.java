@@ -1,8 +1,8 @@
 package org.baratie.yumyum.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.image.domain.Image;
-import org.baratie.yumyum.domain.image.repository.ImageRepository;
+import org.baratie.yumyum.global.utils.file.domain.Image;
+import org.baratie.yumyum.global.utils.file.repository.ImageRepository;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.review.dto.LikeReviewDto;

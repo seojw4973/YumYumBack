@@ -1,20 +1,11 @@
 package org.baratie.yumyum.domain.store.dto;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
 import lombok.*;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
-import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
-import org.baratie.yumyum.domain.image.domain.Image;
-import org.baratie.yumyum.domain.image.dto.ImageDto;
 import org.baratie.yumyum.domain.menu.domain.Menu;
-import org.baratie.yumyum.domain.menu.dto.MenuDto;
-import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
-import org.baratie.yumyum.domain.store.domain.Store;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
