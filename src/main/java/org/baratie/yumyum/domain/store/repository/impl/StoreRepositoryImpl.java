@@ -46,8 +46,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
 
     @Override
     public List<MainStoreDto> findTop10(String local) {
-        return query
-                .select(Projections.constructor(MainStoreDto.class,
+        return query.select(Projections.constructor(MainStoreDto.class,
                         store.id,
                         store.name,
                         image.imageUrl,
@@ -56,9 +55,9 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         favorite.countDistinct().as("favoriteCount")
                 ))
                 .from(store)
-                .leftJoin(review).on(review.store.id.eq(store.id))
-                .leftJoin(favorite).on(favorite.store.id.eq(store.id))
-                .leftJoin(image).on(image.store.id.eq(store.id))
+                .leftJoin(store.reviewList, review)
+                .leftJoin(store.favoriteList, favorite)
+                .leftJoin(store.imageList, image)
                 .where(store.address.contains(local))
                 .groupBy(store.id)  // 그룹화 필드 지정
                 .orderBy(review.grade.avg().desc(), favorite.count().desc())  // 정렬 조건 추가
@@ -77,9 +76,9 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         favorite.countDistinct().as("favoriteCount")
                 ))
                 .from(store)
-                .leftJoin(review).on(review.store.id.eq(store.id))
-                .leftJoin(favorite).on(favorite.store.id.eq(store.id))
-                .leftJoin(image).on(image.store.id.eq(store.id))
+                .leftJoin(store.reviewList, review)
+                .leftJoin(store.favoriteList, favorite)
+                .leftJoin(store.imageList, image)
                 .where(store.address.contains(local))
                 .groupBy(store.id)  // 그룹화 필드 지정
                 .orderBy(store.views.desc())  // 정렬 조건 추가
@@ -98,9 +97,9 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         favorite.countDistinct().as("favoriteCount")
                 ))
                 .from(store)
-                .leftJoin(review).on(review.store.id.eq(store.id))
-                .leftJoin(favorite).on(favorite.store.id.eq(store.id))
-                .leftJoin(image).on(image.store.id.eq(store.id))
+                .leftJoin(store.reviewList, review)
+                .leftJoin(store.favoriteList, favorite)
+                .leftJoin(store.imageList, image)
                 .where(store.address.contains(local))
                 .groupBy(store.id)  // 그룹화 필드 지정
                 .orderBy(favorite.count().desc())  // 정렬 조건 추가
@@ -126,9 +125,9 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         favorite.countDistinct().as("favoriteCount")
                 ))
                 .from(store)
-                .leftJoin(review).on(review.store.id.eq(store.id))
-                .leftJoin(favorite).on(favorite.store.id.eq(store.id))
-                .leftJoin(image).on(image.store.id.eq(store.id))
+                .leftJoin(store.reviewList, review)
+                .leftJoin(store.favoriteList, favorite)
+                .leftJoin(store.imageList, image)
                 .where(
                         store.address.contains(local),
                         yearEq(year), monthEq(month)
@@ -165,8 +164,8 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         favorite.id.countDistinct(),
                         favoriteStatus))
                 .from(store)
-                .leftJoin(review).on(review.store.id.eq(store.id))
-                .leftJoin(favorite).on(favorite.store.id.eq(store.id))
+                .leftJoin(store.reviewList, review)
+                .leftJoin(store.favoriteList, favorite)
                 .where(storeIdEq(storeId))
                 .fetchOne();
     }
@@ -237,11 +236,11 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 category.name
                 ))
                 .from(store)
-                .leftJoin(favorite).on(favorite.store.id.eq(store.id).and(favorite.member.id.eq(memberId)))
-                .leftJoin(review).on(review.store.id.eq(store.id))
-                .leftJoin(category).on(category.store.id.eq(store.id))
-                .leftJoin(image).on(image.store.id.eq(store.id))
-                .leftJoin(hashtag).on(hashtag.store.id.eq(store.id))
+                .leftJoin(store.reviewList, review)
+                .leftJoin(store.favoriteList, favorite)
+                .leftJoin(store.imageList, image)
+                .leftJoin(store.hashtagList, hashtag)
+                .leftJoin(store.categoryList, category)
                 .where(nameContain(keyword))
                 .groupBy(store.id, store.name, store.address, category.name)
                 .limit(30L)
@@ -286,11 +285,11 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         favorite.isFavorite,
                         category.name))
                 .from(store)
-                .leftJoin(favorite).on(favorite.store.id.eq(store.id))
-                .leftJoin(review).on(review.store.id.eq(store.id))
-                .leftJoin(category).on(category.store.id.eq(store.id))
-                .leftJoin(image).on(image.store.id.eq(store.id))
-                .leftJoin(hashtag).on(hashtag.store.id.eq(store.id))
+                .leftJoin(store.reviewList, review)
+                .leftJoin(store.favoriteList, favorite)
+                .leftJoin(store.imageList, image)
+                .leftJoin(store.hashtagList, hashtag)
+                .leftJoin(store.categoryList, category)
                 .where(distanceExpr.loe(1000))
                 .groupBy(store.id, store.name, store.address, category.name)
                 .orderBy(distanceExpr.asc())
