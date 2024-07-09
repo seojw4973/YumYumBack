@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +46,6 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
 
     @Override
     public List<MainStoreDto> findTop10(String local) {
-        // 메인 쿼리 작성
         return query
                 .select(Projections.constructor(MainStoreDto.class,
                         store.id,
@@ -91,7 +89,6 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
 
     @Override
     public List<MainStoreDto> findTop10OnFavorite(String local) {
-        // 메인 쿼리 작성
         return query.select(Projections.constructor(MainStoreDto.class,
                         store.id,
                         store.name,
@@ -184,7 +181,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
         JPQLQuery<Long> favoriteCount = JPAExpressions
                 .select(favorite.count())
                 .from(favorite)
-                .where(favorite.store.id.eq(store.id).and(favorite.isFavorite.eq(true)));
+                .where(favorite.store.id.eq(store.id));
 
         JPQLQuery<Long> totalReviewCount = JPAExpressions
                 .select(review.count())
@@ -227,24 +224,19 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
 
     @Override
     public List<SearchStoreDto> findNearByStore(Double lng, Double lat) {
-        // Favorite count subquery
         JPQLQuery<Long> favoriteCount = JPAExpressions
                 .select(favorite.count())
                 .from(favorite)
-                .where(favorite.store.id.eq(store.id).and(favorite.isFavorite.eq(true)));
+                .where(favorite.store.id.eq(store.id));
 
-        // Total review count subquery
         JPQLQuery<Long> totalReviewCount = JPAExpressions
                 .select(review.count())
                 .from(review)
                 .where(review.store.id.eq(store.id));
 
-        // Distance calculation expression
         NumberTemplate<Double> distanceExpr = Expressions.numberTemplate(Double.class,
                 "ST_Distance_Sphere(Point({0}, {1}), Point({2}, {3}))",
                 store.longitude, store.latitude, lng, lat);
-
-        // Main query
 
         return query.select(Projections.constructor(SearchStoreDto.class,
                         store.id,
@@ -263,9 +255,9 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .leftJoin(category).on(category.store.id.eq(store.id))
                 .leftJoin(image).on(image.store.id.eq(store.id))
                 .leftJoin(hashtag).on(hashtag.store.id.eq(store.id))
-                .where(distanceExpr.loe(5000))  // Distance filter
+                .where(distanceExpr.loe(1000))
                 .groupBy(store.id, store.name, store.address, category.name)
-                .orderBy(distanceExpr.asc())  // Order by distance
+                .orderBy(distanceExpr.asc())
                 .limit(30L)
                 .fetch();
     }
