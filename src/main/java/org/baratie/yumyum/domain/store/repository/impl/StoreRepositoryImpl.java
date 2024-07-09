@@ -230,7 +230,9 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 totalReviewCount,
                 favoriteCount,
                 favorite.isFavorite,
-                category.name
+                category.name,
+                store.longitude,
+                store.latitude
                 ))
                 .from(store)
                 .leftJoin(store.reviewList, review)
@@ -270,7 +272,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 "ST_Distance_Sphere(Point({0}, {1}), Point({2}, {3}))",
                 store.longitude, store.latitude, lng, lat);
 
-        return query.select(Projections.constructor(SearchStoreDto.class,
+        List<SearchStoreDto> nearbyStoreList = query.select(Projections.constructor(SearchStoreDto.class,
                         store.id,
                         store.name,
                         image.imageUrl,
@@ -280,7 +282,9 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         totalReviewCount,
                         favoriteCount,
                         favorite.isFavorite,
-                        category.name))
+                        category.name,
+                        store.longitude,
+                        store.latitude))
                 .from(store)
                 .leftJoin(store.reviewList, review)
                 .leftJoin(store.favoriteList, favorite)
@@ -292,6 +296,16 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .orderBy(distanceExpr.asc())
                 .limit(30L)
                 .fetch();
+
+        for (SearchStoreDto dto : nearbyStoreList) {
+            List<String> hashtags = query.select(hashtag.content)
+                    .from(hashtag)
+                    .where(hashtag.store.id.eq(dto.getStoreId()))
+                    .limit(3L)
+                    .fetch();
+            dto.addHashtagList(hashtags);
+        }
+        return nearbyStoreList;
     }
 
     /**

@@ -10,6 +10,7 @@ import org.baratie.yumyum.domain.member.domain.Member;
 @ToString
 public class MyInfoDto {
 
+    private Long memberId;
     private String email;
     private String phoneNumber;
     private String nickName;
@@ -17,6 +18,7 @@ public class MyInfoDto {
 
     public static MyInfoDto fromEntity(Member member) {
         return MyInfoDto.builder()
+                .memberId(member.getId())
                 .email(member.getEmail())
                 .nickName(member.getNickname())
                 .phoneNumber(member.getPhoneNumber())

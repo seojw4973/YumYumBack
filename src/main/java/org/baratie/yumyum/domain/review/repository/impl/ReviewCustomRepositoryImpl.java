@@ -157,20 +157,24 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     @Override
     public Slice<LikeReviewDto> findLikeReviewsByMemberId(Long memberId, Pageable pageable) {
         List<LikeReviewDto> results = query.select(Projections.constructor(LikeReviewDto.class,
-                review.id,
-                member.imageUrl.as("profileImage"),
-                member.nickname,
-                review.grade,
-                likes.isLikes,
-                review.content,
-                review.createdAt))
+                        review.id,
+                        store.name,
+                        store.address,
+                        member.nickname,
+                        review.grade,
+                        getReviewTotalCount(memberId),
+                        getAvgGrade(memberId),
+                        review.content,
+                        likes.isLikes
+                ))
                 .from(review)
                 .leftJoin(review.member, member)
+                .leftJoin(review.store, store)
                 .leftJoin(likes).on(likes.review.id.eq(review.id))
-                .where(likesMemberIdEq(memberId).and(likes.isLikes.eq(true)))
                 .orderBy(review.createdAt.desc())
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() +1)
+                .limit(pageable.getPageSize() + 1)
+                .where(memberIdEq(memberId).and(likes.isLikes.eq(true)))
                 .fetch();
 
         boolean hasNext = results.size() > pageable.getPageSize();
@@ -179,7 +183,6 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         }
 
         return new SliceImpl<>(results, pageable, hasNext);
-
     }
 
     /**
