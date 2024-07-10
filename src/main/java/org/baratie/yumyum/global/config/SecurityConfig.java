@@ -42,7 +42,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://192.168.0.12:3000"));
         config.setAllowedMethods(Arrays.asList("*"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
@@ -71,11 +71,9 @@ public class SecurityConfig {
 
 
         http.oauth2Login()
-//                .authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization/naver"))
-//                .redirectionEndpoint(redirect -> redirect.baseUri("/login/oauth2/code/*"))
-                .userInfoEndpoint()
-                .userService(oAuth2Service)
-                .and()
+                .authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization"))
+                .redirectionEndpoint(redirect -> redirect.baseUri("/login/oauth2/code/*"))
+                .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2Service))
                 .successHandler(oAuth2SucessHandler);
 
 
