@@ -10,6 +10,8 @@ import org.baratie.yumyum.domain.member.exception.NicknameAlreadyUsing;
 import org.baratie.yumyum.domain.member.exception.PasswordNotEqualException;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -68,6 +70,13 @@ public class MemberService {
             throw new RuntimeException("로그인 실패", e); // 사용자 정의 예외 메시지와 함께 예외를 다시 던짐
         }
         return null;
+    }
+
+    /**
+     * 관리자페이지 회원 조회
+     */
+    public Page<SimpleMemberDto> getSimpleMemberInfo(Pageable pageable) {
+        return memberRepository.getSimpleMemberInfo(pageable);
     }
 
     /**
@@ -136,6 +145,13 @@ public class MemberService {
         return memberRepository.findByEmail(email).orElseThrow(
                 () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND)
         );
+    }
+
+    public void deleteMember(Long memberId) {
+        Member member = getMember(memberId);
+        Member deletedMember = member.deleteMember(memberId);
+
+        memberRepository.save(deletedMember);
     }
 
     /**

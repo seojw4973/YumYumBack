@@ -67,4 +67,11 @@ public class Member {
 
         return this;
     }
+
+    public Member deleteMember(Long memberId) {
+        this.isDeleted = true;
+        this.nickname = "delete_" + memberId;
+
+        return this;
+    }
 }
