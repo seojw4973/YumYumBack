@@ -28,8 +28,10 @@ public class OAuth2Service extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        String nickname = null;
         SocialType socialType = null;
         OAuth2UserInfo oAuth2UserInfo = null;
+        String email = null;
 
         String provider = userRequest.getClientRegistration().getRegistrationId();
 
@@ -37,20 +39,27 @@ public class OAuth2Service extends DefaultOAuth2UserService {
             System.out.println("네이버 로그인 요청");
             oAuth2UserInfo = new NaverUserInfo( (Map)oAuth2User.getAttributes().get("response"));
             socialType = SocialType.NAVER;
+            nickname = "Naver" + oAuth2UserInfo.getName();
+            email = oAuth2UserInfo.getEmail();
+            if(email == null){
+                email = oAuth2UserInfo.getName() + "@naver.com";
+            }
         } else if(provider.equals("kakao")){
             System.out.println("카카오 로그인 요청");
             oAuth2UserInfo = new KakaoUserInfo( (Map)oAuth2User.getAttributes());
             socialType = SocialType.KAKAO;
+            nickname = "Kakao" + oAuth2UserInfo.getName();
+            email = oAuth2UserInfo.getEmail();
+            if(email == null){
+                email = oAuth2User.getName() + "@kakao.com";
+            }
         } else if(provider.equals("google")){
             System.out.println("구글 로그인 요청");
             oAuth2UserInfo = new GoogleUserInfo( oAuth2User.getAttributes() );
+            nickname = "Google" + oAuth2UserInfo.getName();
         }
 
-        String email = oAuth2UserInfo.getEmail();
-        String nickname = oAuth2UserInfo.getNickname();
         String phoneNumber = oAuth2UserInfo.getPhone();
-
-
 
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
         Member member = null;

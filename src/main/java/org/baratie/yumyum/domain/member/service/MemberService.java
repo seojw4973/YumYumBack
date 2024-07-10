@@ -2,7 +2,6 @@ package org.baratie.yumyum.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
-import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.domain.SocialType;
 import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.exception.MemberNotFoundException;
@@ -18,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -130,13 +128,13 @@ public class MemberService {
     /**
      * id 값에 해당하는 멤버 가져오기
      */
-    public Member getMember(Long memberId){
-        exists(memberId);
-        validationMemberId(memberId);
-        return memberRepository.findById(memberId).orElseThrow(
-                () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND)
-        );
-    }
+//    public Member getMember(Long memberId){
+//        exists(memberId);
+//        validationMemberId(memberId);
+//        return memberRepository.findById(memberId).orElseThrow(
+//                () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND)
+//        );
+//    }
 
     /**
      * email 값에 해당하는 멤버 가져오기
@@ -173,5 +171,13 @@ public class MemberService {
         if(!existMember){
             throw new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
         }
+    }
+
+    public Member getMember(Long memberId){
+        Member member = memberRepository.findByIdNotDeleted(memberId);
+        if(member == null){
+            throw new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+        return member;
     }
 }

@@ -4,6 +4,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.domain.QMember;
 import org.baratie.yumyum.domain.member.dto.SimpleMemberDto;
 import org.baratie.yumyum.domain.member.repository.MemberCustomRepository;
@@ -46,5 +47,12 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
 
         return new PageImpl<>(results, pageable, results.size());
 
+    }
+
+    @Override
+    public Member findByIdNotDeleted(Long memberId) {
+        return query.selectFrom(member)
+                .where(member.id.eq(memberId).and(member.isDeleted.eq(false)))
+                .fetchOne();
     }
 }
