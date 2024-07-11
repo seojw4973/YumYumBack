@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReplyResponseDto {
 
+    private Long replyId;
     private String imageUrl;
     private String nickname;
     private String content;

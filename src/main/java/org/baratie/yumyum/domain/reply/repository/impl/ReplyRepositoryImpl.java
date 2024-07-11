@@ -33,6 +33,7 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
     public Slice<ReplyResponseDto> getReplyOnReview(Long reviewId, Pageable pageable) {
 
         List<ReplyResponseDto> results = query.select(Projections.constructor(ReplyResponseDto.class,
+                        reply.id,
                         member.imageUrl,
                         member.nickname,
                         reply.content,
