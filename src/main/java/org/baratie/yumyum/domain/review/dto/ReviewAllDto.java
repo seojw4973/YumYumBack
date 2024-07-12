@@ -9,7 +9,6 @@ import org.baratie.yumyum.global.utils.file.dto.ImageDto;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 public class ReviewAllDto {
     private Long reviewId;
     private String profileImage;
@@ -25,8 +24,11 @@ public class ReviewAllDto {
     private String content;
     private List<ImageDto> images;
 
-    @Builder
-    public ReviewAllDto(Long reviewId, String profileImage, String storeName, String address, String nickname, double grade, Long totalReviewCount, double avgGrade, String content, List<ImageDto> images) {
+    public void addImageList(List<ImageDto> images){
+        this.images = images;
+    }
+
+    public ReviewAllDto(Long reviewId, String profileImage, String storeName, String address, String nickname, double grade, Long totalReviewCount, double avgGrade, String content) {
         this.reviewId = reviewId;
         this.profileImage = profileImage;
         this.storeName = storeName;
@@ -36,6 +38,7 @@ public class ReviewAllDto {
         this.totalReviewCount = totalReviewCount;
         this.avgGrade = Math.round(avgGrade*10.0)/10.0;
         this.content = content;
-        this.images = images;
     }
+
+
 }

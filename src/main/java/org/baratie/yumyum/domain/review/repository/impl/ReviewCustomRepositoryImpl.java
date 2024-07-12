@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.baratie.yumyum.domain.review.dto.*;
 import org.baratie.yumyum.domain.review.repository.ReviewCustomRepository;
+import org.baratie.yumyum.global.utils.file.dto.ImageDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -23,6 +24,7 @@ import static org.baratie.yumyum.domain.likes.domain.QLikes.likes;
 import static org.baratie.yumyum.domain.member.domain.QMember.*;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.store;
+import static org.baratie.yumyum.global.utils.file.domain.QImage.image;
 
 @RequiredArgsConstructor
 public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
@@ -65,7 +67,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
          * 무한스크롤로 리뷰 전체리스트 조회
          */
         List<ReviewAllDto> results = query
-                .select(Projections.fields(ReviewAllDto.class,
+                .select(Projections.constructor(ReviewAllDto.class,
                         review.id.as("reviewId"),
                         member.imageUrl.as("profileImage"),
                         store.name.as("storeName"),
@@ -83,6 +85,15 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
+
+        for(ReviewAllDto dto : results){
+            List<ImageDto> images = query.select(Projections.constructor(ImageDto.class,
+                            image.imageUrl))
+                    .from(image)
+                    .where(image.review.id.eq(review.id))
+                    .fetch();
+            dto.addImageList(images);
+        }
 
         boolean hasNext = results.size() > pageable.getPageSize();
 

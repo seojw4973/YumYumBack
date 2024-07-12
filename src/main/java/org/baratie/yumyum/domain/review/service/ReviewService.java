@@ -47,6 +47,7 @@ public class ReviewService {
         Review saveReview = reviewRepository.save(review);
 
         List<Image> imageList = review.getImageList();
+        imageList.forEach(image -> image.addStore(store));
         imageList.forEach(image -> image.addReview(saveReview));
         imageRepository.saveAll(imageList);
     }
