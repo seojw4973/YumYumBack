@@ -26,8 +26,8 @@ public class StoreDetailDto {
     private List<Menu> menuList;
     private List<String> imageList;
 
-    private Long reviewCount;
-    private Long favoriteCount;
+    private Long totalReviewCount;
+    private Long totalFavoriteCount;
     private Boolean favoriteStatus;
 
     public StoreDetailDto tranceDto(StoreDetailDto storeDetail, List<Hashtag> hashtagList, List<Menu> menuList, List<String> imageList) {
@@ -41,8 +41,8 @@ public class StoreDetailDto {
                 .avgGrade(Math.round(storeDetail.getAvgGrade()*10.0)/10.0)
                 .latitude(storeDetail.getLatitude())
                 .longitude(storeDetail.getLongitude())
-                .reviewCount(storeDetail.getReviewCount())
-                .favoriteCount(storeDetail.getFavoriteCount())
+                .totalReviewCount(storeDetail.getTotalReviewCount())
+                .totalFavoriteCount(storeDetail.getTotalFavoriteCount())
                 .favoriteStatus(storeDetail.getFavoriteStatus())
                 .build();
 
@@ -54,7 +54,7 @@ public class StoreDetailDto {
     }
 
     @Builder
-    public StoreDetailDto(Long storeId, String name, String address, String hours, String calls, int views, double avgGrade, BigDecimal latitude, BigDecimal longitude, Long reviewCount, Long favoriteCount, Boolean favoriteStatus) {
+    public StoreDetailDto(Long storeId, String name, String address, String hours, String calls, int views, double avgGrade, BigDecimal latitude, BigDecimal longitude, Long totalReviewCount, Long totalFavoriteCount, Boolean favoriteStatus) {
         this.storeId = storeId;
         this.name = name;
         this.address = address;
@@ -64,8 +64,8 @@ public class StoreDetailDto {
         this.avgGrade = avgGrade;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.reviewCount = reviewCount;
-        this.favoriteCount = favoriteCount;
+        this.totalReviewCount = totalReviewCount;
+        this.totalFavoriteCount = totalFavoriteCount;
         this.favoriteStatus = favoriteStatus;
 
     }

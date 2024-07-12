@@ -55,8 +55,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
-                .csrf(csrfConfigurer -> csrfConfigurer.disable())
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            .csrf(csrfConfigurer -> csrfConfigurer.disable())
+            .formLogin(auth -> auth.disable())
+            .httpBasic(auth -> auth.disable())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeRequests(auth -> auth
 //                .requestMatchers("/member", "/member/login", "/member/oauth2", "/review/**",

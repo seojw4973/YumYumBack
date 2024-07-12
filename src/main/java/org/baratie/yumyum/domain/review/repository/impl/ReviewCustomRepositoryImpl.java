@@ -4,6 +4,7 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -47,7 +48,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                                 store.address,
                                 review.grade,
                                 review.content,
-                                likeStatus
+                                likeStatus,
+                                review.createdAt
                         )
                 )
                 .from(review)
@@ -156,14 +158,15 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 
     @Override
     public Slice<LikeReviewDto> findLikeReviewsByMemberId(Long memberId, Pageable pageable) {
+
         List<LikeReviewDto> results = query.select(Projections.constructor(LikeReviewDto.class,
                         review.id,
                         store.name,
                         store.address,
                         member.nickname,
                         review.grade,
-                        getReviewTotalCount(memberId),
-                        getAvgGrade(memberId),
+                        getReviewTotalCount(),
+                        getAvgGrade(),
                         review.content,
                         likes.isLikes
                 ))
@@ -171,10 +174,10 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .leftJoin(review.member, member)
                 .leftJoin(review.store, store)
                 .leftJoin(likes).on(likes.review.id.eq(review.id))
+                .where(likes.member.id.eq(memberId).and(likes.isLikes.eq(true)))
                 .orderBy(review.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
-                .where(memberIdEq(memberId).and(likes.isLikes.eq(true)))
                 .fetch();
 
         boolean hasNext = results.size() > pageable.getPageSize();

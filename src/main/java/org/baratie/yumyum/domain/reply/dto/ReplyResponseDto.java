@@ -17,6 +17,6 @@ public class ReplyResponseDto {
     private String imageUrl;
     private String nickname;
     private String content;
-    private LocalDateTime writerDate;
+    private LocalDateTime createdAt;
 
 }

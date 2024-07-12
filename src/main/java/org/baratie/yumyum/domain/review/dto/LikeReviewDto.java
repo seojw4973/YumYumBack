@@ -5,8 +5,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class LikeReviewDto {
@@ -20,4 +18,17 @@ public class LikeReviewDto {
     private double avgGrade;
     private String content;
     private Boolean likeStatus;
+
+    @Builder
+    public LikeReviewDto(Long reviewId, String storeName, String address, String nickname, double grade, Long reviewTotalCount, double avgGrade, String content, Boolean likeStatus) {
+        this.reviewId = reviewId;
+        this.storeName = storeName;
+        this.address = address;
+        this.nickname = nickname;
+        this.grade = grade;
+        this.reviewTotalCount = reviewTotalCount;
+        this.avgGrade = Math.round(avgGrade*10.0)/10.0;
+        this.content = content;
+        this.likeStatus = likeStatus;
+    }
 }
