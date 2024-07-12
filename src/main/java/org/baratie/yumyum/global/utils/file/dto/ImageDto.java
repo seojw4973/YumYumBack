@@ -9,6 +9,7 @@ import org.baratie.yumyum.global.utils.file.domain.Image;
 @NoArgsConstructor
 @ToString
 public class ImageDto {
+    
     private String imageUrl;
 
     public Image toEntity(){
