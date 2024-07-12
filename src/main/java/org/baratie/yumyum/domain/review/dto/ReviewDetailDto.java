@@ -2,6 +2,7 @@ package org.baratie.yumyum.domain.review.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -20,6 +21,7 @@ public class ReviewDetailDto {
     private double grade;
     private String content;
     private Boolean likeStatus;
+    private LocalDateTime createdAt;
     private List<String> images;
 
     public ReviewDetailDto tranceDto(ReviewDetailDto reviewDetail, List<String> images) {
@@ -36,6 +38,7 @@ public class ReviewDetailDto {
                 .grade(reviewDetail.getGrade())
                 .content(reviewDetail.getContent())
                 .likeStatus(reviewDetail.getLikeStatus())
+                .createdAt(reviewDetail.getCreatedAt())
                 .build();
 
         result.images = images;
@@ -44,7 +47,7 @@ public class ReviewDetailDto {
     }
 
     @Builder
-    public ReviewDetailDto(Long reviewId, Long memberId, String imageUrl, String nickname, Long totalReviewCount, double avgGrade, String storeName, String address, double grade, String content, Boolean likeStatus) {
+    public ReviewDetailDto(Long reviewId, Long memberId, String imageUrl, String nickname, Long totalReviewCount, double avgGrade, String storeName, String address, double grade, String content, Boolean likeStatus, LocalDateTime createdAt) {
         this.reviewId = reviewId;
         this.memberId = memberId;
         this.imageUrl = imageUrl;
@@ -56,6 +59,7 @@ public class ReviewDetailDto {
         this.grade = grade;
         this.content = content;
         this.likeStatus = likeStatus;
+        this.createdAt = createdAt;
     }
 }
 

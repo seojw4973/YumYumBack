@@ -9,8 +9,6 @@ import org.baratie.yumyum.global.utils.file.dto.ImageDto;
 import java.util.List;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class ReviewAllDto {
     private Long reviewId;
@@ -27,4 +25,17 @@ public class ReviewAllDto {
     private String content;
     private List<ImageDto> images;
 
+    @Builder
+    public ReviewAllDto(Long reviewId, String profileImage, String storeName, String address, String nickname, double grade, Long totalReviewCount, double avgGrade, String content, List<ImageDto> images) {
+        this.reviewId = reviewId;
+        this.profileImage = profileImage;
+        this.storeName = storeName;
+        this.address = address;
+        this.nickname = nickname;
+        this.grade = grade;
+        this.totalReviewCount = totalReviewCount;
+        this.avgGrade = Math.round(avgGrade*10.0)/10.0;
+        this.content = content;
+        this.images = images;
+    }
 }

@@ -17,6 +17,6 @@ public class ReportPageResponseDto {
     private String nickName;
     private String targetContent;
     private Long targetId;
-    private String content;
+    private String reportReason;
     private LocalDateTime createdAt;
 }
