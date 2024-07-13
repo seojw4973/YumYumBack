@@ -2,6 +2,7 @@ package org.baratie.yumyum.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.global.utils.file.domain.Image;
+import org.baratie.yumyum.global.utils.file.domain.ImageType;
 import org.baratie.yumyum.global.utils.file.repository.ImageRepository;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
@@ -15,6 +16,7 @@ import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.service.StoreService;
 import org.baratie.yumyum.global.exception.ErrorCode;
+import org.baratie.yumyum.global.utils.file.service.ImageService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class ReviewService {
     private final ImageRepository imageRepository;
     private final MemberService memberService;
     private final StoreService storeService;
+    private final ImageService imageService;
 
     /**
      * 리뷰 등록
@@ -46,10 +49,14 @@ public class ReviewService {
         Review review = request.toEntity(store, member);
         Review saveReview = reviewRepository.save(review);
 
-        List<Image> imageList = review.getImageList();
-        imageList.forEach(image -> image.addStore(store));
-        imageList.forEach(image -> image.addReview(saveReview));
-        imageRepository.saveAll(imageList);
+        if(request.getImageList() != null){
+            imageService.fileUploadMultiple(ImageType.REVIEW, saveReview.getId(), request.getImageList());
+        }
+
+//        List<Image> imageList = review.getImageList();
+//        imageList.forEach(image -> image.addStore(store));
+//        imageList.forEach(image -> image.addReview(saveReview));
+//        imageRepository.saveAll(imageList);
     }
 
     /**
