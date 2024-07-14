@@ -8,6 +8,8 @@ import org.baratie.yumyum.domain.review.dto.*;
 import org.baratie.yumyum.domain.review.service.ReviewService;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.service.StoreService;
+import org.baratie.yumyum.global.utils.file.domain.ImageType;
+import org.baratie.yumyum.global.utils.file.service.ImageService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -15,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/review")
@@ -24,6 +29,7 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final StoreService storeService;
     private final MemberService memberService;
+    private final ImageService imageService;
 
     /**
      * 리뷰 전체 조회
@@ -87,9 +93,10 @@ public class ReviewController {
      * 리뷰 작성
      */
     @PostMapping
-    public ResponseEntity<Void> writeReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody CreateReviewDto createReviewDto){
-        reviewService.createReview(customUserDetails, createReviewDto);
-
+    public ResponseEntity<Void> writeReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                            @RequestPart("createReviewDto") CreateReviewDto createReviewDto,
+                                            @RequestPart("files") List<MultipartFile> files) {
+        reviewService.createReview(customUserDetails, createReviewDto, files);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
 import org.baratie.yumyum.global.utils.file.domain.Image;
+import org.baratie.yumyum.global.utils.file.domain.ImageType;
 import org.baratie.yumyum.global.utils.file.repository.ImageRepository;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.repository.MenuRepository;
@@ -15,11 +16,13 @@ import org.baratie.yumyum.domain.store.exception.StoreExistException;
 import org.baratie.yumyum.domain.store.exception.StoreNotFoundException;
 import org.baratie.yumyum.domain.store.repository.StoreRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
+import org.baratie.yumyum.global.utils.file.service.ImageService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -37,13 +40,14 @@ public class StoreService {
     private final GeoUtils geoUtils;
     private final ImageRepository imageRepository;
     private final ReviewRepository reviewRepository;
+    private final ImageService imageService;
 
     /**
      * 가게 등록
      * @param createStoreDto
      */
     @Transactional
-    public void createStore(final CreateStoreDto createStoreDto) throws IOException, InterruptedException, ApiException {
+    public void createStore(final CreateStoreDto createStoreDto, List<MultipartFile> files) throws IOException, InterruptedException, ApiException {
         existStoreName(createStoreDto.getName());
 
         BigDecimal[] bigDecimals = geoUtils.findGeoPoint(createStoreDto.getAddress());
@@ -58,8 +62,12 @@ public class StoreService {
         List<Hashtag> hashtagList = store.getHashtagList();
         hashtagList.forEach(hashtag -> hashtag.addStore(store));
 
-        List<Image> imageList = store.getImageList();
-        imageList.forEach(image -> image.addStore(store));
+        if(files != null){
+            imageService.fileUploadMultiple(ImageType.STORE, store, files);
+        }
+
+//        List<Image> imageList = store.getImageList();
+//        imageList.forEach(image -> image.addStore(store));
 
         storeRepository.save(store);
     }

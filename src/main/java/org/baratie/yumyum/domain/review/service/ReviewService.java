@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -42,15 +43,15 @@ public class ReviewService {
      * 멤버 id 값이 필요한지는 의문, 토론 필요
      */
     @Transactional
-    public void createReview(CustomUserDetails customUserDetails, CreateReviewDto request){
+    public void createReview(CustomUserDetails customUserDetails, CreateReviewDto request, List<MultipartFile> files){
         Member member = memberService.getMember(customUserDetails.getId());
         Store store = storeService.validationStoreId(request.getStoreId());
 
         Review review = request.toEntity(store, member);
         Review saveReview = reviewRepository.save(review);
 
-        if(request.getImageList() != null){
-            imageService.fileUploadMultiple(ImageType.REVIEW, saveReview.getId(), request.getImageList());
+        if(files != null){
+            imageService.fileUploadMultiple(ImageType.REVIEW, saveReview, files);
         }
 
 //        List<Image> imageList = review.getImageList();
@@ -125,6 +126,7 @@ public class ReviewService {
     public void deleteReview(Long memberId, Long reviewId) {
         validationReviewId(reviewId);
         isLoginMember(memberId, reviewId);
+        imageService.targetFilesDelete(ImageType.REVIEW, reviewId);
 
         reviewRepository.deleteById(reviewId);
     }

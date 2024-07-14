@@ -20,7 +20,6 @@ public class CreateReviewDto {
     private Long storeId;
     private String content;
     private double grade;
-    List<MultipartFile> imageList;
 
     public Review toEntity(Store store, Member member) {
 

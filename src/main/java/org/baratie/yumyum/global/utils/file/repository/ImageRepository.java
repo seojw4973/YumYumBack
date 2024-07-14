@@ -1,6 +1,7 @@
 package org.baratie.yumyum.global.utils.file.repository;
 
 import org.baratie.yumyum.global.utils.file.domain.Image;
+import org.baratie.yumyum.global.utils.file.domain.ImageType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,4 +20,10 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 
     @Query("SELECT i.imageUrl FROM Image i WHERE i.store.id = :storeId")
     List<String> findByStoreId(Long storeId);
+
+    @Query("SELECT i from Image i Where i.review.id = :targetId")
+    List<Image> findEntityByReviewId(Long targetId);
+
+    @Query("SELECT i from Image i Where i.store.id = :targetId")
+    List<Image> findEntityByStoreId(Long targetId);
 }

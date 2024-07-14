@@ -78,4 +78,32 @@ public class ImageService{
         }
     }
 
+    public List<String> findFileUrl(ImageType type, Long targetId) {
+        if(type.equals(ImageType.REVIEW)){
+            return imageRepository.findByReviewId(targetId);
+        }else if(type.equals(ImageType.STORE)){
+            return imageRepository.findByStoreId(targetId);
+        }
+        return null;
+    }
+
+    public void targetFilesDelete(ImageType type, Long targetId){
+        List<Image> imageList = null;
+        if(type.equals(ImageType.REVIEW)){
+            imageList = imageRepository.findEntityByReviewId(targetId);
+            imageRepository.deleteAll(imageList);
+        }else if(type.equals(ImageType.STORE)){
+            imageList = imageRepository.findEntityByStoreId(targetId);
+            imageRepository.deleteAll(imageList);
+        }
+
+        for(Image image : imageList){
+            String imageUrl = image.getImageUrl();
+            String objectKey = imageUrl.substring(bucketName.length() + type.name().toLowerCase().length() + 2);
+
+            s3.deleteObject(bucketName + "/" + type.name().toLowerCase(), objectKey);
+        }
+    }
+
+
 }

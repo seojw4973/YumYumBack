@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -105,8 +106,9 @@ public class StoreController {
      * 가게 등록
      */
     @PostMapping
-    public ResponseEntity<Void> registerStore(@RequestBody CreateStoreDto createStoreDto) throws IOException, InterruptedException, ApiException {
-        storeService.createStore(createStoreDto);
+    public ResponseEntity<Void> registerStore(@RequestPart("createStoreDto") CreateStoreDto createStoreDto,
+                                              @RequestPart("files") List<MultipartFile> files) throws IOException, InterruptedException, ApiException {
+        storeService.createStore(createStoreDto, files);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
