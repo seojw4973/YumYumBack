@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
 import org.baratie.yumyum.global.utils.file.domain.Image;
+import org.baratie.yumyum.global.utils.file.domain.ImageType;
 import org.baratie.yumyum.global.utils.file.repository.ImageRepository;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.repository.MenuRepository;
@@ -15,11 +16,13 @@ import org.baratie.yumyum.domain.store.exception.StoreExistException;
 import org.baratie.yumyum.domain.store.exception.StoreNotFoundException;
 import org.baratie.yumyum.domain.store.repository.StoreRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
+import org.baratie.yumyum.global.utils.file.service.ImageService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -37,13 +40,14 @@ public class StoreService {
     private final GeoUtils geoUtils;
     private final ImageRepository imageRepository;
     private final ReviewRepository reviewRepository;
+    private final ImageService imageService;
 
     /**
      * 가게 등록
      * @param createStoreDto
      */
     @Transactional
-    public void createStore(final CreateStoreDto createStoreDto) throws IOException, InterruptedException, ApiException {
+    public void createStore(final CreateStoreDto createStoreDto, List<MultipartFile> files) throws IOException, InterruptedException, ApiException {
         existStoreName(createStoreDto.getName());
 
         BigDecimal[] bigDecimals = geoUtils.findGeoPoint(createStoreDto.getAddress());
@@ -58,8 +62,12 @@ public class StoreService {
         List<Hashtag> hashtagList = store.getHashtagList();
         hashtagList.forEach(hashtag -> hashtag.addStore(store));
 
-        List<Image> imageList = store.getImageList();
-        imageList.forEach(image -> image.addStore(store));
+        if(files != null){
+            imageService.fileUploadMultiple(ImageType.STORE, store, files);
+        }
+
+//        List<Image> imageList = store.getImageList();
+//        imageList.forEach(image -> image.addStore(store));
 
         storeRepository.save(store);
     }
@@ -97,7 +105,7 @@ public class StoreService {
      * @param request
      */
     @Transactional
-    public void updateStore(Long storeId, UpdateStoreDto request) {
+    public void updateStore(Long storeId, UpdateStoreDto request, List<MultipartFile> files) {
         Store findstore = validationStoreId(storeId);
         Store updatedStore = findstore.updateStore(request);
         System.out.println(updatedStore);
@@ -112,9 +120,11 @@ public class StoreService {
         hashtagList.forEach(hashtag -> hashtag.addStore(updatedStore));
         hashtagRepository.saveAll(hashtagList);
 
-        List<Image> imageList = updatedStore.getImageList();
-        imageList.forEach(image -> image.addStore(updatedStore));
-        imageRepository.saveAll(imageList);
+        if(files == null){
+            imageService.targetFilesDelete(ImageType.STORE, storeId);
+        }else{
+            imageService.fileUploadMultiple(ImageType.STORE, storeId, files);
+        }
     }
 
     /**
@@ -168,12 +178,18 @@ public class StoreService {
      * 검색 시 맛집 리스트 조회
      * @param memberId 로그인한 유저 id값
      * @param keyword 검색어
-     * @return 검색 조건에 맞는 맛집 리스트 30개 제한으로 출력
+     * @return 검색 조건에 맞는 맛집 리스트 30개 제한으로 리턴
      */
     public List<SearchStoreDto> getSearchStores(Long memberId, String keyword) {
         return storeRepository.findSearchStore(memberId, keyword);
     }
 
+    /**
+     * 기본 위치 기준 근처 맛집 조회
+     * @param lng 경도
+     * @param lat 위도
+     * @return 전달받은 위치 반경 1km 내의 맛집 리스트 리턴
+     */
     public List<SearchStoreDto> getNearByStore(Double lng, Double lat) {
         return storeRepository.findNearByStore(lng, lat);
     }

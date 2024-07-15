@@ -17,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,8 +34,9 @@ public class MemberController {
      * @return response 회원가입 완료 여부
      */
     @PostMapping
-    public ResponseEntity<String> registerMember(@RequestBody SignUpDto signUpDto) {
-        memberService.register(signUpDto);
+    public ResponseEntity<String> registerMember(@RequestPart SignUpDto signUpDto,
+                                                 @RequestPart(required = false) MultipartFile file) throws IOException {
+        memberService.register(signUpDto, file);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

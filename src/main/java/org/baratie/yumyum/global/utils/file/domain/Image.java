@@ -38,11 +38,17 @@ public class Image extends BaseTimeEntity {
 
     public void addStore(Store store) {
         this.store = store;
-        imageType = ImageType.STORE;
     }
 
     public void addReview(Review review) {
         this.review = review;
-        imageType = ImageType.REVIEW;
+    }
+
+    public void addEntity(Object object){
+        if(object instanceof Store){
+            addStore((Store)object);
+        }else if(object instanceof Review){
+            addReview((Review)object);
+        }
     }
 }

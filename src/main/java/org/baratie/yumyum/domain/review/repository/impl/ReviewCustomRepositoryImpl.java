@@ -87,10 +87,10 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .fetch();
 
         for(ReviewAllDto dto : results){
-            List<ImageDto> images = query.select(Projections.constructor(ImageDto.class,
-                            image.imageUrl))
+            List<String> images = query.select(
+                            image.imageUrl)
                     .from(image)
-                    .where(image.review.id.eq(review.id))
+                    .where(image.review.id.eq(dto.getReviewId()))
                     .fetch();
             dto.addImageList(images);
         }
@@ -190,6 +190,15 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
+
+        for(LikeReviewDto dto : results){
+            List<String> images = query.select(
+                            image.imageUrl)
+                    .from(image)
+                    .where(image.review.id.eq(dto.getReviewId()))
+                    .fetch();
+            dto.addImageList(images);
+        }
 
         boolean hasNext = results.size() > pageable.getPageSize();
         if (hasNext) {

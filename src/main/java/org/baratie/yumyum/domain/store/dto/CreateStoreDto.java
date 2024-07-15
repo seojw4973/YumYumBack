@@ -35,14 +35,12 @@ public class CreateStoreDto {
     private BigDecimal latitude;
     private BigDecimal longitude;
 
-    List<ImageDto> imageList;
     List<HashtagDto> hashtagList;
     List<MenuDto> menuList;
 
     public Store toEntity(BigDecimal latitude, BigDecimal longitude) throws IOException, InterruptedException, ApiException {
         List<Hashtag> hashtagList = this.hashtagList.stream().map(HashtagDto::toEntity).collect(Collectors.toList());
         List<Menu> menuList = this.menuList.stream().map(MenuDto::toEntity).collect(Collectors.toList());
-        List<Image> images = this.imageList.stream().map(ImageDto::toEntity).collect(Collectors.toList());
 
         return Store.builder()
                 .name(this.name)
@@ -54,7 +52,6 @@ public class CreateStoreDto {
                 .longitude(longitude)
                 .hashtagList(hashtagList)
                 .menuList(menuList)
-                .imageList(images)
                 .build();
     }
 }

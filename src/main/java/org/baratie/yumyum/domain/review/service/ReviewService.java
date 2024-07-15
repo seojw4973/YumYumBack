@@ -2,6 +2,7 @@ package org.baratie.yumyum.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.global.utils.file.domain.Image;
+import org.baratie.yumyum.global.utils.file.domain.ImageType;
 import org.baratie.yumyum.global.utils.file.repository.ImageRepository;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
@@ -15,10 +16,12 @@ import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.service.StoreService;
 import org.baratie.yumyum.global.exception.ErrorCode;
+import org.baratie.yumyum.global.utils.file.service.ImageService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,6 +34,7 @@ public class ReviewService {
     private final ImageRepository imageRepository;
     private final MemberService memberService;
     private final StoreService storeService;
+    private final ImageService imageService;
 
     /**
      * 리뷰 등록
@@ -39,17 +43,21 @@ public class ReviewService {
      * 멤버 id 값이 필요한지는 의문, 토론 필요
      */
     @Transactional
-    public void createReview(CustomUserDetails customUserDetails, CreateReviewDto request){
+    public void createReview(CustomUserDetails customUserDetails, CreateReviewDto request, List<MultipartFile> files){
         Member member = memberService.getMember(customUserDetails.getId());
         Store store = storeService.validationStoreId(request.getStoreId());
 
         Review review = request.toEntity(store, member);
         Review saveReview = reviewRepository.save(review);
 
-        List<Image> imageList = review.getImageList();
-        imageList.forEach(image -> image.addStore(store));
-        imageList.forEach(image -> image.addReview(saveReview));
-        imageRepository.saveAll(imageList);
+        if(files != null){
+            imageService.fileUploadMultiple(ImageType.REVIEW, saveReview, files);
+        }
+
+//        List<Image> imageList = review.getImageList();
+//        imageList.forEach(image -> image.addStore(store));
+//        imageList.forEach(image -> image.addReview(saveReview));
+//        imageRepository.saveAll(imageList);
     }
 
     /**
@@ -100,12 +108,18 @@ public class ReviewService {
      * @param request 수정 내용
      */
     @Transactional
-    public void updateReview(Long memberId, Long reviewId, UpdateReviewRequestDto request) {
+    public void updateReview(Long memberId, Long reviewId, UpdateReviewRequestDto request, List<MultipartFile> files) {
         Review findReview = getReview(reviewId);
 
         isLoginMember(memberId, reviewId);
 
         Review updateReview = findReview.updateReview(request);
+
+        if(files == null){
+            imageService.targetFilesDelete(ImageType.REVIEW, updateReview.getId());
+        }else if(!files.isEmpty()){
+            imageService.fileUploadMultiple(ImageType.REVIEW, updateReview, files);
+        }
 
         reviewRepository.save(updateReview);
     }
@@ -118,6 +132,7 @@ public class ReviewService {
     public void deleteReview(Long memberId, Long reviewId) {
         validationReviewId(reviewId);
         isLoginMember(memberId, reviewId);
+        imageService.targetFilesDelete(ImageType.REVIEW, reviewId);
 
         reviewRepository.deleteById(reviewId);
     }
