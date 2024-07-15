@@ -22,9 +22,9 @@ public class ReviewAllDto {
     private double avgGrade;
 
     private String content;
-    private List<ImageDto> images;
+    private List<String> images;
 
-    public void addImageList(List<ImageDto> images){
+    public void addImageList(List<String> images){
         this.images = images;
     }
 

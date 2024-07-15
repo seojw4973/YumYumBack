@@ -116,8 +116,10 @@ public class StoreController {
      * 가게 정보 수정
      */
     @PatchMapping("/{storeId}")
-    public ResponseEntity<Void> updateStore(@PathVariable Long storeId, @RequestBody UpdateStoreDto request) {
-        storeService.updateStore(storeId, request);
+    public ResponseEntity<Void> updateStore(@PathVariable Long storeId,
+                                            @RequestBody UpdateStoreDto request,
+                                            @RequestPart List<MultipartFile> files) {
+        storeService.updateStore(storeId, request, files);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

@@ -108,12 +108,18 @@ public class ReviewService {
      * @param request 수정 내용
      */
     @Transactional
-    public void updateReview(Long memberId, Long reviewId, UpdateReviewRequestDto request) {
+    public void updateReview(Long memberId, Long reviewId, UpdateReviewRequestDto request, List<MultipartFile> files) {
         Review findReview = getReview(reviewId);
 
         isLoginMember(memberId, reviewId);
 
         Review updateReview = findReview.updateReview(request);
+
+        if(files == null){
+            imageService.targetFilesDelete(ImageType.REVIEW, updateReview.getId());
+        }else if(!files.isEmpty()){
+            imageService.fileUploadMultiple(ImageType.REVIEW, updateReview, files);
+        }
 
         reviewRepository.save(updateReview);
     }

@@ -31,6 +31,19 @@ public class ImageService{
     @Value("${spring.s3.bucket}")
     private String bucketName;
 
+    @Value("${spring.s3.endpoint}")
+    private String endpoint;
+
+    public String profileImageUpload(MultipartFile file) throws IOException {
+        String uuid = UUID.randomUUID().toString();
+        String fileName = uuid + "_" + file.getOriginalFilename();
+
+        String profileUrl = endpoint + "/" + bucketName + "/profile/" + fileName;
+        uploadProfileImage(fileName, file);
+
+        return profileUrl;
+    }
+
     public void fileUploadMultiple(ImageType type,Object target, List<MultipartFile> files){
         for(MultipartFile file : files){
             String uuid = UUID.randomUUID().toString();
@@ -38,7 +51,7 @@ public class ImageService{
 
             Image image = Image.builder()
                     .imageType(type)
-                    .imageUrl(bucketName + "/" + type.name().toLowerCase() + "/" + fileName)
+                    .imageUrl(endpoint + "/" + bucketName + "/" + type.name().toLowerCase() + "/" + fileName)
                     .build();
 
             image.addEntity(target);
@@ -54,6 +67,22 @@ public class ImageService{
 
     private void uploadMutipartFile(String fileName, MultipartFile image, ImageType type) throws IOException {
         String savePath = bucketName + "/" + type.toString().toLowerCase();
+        try{
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(image.getSize());
+            metadata.setContentType(image.getContentType());
+
+            s3.putObject(savePath, fileName, image.getInputStream(), metadata);
+            setFileAccessPublic(fileName, savePath);
+        }catch(AmazonS3Exception e){
+            e.printStackTrace();
+        }catch(SdkClientException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void uploadProfileImage(String fileName, MultipartFile image) throws IOException {
+        String savePath = bucketName + "/profile";
         try{
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(image.getSize());

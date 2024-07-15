@@ -95,7 +95,7 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<Void> writeReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                             @RequestPart("createReviewDto") CreateReviewDto createReviewDto,
-                                            @RequestPart("files") List<MultipartFile> files) {
+                                            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         reviewService.createReview(customUserDetails, createReviewDto, files);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -104,8 +104,11 @@ public class ReviewController {
      * 리뷰 수정
      */
     @PatchMapping("/{reviewId}")
-    public ResponseEntity<Void> updateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long reviewId, @RequestBody UpdateReviewRequestDto request) {
-        reviewService.updateReview(customUserDetails.getId(), reviewId, request);
+    public ResponseEntity<Void> updateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                             @PathVariable Long reviewId,
+                                             @RequestPart UpdateReviewRequestDto request,
+                                             @RequestPart List<MultipartFile> files) {
+        reviewService.updateReview(customUserDetails.getId(), reviewId, request, files);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }

@@ -9,6 +9,7 @@ import org.baratie.yumyum.domain.member.exception.NicknameAlreadyUsing;
 import org.baratie.yumyum.domain.member.exception.PasswordNotEqualException;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
+import org.baratie.yumyum.global.utils.file.service.ImageService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +17,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 
 @Service
@@ -26,16 +30,18 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final ImageService imageService;
 
     /**
      * 회원가입
      * @param signUpDto
      * @return
      */
-    public void register(SignUpDto signUpDto){
+    public void register(SignUpDto signUpDto, MultipartFile file) throws IOException {
         nicknameDuplicateCheck(signUpDto.getNickName());
         String password = passwordEncoder.encode(signUpDto.getPassword());
-        Member member = signUpDto.toEntity(password);
+        String profileUrl = imageService.profileImageUpload(file);
+        Member member = signUpDto.toEntity(password, profileUrl);
         memberRepository.save(member);
     }
 

@@ -105,7 +105,7 @@ public class StoreService {
      * @param request
      */
     @Transactional
-    public void updateStore(Long storeId, UpdateStoreDto request) {
+    public void updateStore(Long storeId, UpdateStoreDto request, List<MultipartFile> files) {
         Store findstore = validationStoreId(storeId);
         Store updatedStore = findstore.updateStore(request);
         System.out.println(updatedStore);
@@ -120,9 +120,11 @@ public class StoreService {
         hashtagList.forEach(hashtag -> hashtag.addStore(updatedStore));
         hashtagRepository.saveAll(hashtagList);
 
-        List<Image> imageList = updatedStore.getImageList();
-        imageList.forEach(image -> image.addStore(updatedStore));
-        imageRepository.saveAll(imageList);
+        if(files == null){
+            imageService.targetFilesDelete(ImageType.STORE, storeId);
+        }else{
+            imageService.fileUploadMultiple(ImageType.STORE, storeId, files);
+        }
     }
 
     /**
@@ -176,12 +178,18 @@ public class StoreService {
      * 검색 시 맛집 리스트 조회
      * @param memberId 로그인한 유저 id값
      * @param keyword 검색어
-     * @return 검색 조건에 맞는 맛집 리스트 30개 제한으로 출력
+     * @return 검색 조건에 맞는 맛집 리스트 30개 제한으로 리턴
      */
     public List<SearchStoreDto> getSearchStores(Long memberId, String keyword) {
         return storeRepository.findSearchStore(memberId, keyword);
     }
 
+    /**
+     * 기본 위치 기준 근처 맛집 조회
+     * @param lng 경도
+     * @param lat 위도
+     * @return 전달받은 위치 반경 1km 내의 맛집 리스트 리턴
+     */
     public List<SearchStoreDto> getNearByStore(Double lng, Double lat) {
         return storeRepository.findNearByStore(lng, lat);
     }

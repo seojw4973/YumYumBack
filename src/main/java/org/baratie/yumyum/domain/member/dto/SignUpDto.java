@@ -2,6 +2,8 @@ package org.baratie.yumyum.domain.member.dto;
 
 import lombok.*;
 import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.member.domain.Role;
+import org.baratie.yumyum.domain.member.domain.SocialType;
 
 @Getter
 @Builder
@@ -14,15 +16,16 @@ public class SignUpDto {
     private String password;
     private String phoneNumber;
     private String nickName;
-    private String imageUrl;
 
-    public Member toEntity(String password){
+    public Member toEntity(String password, String imageUrl){
         return Member.builder()
                 .email(this.email)
                 .password(password)
                 .phoneNumber(this.phoneNumber)
-                .imageUrl(this.imageUrl)
+                .imageUrl(imageUrl)
                 .nickname(this.nickName)
+                .role(Role.USER)
+                .socialType(SocialType.YUMYUM)
                 .build();
     }
 }
