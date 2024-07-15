@@ -53,16 +53,6 @@ public class ReplyService {
     }
 
     /**
-     * 내가 쓴 댓글 보기
-     * @param memberId
-     * @param pageable
-     * @return Slice객체로 내가 쓴 댓글 리턴
-     */
-    public Slice<MyReplyDto> getMyReply(Long memberId, Pageable pageable) {
-        return replyRepository.findByMemberId(memberId, pageable);
-    }
-
-    /**
      * 댓글 id로 리뷰 id 가져오기
      * @param replyId
      * @return 댓글이 포함된 리뷰 id

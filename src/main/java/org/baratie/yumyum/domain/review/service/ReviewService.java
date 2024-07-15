@@ -56,23 +56,6 @@ public class ReviewService {
     }
 
     /**
-     * 좋아요한 리뷰 조회
-     * @param memberId
-     * @param pageable
-     * @return 좋아요한 리뷰 리스트 리턴
-     */
-    public Slice<LikeReviewDto> getMyLikeReview(Long memberId, Pageable pageable) {
-        return reviewRepository.findLikeReviewsByMemberId(memberId, pageable);
-    }
-
-    /**
-     * 내가 쓴 리뷰
-     */
-    public Slice<MyReviewDto> getMyReview(Long memberId, Pageable pageable) {
-        return reviewRepository.getMyReview(memberId, pageable);
-    }
-
-    /**
      * 리뷰 수정
      * @param reviewId 수정할 리뷰
      * @param request 수정 내용

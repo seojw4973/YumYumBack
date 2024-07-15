@@ -70,14 +70,6 @@ public class StoreService {
     }
 
     /**
-     * 내가 즐겨찾기 한 맛집 조회
-     * @param memberId
-     */
-    public Slice<MyFavoriteStoreDto> getMyFavoriteStore(Long memberId, Pageable pageable) {
-        return storeRepository.findFavoriteStore(memberId, pageable);
-    }
-
-    /**
      * 맛집 상세 조회
      * @param storeId 가게 pk
      * @return StoreDetailDto
@@ -122,16 +114,6 @@ public class StoreService {
         } else {
             imageService.fileUploadMultiple(ImageType.STORE, storeId, files);
         }
-    }
-
-    /**
-     * 관리자 페이지 맛집 전체 조회
-     * @param pageable
-     * @return 맛집 전체 데이터 Page 정보와 함께 리턴
-     */
-    public Page<AdminStoreDto> getAdminStores(Pageable pageable) {
-        Page<Store> pageStore = storeRepository.findAll(pageable);
-        return pageStore.map(m -> new AdminStoreDto(m.getId(), m.getName(), m.getCall(), m.getAddress(), m.isClosed()));
     }
 
     /**

@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.dto.MyReplyDto;
 import org.baratie.yumyum.domain.member.service.MemberService;
-import org.baratie.yumyum.domain.reply.service.ReplyService;
+import org.baratie.yumyum.domain.member.service.MyPageService;
 import org.baratie.yumyum.domain.review.dto.LikeReviewDto;
 import org.baratie.yumyum.domain.review.dto.MyReviewDto;
-import org.baratie.yumyum.domain.review.service.ReviewService;
 import org.baratie.yumyum.domain.store.dto.MyFavoriteStoreDto;
-import org.baratie.yumyum.domain.store.service.StoreService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -23,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/member")
 public class MyPageController {
     private final MemberService memberService;
-    private final ReplyService replyService;
-    private final ReviewService reviewService;
-    private final StoreService storeService;
+    private final MyPageService myPageService;
 
     /**
      * 내 댓글 보기
@@ -37,7 +33,7 @@ public class MyPageController {
     public ResponseEntity<Slice<MyReplyDto>> getMyReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber) {
         Long memberId = customUserDetails.getId();
         Pageable pageable = PageRequest.of(pageNumber, 5);
-        Slice<MyReplyDto> myReplyDto = replyService.getMyReply(memberId, pageable);
+        Slice<MyReplyDto> myReplyDto = myPageService.getMyReply(memberId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(myReplyDto);
     }
 
@@ -48,7 +44,7 @@ public class MyPageController {
     public ResponseEntity<Slice<LikeReviewDto>> getLikeReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber){
         Long memberId = customUserDetails.getId();
         Pageable pageable = PageRequest.of(pageNumber, 5);
-        Slice<LikeReviewDto> likeReviewDto = reviewService.getMyLikeReview(memberId, pageable);
+        Slice<LikeReviewDto> likeReviewDto = myPageService.getMyLikeReview(memberId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(likeReviewDto);
     }
 
@@ -60,7 +56,7 @@ public class MyPageController {
         memberService.validationMemberId(customUserDetails.getId());
         Pageable pageable = PageRequest.of(pageNumber, 5);
 
-        Slice<MyReviewDto> myReview = reviewService.getMyReview(customUserDetails.getId(), pageable);
+        Slice<MyReviewDto> myReview = myPageService.getMyReview(customUserDetails.getId(), pageable);
 
         return new ResponseEntity<>(myReview, HttpStatus.OK);
     }
@@ -72,7 +68,7 @@ public class MyPageController {
     ResponseEntity<Slice<MyFavoriteStoreDto>> myFavoriteStore(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, 5);
 
-        Slice<MyFavoriteStoreDto> myFavoriteStore = storeService.getMyFavoriteStore(customUserDetails.getId(), pageable);
+        Slice<MyFavoriteStoreDto> myFavoriteStore = myPageService.getMyFavoriteStore(customUserDetails.getId(), pageable);
 
         return new ResponseEntity<>(myFavoriteStore, HttpStatus.ACCEPTED);
     }
