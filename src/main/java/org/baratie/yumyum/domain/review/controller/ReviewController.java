@@ -2,14 +2,10 @@ package org.baratie.yumyum.domain.review.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
-import org.baratie.yumyum.domain.member.service.MemberService;
-import org.baratie.yumyum.domain.review.dto.LikeReviewDto;
 import org.baratie.yumyum.domain.review.dto.*;
 import org.baratie.yumyum.domain.review.service.ReviewService;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.service.StoreService;
-import org.baratie.yumyum.global.utils.file.domain.ImageType;
-import org.baratie.yumyum.global.utils.file.service.ImageService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -28,8 +24,6 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final StoreService storeService;
-    private final MemberService memberService;
-    private final ImageService imageService;
 
     /**
      * 리뷰 전체 조회
@@ -49,30 +43,6 @@ public class ReviewController {
         ReviewDetailDto reviewDetail = reviewService.getReviewDetail(reviewId);
 
         return new ResponseEntity<>(reviewDetail, HttpStatus.OK);
-    }
-
-    /**
-     * 좋아요한 리뷰 보기
-     */
-    @GetMapping("/likeReview")
-    public ResponseEntity<Slice<LikeReviewDto>> getLikeReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber){
-        Long memberId = customUserDetails.getId();
-        Pageable pageable = PageRequest.of(pageNumber, 5);
-        Slice<LikeReviewDto> likeReviewDto = reviewService.getMyLikeReview(memberId, pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(likeReviewDto);
-    }
-
-    /**
-     * 내가 작성한 리뷰
-     */
-    @GetMapping("/myReview")
-    public ResponseEntity<Slice<MyReviewDto>> getMyReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber) {
-        memberService.validationMemberId(customUserDetails.getId());
-        Pageable pageable = PageRequest.of(pageNumber, 5);
-
-        Slice<MyReviewDto> myReview = reviewService.getMyReview(customUserDetails.getId(), pageable);
-
-        return new ResponseEntity<>(myReview, HttpStatus.OK);
     }
 
     /**

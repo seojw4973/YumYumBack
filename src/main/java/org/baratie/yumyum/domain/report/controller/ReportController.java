@@ -1,6 +1,5 @@
 package org.baratie.yumyum.domain.report.controller;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.report.dto.CreateReportDto;
