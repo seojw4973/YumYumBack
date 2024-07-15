@@ -3,17 +3,14 @@ package org.baratie.yumyum.domain.review.repository.impl;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-
-import org.baratie.yumyum.domain.review.dto.*;
+import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
+import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
+import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
 import org.baratie.yumyum.domain.review.repository.ReviewCustomRepository;
-import org.baratie.yumyum.global.utils.file.dto.ImageDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -21,7 +18,7 @@ import org.springframework.data.domain.SliceImpl;
 import java.util.List;
 
 import static org.baratie.yumyum.domain.likes.domain.QLikes.likes;
-import static org.baratie.yumyum.domain.member.domain.QMember.*;
+import static org.baratie.yumyum.domain.member.domain.QMember.member;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.store;
 import static org.baratie.yumyum.global.utils.file.domain.QImage.image;
@@ -31,6 +28,12 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 
     private final JPAQueryFactory query;
 
+    /**
+     * 리뷰 상세 조회
+     * @param memberId 좋아요 상태 구분하기 위해 리뷰
+     * @param reviewId 상세 조회한 리뷰 id
+     * @return
+     */
     @Override
     public ReviewDetailDto findReviewDetail(Long memberId, Long reviewId) {
 
@@ -60,12 +63,14 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .fetchOne();
     }
 
+    /**
+     * 리뷰 전체 리스트 조회
+     * @param pageable
+     * @return 최신 작성순으로 리뷰 전체 리스트 리턴
+     */
     @Override
     public Slice<ReviewAllDto> findAllReviews(Pageable pageable) {
 
-        /**
-         * 무한스크롤로 리뷰 전체리스트 조회
-         */
         List<ReviewAllDto> results = query
                 .select(Projections.constructor(ReviewAllDto.class,
                         review.id.as("reviewId"),
@@ -104,6 +109,12 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         return new SliceImpl<>(results, pageable, hasNext);
     }
 
+    /**
+     * 맛집에 작성된 리뷰 조회
+     * @param storeId 상세페이지 조회한 가게 id 값
+     * @param pageable
+     * @return 맛집에 작성된 리뷰 리스트 리턴
+     */
     @Override
     public Slice<StoreReviewDto> findReviewByStoreId(Long storeId, Pageable pageable) {
 
@@ -132,93 +143,15 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     }
 
     /**
-     * 내가 작성한 리뷰
-     * @param memberId 로그인한 사용자 ID
-     * @return 로그인한 사용자가 작성한 리뷰
+     * 리뷰 총 갯수
+     * @param memberId 조회할 멤버
+     * @return 멤버가 작성한 리뷰 갯수
      */
-    @Override
-    public Slice<MyReviewDto> getMyReview(Long memberId, Pageable pageable) {
-        List<MyReviewDto> results = query.select(Projections.constructor(MyReviewDto.class,
-                        review.id,
-                        store.name,
-                        store.address,
-                        member.nickname,
-                        review.grade,
-                        getReviewTotalCount(memberId),
-                        getAvgGrade(memberId),
-                        review.content,
-                        likes.isLikes
-                ))
+    private JPQLQuery<Long> getReviewTotalCount(Long memberId) {
+        return JPAExpressions
+                .select(review.count())
                 .from(review)
-                .leftJoin(review.member, member)
-                .leftJoin(review.store, store)
-                .leftJoin(likes).on(likes.review.id.eq(review.id))
-                .orderBy(review.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
-                .where(memberIdEq(memberId))
-                .fetch();
-
-        boolean hasNext = results.size() > pageable.getPageSize();
-        if (hasNext) {
-            results.remove(pageable.getPageSize());
-        }
-
-        return new SliceImpl<>(results, pageable, hasNext);
-    }
-
-    @Override
-    public Slice<LikeReviewDto> findLikeReviewsByMemberId(Long memberId, Pageable pageable) {
-
-        List<LikeReviewDto> results = query.select(Projections.constructor(LikeReviewDto.class,
-                        review.id,
-                        store.name,
-                        store.address,
-                        member.nickname,
-                        review.grade,
-                        getReviewTotalCount(),
-                        getAvgGrade(),
-                        review.content,
-                        likes.isLikes
-                ))
-                .from(review)
-                .leftJoin(review.member, member)
-                .leftJoin(review.store, store)
-                .leftJoin(likes).on(likes.review.id.eq(review.id))
-                .where(likes.member.id.eq(memberId).and(likes.isLikes.eq(true)))
-                .orderBy(review.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
-                .fetch();
-
-        for(LikeReviewDto dto : results){
-            List<String> images = query.select(
-                            image.imageUrl)
-                    .from(image)
-                    .where(image.review.id.eq(dto.getReviewId()))
-                    .fetch();
-            dto.addImageList(images);
-        }
-
-        boolean hasNext = results.size() > pageable.getPageSize();
-        if (hasNext) {
-            results.remove(pageable.getPageSize());
-        }
-
-        return new SliceImpl<>(results, pageable, hasNext);
-    }
-
-    /**
-     * 멤버 ID 조회
-     * @param reviewId
-     * @return 리뷰 작성자의 ID값
-     */
-    @Override
-    public Long findMemberIdByReviewId(Long reviewId) {
-        return query.select(review.member.id)
-                .from(review)
-                .where(reviewIdEq(reviewId))
-                .fetchOne();
+                .where(memberIdEq(memberId));
     }
 
     /**
@@ -230,18 +163,6 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .select(review.count())
                 .from(review)
                 .where(review.member.id.eq(member.id));
-    }
-
-    /**
-     * 리뷰 총 갯수
-     * @param memberId 조회할 멤버
-     * @return 멤버가 작성한 리뷰 갯수
-     */
-    private JPQLQuery<Long> getReviewTotalCount(Long memberId) {
-        return JPAExpressions
-                .select(review.count())
-                .from(review)
-                .where(memberIdEq(memberId));
     }
 
     /**
@@ -278,9 +199,4 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     public BooleanExpression storeIdEq(Long storeId) {
         return review.store.id.eq(storeId);
     }
-  
-    public BooleanExpression likesMemberIdEq(Long memberId) { 
-      return likes.member.id.eq(memberId); 
-   }
-
 }
