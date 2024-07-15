@@ -18,4 +18,13 @@ public class UpdateMemberDto {
     @NotBlank
     private String checkPassword;
 
+    public UpdateMemberDto tranceDto(UpdateMemberDto updateMemberDto, String url) {
+        this.profileImage = url;
+        this.nickname = updateMemberDto.getNickname();
+        this.phoneNumber = updateMemberDto.getPhoneNumber();
+        this.password = updateMemberDto.getPassword();
+        this.checkPassword = updateMemberDto.getCheckPassword();
+        return this;
+    }
+
 }

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,10 +35,11 @@ public class MemberController {
      */
     @PatchMapping
     public ResponseEntity<Void> updateMember(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                             @Valid @RequestPart UpdateMemberDto updateMemberDto) {
+                                             @Valid @RequestPart UpdateMemberDto updateMemberDto,
+                                             @RequestPart(required = false) MultipartFile file) throws Exception {
         Member member = memberService.getMember(customUserDetails.getId());
 
-        memberService.updateMember(member, updateMemberDto);
+        memberService.updateMember(member, updateMemberDto, file);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }

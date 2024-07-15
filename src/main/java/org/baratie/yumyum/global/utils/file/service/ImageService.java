@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.global.exception.ErrorCode;
 import org.baratie.yumyum.global.utils.file.domain.Image;
 import org.baratie.yumyum.global.utils.file.domain.ImageType;
@@ -35,6 +36,10 @@ public class ImageService{
     private String endpoint;
 
     public String profileImageUpload(MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+
         String uuid = UUID.randomUUID().toString();
         String fileName = uuid + "_" + file.getOriginalFilename();
 
@@ -128,10 +133,17 @@ public class ImageService{
 
         for(Image image : imageList){
             String imageUrl = image.getImageUrl();
-            String objectKey = imageUrl.substring(bucketName.length() + type.name().toLowerCase().length() + 2);
+            String objectKey = imageUrl.substring(endpoint.length() + bucketName.length() + type.name().toLowerCase().length() + 3);
 
             s3.deleteObject(bucketName + "/" + type.name().toLowerCase(), objectKey);
         }
+    }
+
+    public void targetFileDelete(Member member){
+        String profileUrl = member.getImageUrl();
+        String objectKey = profileUrl.substring( endpoint.length() + bucketName.length() + 10);
+
+        s3.deleteObject(bucketName + "/profile", objectKey);
     }
 
 
