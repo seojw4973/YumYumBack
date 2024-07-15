@@ -2,6 +2,7 @@ package org.baratie.yumyum.domain.store.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.store.dto.MainStoreDto;
+import org.baratie.yumyum.domain.store.service.RankingService;
 import org.baratie.yumyum.domain.store.service.StoreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +18,14 @@ import java.util.List;
 @RequestMapping("/top10")
 public class RankingController {
 
-    private final StoreService storeService;
+    private final RankingService rankingService;
 
     /**
      * 평점 기준 top10 맛집
      */
     @GetMapping
     public ResponseEntity<List<MainStoreDto>> findTop10(@RequestParam String local) {
-        List<MainStoreDto> Top10List = storeService.getTop10(local);
+        List<MainStoreDto> Top10List = rankingService.getTop10(local);
 
         return ResponseEntity.status(HttpStatus.OK).body(Top10List);
     }
@@ -34,7 +35,7 @@ public class RankingController {
      */
     @GetMapping("/month")
     public ResponseEntity<List<MainStoreDto>> findTop10OnMonth(@RequestParam String local) {
-        List<MainStoreDto> top10List = storeService.getTop10OnMonth(local);
+        List<MainStoreDto> top10List = rankingService.getTop10OnMonth(local);
 
         return new ResponseEntity(top10List, HttpStatus.OK);
     }
@@ -44,7 +45,7 @@ public class RankingController {
      */
     @GetMapping("/favorite")
     public ResponseEntity<List<MainStoreDto>> findTop10OnFavorite(@RequestParam String local) {
-        List<MainStoreDto> top10List = storeService.getTop10OnFavorite(local);
+        List<MainStoreDto> top10List = rankingService.getTop10OnFavorite(local);
 
         return new ResponseEntity<>(top10List, HttpStatus.OK);
     }
@@ -54,7 +55,7 @@ public class RankingController {
      */
     @GetMapping("/views")
     public ResponseEntity<List<MainStoreDto>> findTop10OnViews(@RequestParam String local) {
-        List<MainStoreDto> top10List = storeService.getTop10OnViews(local);
+        List<MainStoreDto> top10List = rankingService.getTop10OnViews(local);
 
         return new ResponseEntity(top10List, HttpStatus.OK);
     }
