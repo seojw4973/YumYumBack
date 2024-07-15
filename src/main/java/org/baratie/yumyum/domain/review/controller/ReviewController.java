@@ -4,11 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.review.dto.*;
 import org.baratie.yumyum.domain.review.service.ReviewService;
-import org.baratie.yumyum.domain.store.domain.Store;
-import org.baratie.yumyum.domain.store.service.StoreService;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,7 +18,6 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
-    private final StoreService storeService;
 
     /**
      * 리뷰 작성
