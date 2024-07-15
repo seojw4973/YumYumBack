@@ -66,9 +66,6 @@ public class StoreService {
             imageService.fileUploadMultiple(ImageType.STORE, store, files);
         }
 
-//        List<Image> imageList = store.getImageList();
-//        imageList.forEach(image -> image.addStore(store));
-
         storeRepository.save(store);
     }
 
@@ -120,48 +117,11 @@ public class StoreService {
         hashtagList.forEach(hashtag -> hashtag.addStore(updatedStore));
         hashtagRepository.saveAll(hashtagList);
 
-        if(files == null){
+        if (files == null) {
             imageService.targetFilesDelete(ImageType.STORE, storeId);
-        }else{
+        } else {
             imageService.fileUploadMultiple(ImageType.STORE, storeId, files);
         }
-    }
-
-    /**
-     * 즐겨찾기 기준 top 10
-     * @param local 지역
-     * @return 지역에 따른 즐겨찾기 기준 top10
-     */
-    public List<MainStoreDto> getTop10OnFavorite(String local) {
-        return storeRepository.findTop10OnFavorite(local);
-    }
-
-    /**
-     * 조회수 기준 top 10
-     * @param local 지역
-     * @return 조회수에 따른 즐겨찾기 기준 top10
-     */
-    public List<MainStoreDto> getTop10OnViews(String local) {
-        return storeRepository.findTop10OnViews(local);
-    }
-
-    public List<MainStoreDto> getTop10OnMonth(String local) {
-
-        LocalDateTime now = LocalDateTime.now();
-
-        int year = now.getYear();
-        int month = now.getMonthValue();
-
-        return storeRepository.findTop10OnMonth(local, year, month);
-    }
-
-    /**
-     * 지역에 따른 Top10 가게 조회
-     * @param local
-     * @return 해당 지역에 조건에 맞는 Top10 가게 리턴
-     */
-    public List<MainStoreDto> getTop10(String local) {
-        return storeRepository.findTop10(local);
     }
 
     /**
@@ -175,27 +135,6 @@ public class StoreService {
     }
 
     /**
-     * 검색 시 맛집 리스트 조회
-     * @param memberId 로그인한 유저 id값
-     * @param keyword 검색어
-     * @return 검색 조건에 맞는 맛집 리스트 30개 제한으로 리턴
-     */
-    public List<SearchStoreDto> getSearchStores(Long memberId, String keyword) {
-        return storeRepository.findSearchStore(memberId, keyword);
-    }
-
-    /**
-     * 기본 위치 기준 근처 맛집 조회
-     * @param lng 경도
-     * @param lat 위도
-     * @return 전달받은 위치 반경 1km 내의 맛집 리스트 리턴
-     */
-    public List<SearchStoreDto> getNearByStore(Double lng, Double lat) {
-        return storeRepository.findNearByStore(lng, lat);
-    }
-
-
-    /**
      * 가게가 존재하는지와 폐업한 가게인지 확인
      * @param storeId 가게 pk
      * @return Store
@@ -206,22 +145,15 @@ public class StoreService {
         );
     }
 
+    /**
+     * 가게 이름 중복 검사
+     * @param storeName 검증할 가게 이름
+     */
     private void existStoreName(String storeName){
        boolean existStore = storeRepository.existsByName(storeName);
        if(existStore){
         throw new StoreExistException(ErrorCode.EXIST_STORE_NAME);
        }
-    }
-
-    /**
-     * 주소값을 위도, 경도 좌표값으로 변환
-     * @param address 주소값
-     * @return latlng 해당 주소의 위도, 경도 좌표
-     */
-    public BigDecimal[] addressToLagLng(String address) throws IOException, InterruptedException, ApiException {
-        System.out.println("address = " + address);
-        BigDecimal[] latlng =  geoUtils.findGeoPoint(address);
-        return latlng;
     }
 
 }
