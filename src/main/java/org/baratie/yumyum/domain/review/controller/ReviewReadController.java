@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
+import org.baratie.yumyum.domain.review.service.ReviewReadService;
 import org.baratie.yumyum.domain.review.service.ReviewService;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.service.StoreService;
@@ -21,6 +22,7 @@ public class ReviewReadController {
 
     private final StoreService storeService;
     private final ReviewService reviewService;
+    private final ReviewReadService reviewReadService;
 
     /**
      * 리뷰 전체 조회
@@ -29,7 +31,7 @@ public class ReviewReadController {
     public Slice<ReviewAllDto> getAllReview(@RequestParam("pageNumber") int pageNumber){
         Pageable pageable = PageRequest.of(pageNumber, 5);
 
-        return reviewService.getAllReview(pageable);
+        return reviewReadService.getAllReview(pageable);
     }
 
     /**
@@ -37,7 +39,9 @@ public class ReviewReadController {
      */
     @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewDetailDto> getReviewDetail(@PathVariable Long reviewId) {
-        ReviewDetailDto reviewDetail = reviewService.getReviewDetail(reviewId);
+        reviewService.validationReviewId(reviewId);
+
+        ReviewDetailDto reviewDetail = reviewReadService.getReviewDetail(reviewId);
 
         return new ResponseEntity<>(reviewDetail, HttpStatus.OK);
     }
@@ -51,7 +55,7 @@ public class ReviewReadController {
 
         Pageable pageable = PageRequest.of(pageNumber, 5);
 
-        Slice<StoreReviewDto> storeReviewList = reviewService.getStoreReviewList(store.getId(), pageable);
+        Slice<StoreReviewDto> storeReviewList = reviewReadService.getStoreReviewList(store.getId(), pageable);
 
         return new ResponseEntity<>(storeReviewList, HttpStatus.ACCEPTED);
     }

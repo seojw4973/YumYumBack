@@ -1,7 +1,6 @@
 package org.baratie.yumyum.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.global.utils.file.domain.Image;
 import org.baratie.yumyum.global.utils.file.domain.ImageType;
 import org.baratie.yumyum.global.utils.file.repository.ImageRepository;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
@@ -54,35 +53,6 @@ public class ReviewService {
             imageService.fileUploadMultiple(ImageType.REVIEW, saveReview, files);
         }
 
-//        List<Image> imageList = review.getImageList();
-//        imageList.forEach(image -> image.addStore(store));
-//        imageList.forEach(image -> image.addReview(saveReview));
-//        imageRepository.saveAll(imageList);
-    }
-
-    /**
-     * 가게 상세페이지 리뷰 조회
-     * @param storeId
-     * @param pageable
-     * @return 가게에 달린 리뷰
-     */
-    public Slice<StoreReviewDto> getStoreReviewList(Long storeId, Pageable pageable) {
-        return reviewRepository.findReviewByStoreId(storeId, pageable);
-    }
-
-    /**
-     * 리뷰 상세조회
-     * @param reviewId
-     * @return 리뷰 상세정보 리턴
-     */
-    public ReviewDetailDto getReviewDetail(Long reviewId) {
-        validationReviewId(reviewId);
-
-        Long memberId = reviewRepository.findMemberIdByReviewId(reviewId);
-        ReviewDetailDto reviewDetail = reviewRepository.findReviewDetail(memberId, reviewId);
-        List<String> images = imageRepository.findByReviewId(reviewId);
-
-        return reviewDetail.tranceDto(reviewDetail, images);
     }
 
     /**
@@ -135,15 +105,6 @@ public class ReviewService {
         imageService.targetFilesDelete(ImageType.REVIEW, reviewId);
 
         reviewRepository.deleteById(reviewId);
-    }
-
-    /**
-     * 리뷰 전체 조회 (이미지 제외)
-     * @param pageable
-     * @return
-     */
-    public Slice<ReviewAllDto> getAllReview(Pageable pageable){
-        return reviewRepository.findAllReviews(pageable);
     }
 
     /**
