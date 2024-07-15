@@ -1,12 +1,11 @@
 package org.baratie.yumyum.domain.member.repository;
 
+import org.baratie.yumyum.domain.member.dto.MemberBasicDto;
 import org.baratie.yumyum.domain.member.dto.SimpleMemberDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 public interface MemberCustomRepository {
@@ -17,4 +16,6 @@ public interface MemberCustomRepository {
 
 
     Member findByIdNotDeleted(Long memberId);
+
+    MemberBasicDto findMemberBasisInfo(Long memberId);
 }
