@@ -26,40 +26,6 @@ public class ReviewController {
     private final StoreService storeService;
 
     /**
-     * 리뷰 전체 조회
-     */
-    @GetMapping
-    public Slice<ReviewAllDto> getAllReview(@RequestParam("pageNumber") int pageNumber){
-        Pageable pageable = PageRequest.of(pageNumber, 5);
-
-        return reviewService.getAllReview(pageable);
-    }
-
-    /**
-     * 리뷰 상세 조회
-     */
-    @GetMapping("/{reviewId}")
-    public ResponseEntity<ReviewDetailDto> getReviewDetail(@PathVariable Long reviewId) {
-        ReviewDetailDto reviewDetail = reviewService.getReviewDetail(reviewId);
-
-        return new ResponseEntity<>(reviewDetail, HttpStatus.OK);
-    }
-
-    /**
-     * 가게에 작성된 리뷰 리스트
-     */
-    @GetMapping("/store/{storeId}")
-    public ResponseEntity<Slice<StoreReviewDto>> getStoreReviewList(@PathVariable Long storeId, @RequestParam int pageNumber) {
-        Store store = storeService.validationStoreId(storeId);
-
-        Pageable pageable = PageRequest.of(pageNumber, 5);
-
-        Slice<StoreReviewDto> storeReviewList = reviewService.getStoreReviewList(store.getId(), pageable);
-
-        return new ResponseEntity<>(storeReviewList, HttpStatus.ACCEPTED);
-    }
-
-    /**
      * 리뷰 작성
      */
     @PostMapping
