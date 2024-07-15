@@ -45,7 +45,7 @@ public class ReplyController {
      * @param pageNumber 페이지 번호
      * @return 로그인한 유저 id의 댓글 리턴
      */
-    @GetMapping("/myreply")
+    @GetMapping("/myReply")
     public ResponseEntity<Slice<MyReplyDto>> getMyReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber) {
         Long memberId = customUserDetails.getId();
         Pageable pageable = PageRequest.of(pageNumber, 5);
