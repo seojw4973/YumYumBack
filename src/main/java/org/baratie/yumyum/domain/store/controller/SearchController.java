@@ -7,15 +7,13 @@ import org.baratie.yumyum.domain.store.service.SearchService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/search")
 public class SearchController {
 
     private final SearchService searchService;
@@ -32,7 +30,7 @@ public class SearchController {
     /**
      * 검색한 가게 리스트
      */
-    @GetMapping("/search/{filter}")
+    @GetMapping("/{filter}")
     public ResponseEntity<List<SearchStoreDto>> searchStore(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable String filter) {
         List<SearchStoreDto> searchStoreDto = searchService.getSearchStores(customUserDetails.getId(), filter);
         return ResponseEntity.status(HttpStatus.OK).body(searchStoreDto);
