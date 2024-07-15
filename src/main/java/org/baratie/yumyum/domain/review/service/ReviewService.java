@@ -30,7 +30,6 @@ import java.util.List;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final ImageRepository imageRepository;
     private final MemberService memberService;
     private final StoreService storeService;
     private final ImageService imageService;
