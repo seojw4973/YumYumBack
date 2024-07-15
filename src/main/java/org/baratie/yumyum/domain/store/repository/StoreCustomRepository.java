@@ -14,19 +14,9 @@ public interface StoreCustomRepository {
 
     Optional<Store> existAndDeletedStore(Long storeId);
 
-    List<MainStoreDto> findTop10(String local);
-
-    List<MainStoreDto> findTop10OnViews(String local);
-
-    List<MainStoreDto> findTop10OnFavorite(String local);
-
     StoreDetailDto findStoreDetail(Long memberId, Long storeId);
 
     Slice<MyFavoriteStoreDto> findFavoriteStore(Long memberId, Pageable pageable);
 
-    List<MainStoreDto> findTop10OnMonth(String local, int year, int month);
 
-    List<SearchStoreDto> findSearchStore(Long memberId, String keyword);
-
-    List<SearchStoreDto> findNearByStore(Double lng, Double lat);
 }
