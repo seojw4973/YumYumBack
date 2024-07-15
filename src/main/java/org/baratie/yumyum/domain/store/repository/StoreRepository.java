@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface StoreRepository extends JpaRepository<Store, Long>, StoreCustomRepository{
+public interface StoreRepository extends JpaRepository<Store, Long>, StoreCustomRepository, SearchCustomRepository, RankingCustomRepository{
 
     boolean existsByName(String storeName);
 }
