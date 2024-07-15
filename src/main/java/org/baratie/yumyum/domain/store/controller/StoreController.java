@@ -25,53 +25,6 @@ public class StoreController {
     private final StoreService storeService;
 
     /**
-     * 평점 기준 top10 맛집
-     */
-    @GetMapping("/top10")
-    public ResponseEntity<List<MainStoreDto>> findTop10(@RequestParam String local) {
-        List<MainStoreDto> Top10List = storeService.getTop10(local);
-
-        return ResponseEntity.status(HttpStatus.OK).body(Top10List);
-    }
-
-    /**
-     * 이달의 맛집
-     */
-    @GetMapping("/top10/month")
-    public ResponseEntity<List<MainStoreDto>> findTop10OnMonth(@RequestParam String local) {
-        List<MainStoreDto> top10List = storeService.getTop10OnMonth(local);
-
-        return new ResponseEntity(top10List, HttpStatus.OK);
-    }
-
-    /**
-     * 즐겨찾기 기준 top10 맛집
-     */
-    @GetMapping("/top10/favorite")
-    public ResponseEntity<List<MainStoreDto>> findTop10OnFavorite(@RequestParam String local) {
-        List<MainStoreDto> top10List = storeService.getTop10OnFavorite(local);
-
-        return new ResponseEntity<>(top10List, HttpStatus.OK);
-    }
-
-    /**
-     * 조회수 기준 top10 맛집
-     */
-    @GetMapping("/top10/views")
-    public ResponseEntity<List<MainStoreDto>> findTop10OnViews(@RequestParam String local) {
-        List<MainStoreDto> top10List = storeService.getTop10OnViews(local);
-
-        return new ResponseEntity(top10List, HttpStatus.OK);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<SearchStoreDto>> findNearbyStore(@RequestParam Double lng, @RequestParam Double lat) {
-        List<SearchStoreDto> nearByStoreList = storeService.getNearByStore(lng, lat);
-        return ResponseEntity.status(HttpStatus.OK).body(nearByStoreList);
-    }
-
-
-    /**
      * 가게 상세 정보
      */
     @GetMapping("/{storeId}")
@@ -91,15 +44,6 @@ public class StoreController {
         Slice<MyFavoriteStoreDto> myFavoriteStore = storeService.getMyFavoriteStore(customUserDetails.getId(), pageable);
 
         return new ResponseEntity<>(myFavoriteStore, HttpStatus.ACCEPTED);
-    }
-
-    /**
-     * 검색한 가게 리스트
-     */
-    @GetMapping("/search/{filter}")
-    public ResponseEntity<List<SearchStoreDto>> searchStore(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable String filter) {
-        List<SearchStoreDto> searchStoreDtos = storeService.getSearchStores(customUserDetails.getId(), filter);
-        return ResponseEntity.status(HttpStatus.OK).body(searchStoreDtos);
     }
 
     /**
