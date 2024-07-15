@@ -1,4 +1,4 @@
-package org.baratie.yumyum.domain.member.service;
+package org.baratie.yumyum.domain.member.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
