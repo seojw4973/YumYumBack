@@ -19,7 +19,6 @@ public class MemberController {
 
     /**
      * 내 정보 보기
-     *
      * @param customUserDetails 로그인한 유저 정보
      * @return 로그인한 유저의 상세 정보
      */

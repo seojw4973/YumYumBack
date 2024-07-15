@@ -20,18 +20,27 @@ public class ReportController {
 
     private final ReportService reportService;
 
+    /**
+     * 신고된 리뷰 조회
+     */
     @GetMapping("/review")
     public ResponseEntity<Page<ReportPageResponseDto>> findReviewReport(@PageableDefault(size=5) Pageable pageable) {
         Page<ReportPageResponseDto> reportReviewList = reportService.getReviewReport(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(reportReviewList);
     }
 
+    /**
+     * 신고된 댓글 조회
+     */
     @GetMapping("/reply")
     public ResponseEntity<Page<ReportPageResponseDto>> findReplyReport(@PageableDefault(size=5) Pageable pageable) {
         Page<ReportPageResponseDto> reportReplyList = reportService.getReplyReport(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(reportReplyList);
     }
 
+    /**
+     * 신고하기
+     */
     @PostMapping
     public ResponseEntity<Void> createReport(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody CreateReportDto createReportDto) {
         Long memberId = customUserDetails.getId();

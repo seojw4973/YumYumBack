@@ -28,6 +28,9 @@ public class ReplyController {
     private final ReviewService reviewService;
     private final MemberService memberService;
 
+    /**
+     * 리뷰에 달린 댓글 조회
+     */
     @GetMapping("/{reviewId}")
     public ResponseEntity<Slice<ReplyResponseDto>> getReplyOnReview(@PathVariable Long reviewId, @RequestParam int pageNumber) {
         reviewService.validationReviewId(reviewId);
@@ -38,6 +41,9 @@ public class ReplyController {
         return new ResponseEntity<>(replyOnReview, HttpStatus.OK);
     }
 
+    /**
+     * 댓글 달기
+     */
     @PostMapping
     public ResponseEntity<Void> createReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody CreateReplyDto request){
         Member member = memberService.getMember(customUserDetails.getId());
@@ -47,12 +53,18 @@ public class ReplyController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * 댓글 수정
+     */
     @PatchMapping("/{replyId}")
     public ResponseEntity<Void> updateReply(@PathVariable Long replyId, @RequestBody UpdateRelyDto request){
         replyService.updateReply(replyId, request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    /**
+     * 댓글 삭제
+     */
     @DeleteMapping("/{replyId}")
     public ResponseEntity<Void> deleteReply(@PathVariable Long replyId){
         replyService.deleteReply(replyId);

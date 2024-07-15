@@ -20,7 +20,6 @@ public class AuthController {
 
     /**
      * 회원가입
-     *
      * @param signUpDto 회원가입 정보
      * @return response 회원가입 완료 여부
      */
@@ -33,7 +32,6 @@ public class AuthController {
 
     /**
      * 로그인
-     *
      * @param loginDto 이메일과 비밀먼호
      * @return LoginResponseDto 로그인한 유저의 정보 및 jwt 리턴
      */
