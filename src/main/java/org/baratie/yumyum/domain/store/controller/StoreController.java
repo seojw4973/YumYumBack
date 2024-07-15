@@ -46,7 +46,7 @@ public class StoreController {
      */
     @PatchMapping("/{storeId}")
     public ResponseEntity<Void> updateStore(@PathVariable Long storeId,
-                                            @RequestBody UpdateStoreDto request,
+                                            @RequestPart UpdateStoreDto request,
                                             @RequestPart List<MultipartFile> files) {
         storeService.updateStore(storeId, request, files);
         return ResponseEntity.status(HttpStatus.OK).build();

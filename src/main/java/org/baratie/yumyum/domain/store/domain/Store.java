@@ -92,7 +92,6 @@ public class Store extends BaseTimeEntity {
 
         updateMenuList(request.getMenuList());
         updateHashtagList(request.getHashtagList());
-        updateImageList(request.getImageList());
 
         return this;
     }
@@ -120,15 +119,15 @@ public class Store extends BaseTimeEntity {
         }
     }
 
-    private void updateImageList(List<ImageDto> imageDtos) {
-        this.imageList.clear();
-        for (ImageDto imageDto : imageDtos) {
-            Image image = Image.builder()
-                    .imageUrl(imageDto.getImageUrl())
-                    .imageType(ImageType.STORE)
-                    .store(this)
-                    .build();
-            this.imageList.add(image);
-        }
-    }
+//    private void updateImageList(List<ImageDto> imageDtos) {
+//        this.imageList.clear();
+//        for (ImageDto imageDto : imageDtos) {
+//            Image image = Image.builder()
+//                    .imageUrl(imageDto.getImageUrl())
+//                    .imageType(ImageType.STORE)
+//                    .store(this)
+//                    .build();
+//            this.imageList.add(image);
+//        }
+//    }
 }

@@ -112,7 +112,8 @@ public class StoreService {
         if (files == null) {
             imageService.targetFilesDelete(ImageType.STORE, storeId);
         } else {
-            imageService.fileUploadMultiple(ImageType.STORE, storeId, files);
+            imageService.targetFilesDelete(ImageType.STORE, storeId);
+            imageService.fileUploadMultiple(ImageType.STORE, updatedStore, files);
         }
     }
 
