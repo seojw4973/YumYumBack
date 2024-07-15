@@ -5,6 +5,7 @@ import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
 import org.baratie.yumyum.domain.member.dto.UpdateMemberDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Getter
@@ -47,11 +48,8 @@ public class Member {
     /**
      * 회원 정보 수정
      */
-    public Member updateInfo(UpdateMemberDto updateMemberDto) {
-
-        if (updateMemberDto.getProfileImage() != null && !updateMemberDto.getProfileImage().isBlank()) {
-            this.imageUrl = updateMemberDto.getProfileImage();
-        }
+    public Member updateInfo(UpdateMemberDto updateMemberDto, String url) {
+        this.imageUrl = url;
 
         if (updateMemberDto.getNickname() != null && !updateMemberDto.getNickname().isBlank()) {
             this.nickname = updateMemberDto.getNickname();

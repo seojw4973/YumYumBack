@@ -8,10 +8,12 @@ import org.baratie.yumyum.domain.member.exception.NicknameAlreadyUsing;
 import org.baratie.yumyum.domain.member.exception.PasswordNotEqualException;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.baratie.yumyum.global.utils.file.service.ImageService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 
 @Service
@@ -20,7 +22,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final ImageService imageService;
 
 
     /**
@@ -38,12 +40,21 @@ public class MemberService {
      * @param member 수정할 멤버
      * @param updateMemberDto 수정 요청한 정보
      */
-    public void updateMember(Member member, UpdateMemberDto updateMemberDto) {
-
+    public void updateMember(Member member, UpdateMemberDto updateMemberDto, MultipartFile file) throws IOException {
         nicknameDuplicateCheck(updateMemberDto.getNickname());
         passwordCheck(updateMemberDto);
+        String profileUrl;
+        if(file != null && !file.isEmpty()){
+            if(member.getImageUrl() != null) {
+                imageService.targetFileDelete(member);
+            }
+            profileUrl = imageService.profileImageUpload(file);
+        }else {
+            imageService.targetFileDelete(member);
+            profileUrl = null;
+        }
 
-        Member updateMember = member.updateInfo(updateMemberDto);
+        Member updateMember = member.updateInfo(updateMemberDto, profileUrl);
 
         memberRepository.save(updateMember);
     }

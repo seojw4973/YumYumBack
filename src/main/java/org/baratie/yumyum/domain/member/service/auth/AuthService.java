@@ -37,7 +37,10 @@ public class AuthService {
     public void register(SignUpDto signUpDto, MultipartFile file) throws IOException {
         memberService.nicknameDuplicateCheck(signUpDto.getNickName());
         String password = passwordEncoder.encode(signUpDto.getPassword());
-        String profileUrl = imageService.profileImageUpload(file);
+        String profileUrl = null;
+        if(file != null && !file.isEmpty()){
+            profileUrl = imageService.profileImageUpload(file);
+        }
         Member member = signUpDto.toEntity(password, profileUrl);
         memberRepository.save(member);
     }
