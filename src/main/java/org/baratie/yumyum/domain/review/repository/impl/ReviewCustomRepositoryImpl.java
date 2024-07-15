@@ -44,22 +44,16 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         return query.select(
                         Projections.constructor(ReviewDetailDto.class,
                                 review.id,
-                                member.id,
-                                member.imageUrl.as("profileImage"),
-                                member.nickname,
-                                ExpressionUtils.as(getReviewTotalCount(memberId), "totalReviewCount"),
-                                ExpressionUtils.as(getAvgGrade(memberId), "avgGrade"),
-                                store.name.as("storeName"),
-                                store.address,
                                 review.grade,
                                 review.content,
-                                likeStatus,
-                                review.createdAt
-                        )
-                )
+                                review.createdAt,
+                                store.name.as("storeName"),
+                                store.address,
+                                likeStatus
+                        ))
                 .from(review)
-                .leftJoin(review.member, member)
-                .where(reviewIdEq(reviewId).and(memberIdEq(memberId)))
+                .leftJoin(review.store, store)
+                .where(reviewIdEq(reviewId))
                 .fetchOne();
     }
 
