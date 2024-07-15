@@ -3,7 +3,7 @@ package org.baratie.yumyum.global.config;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.Filter.JwtAuthenticationFilter;
 import org.baratie.yumyum.domain.member.handler.OAuth2SuccessHandler;
-import org.baratie.yumyum.domain.member.service.JwtService;
+import org.baratie.yumyum.domain.member.service.auth.JwtService;
 import org.baratie.yumyum.global.exception.AuthEntryPoint;
 import org.baratie.yumyum.global.exception.JwtAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;

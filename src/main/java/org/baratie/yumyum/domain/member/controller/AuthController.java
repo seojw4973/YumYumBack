@@ -5,6 +5,7 @@ import org.baratie.yumyum.domain.member.dto.LoginDto;
 import org.baratie.yumyum.domain.member.dto.LoginResponseDto;
 import org.baratie.yumyum.domain.member.dto.SignUpDto;
 import org.baratie.yumyum.domain.member.service.MemberService;
+import org.baratie.yumyum.domain.member.service.auth.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class AuthController {
-    private final MemberService memberService;
+    private final AuthService authService;
 
     /**
      * 회원가입
@@ -26,7 +27,7 @@ public class AuthController {
     @PostMapping
     public ResponseEntity<String> registerMember(@RequestPart SignUpDto signUpDto,
                                                  @RequestPart(required = false) MultipartFile file) throws IOException {
-        memberService.register(signUpDto, file);
+        authService.register(signUpDto, file);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -37,7 +38,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginDto loginDto) {
-        LoginResponseDto loginResponseDtoDto = memberService.login(loginDto);
+        LoginResponseDto loginResponseDtoDto = authService.login(loginDto);
         return ResponseEntity.status(HttpStatus.OK).body(loginResponseDtoDto);
     }
 

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.dto.SimpleMemberDto;
+import org.baratie.yumyum.domain.member.service.AdminService;
 import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.store.dto.AdminStoreDto;
 import org.baratie.yumyum.domain.store.service.StoreService;
@@ -21,8 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 public class AdminController {
 
-    private final MemberService memberService;
-    private final StoreService storeService;
+    private final AdminService adminService;
 
     /**
      * 관리자 페이지 회원 전체 조회
@@ -32,7 +32,7 @@ public class AdminController {
         customUserDetails.getAuthorities().equals(Role.ADMIN);
 
 
-        Page<SimpleMemberDto> simpleMemberDto = memberService.getSimpleMemberInfo(pageable);
+        Page<SimpleMemberDto> simpleMemberDto = adminService.getSimpleMemberInfo(pageable);
 
         return new ResponseEntity<>(simpleMemberDto, HttpStatus.OK);
     }
@@ -43,7 +43,7 @@ public class AdminController {
     @GetMapping("/store")
     public ResponseEntity<Page<AdminStoreDto>> findAllAdmin(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        Page<AdminStoreDto> adminStoreDto = storeService.getAdminStores(pageable);
+        Page<AdminStoreDto> adminStoreDto = adminService.getAdminStores(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(adminStoreDto);
     }
 
@@ -53,7 +53,7 @@ public class AdminController {
      */
     @DeleteMapping("/{memberId}")
     public ResponseEntity<Void> deleteMember(@PathVariable Long memberId) {
-        memberService.deleteMember(memberId);
+        adminService.deleteMember(memberId);
 
         return ResponseEntity.noContent().build();
     }

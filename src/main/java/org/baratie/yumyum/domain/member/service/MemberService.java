@@ -2,24 +2,16 @@ package org.baratie.yumyum.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
-import org.baratie.yumyum.domain.member.domain.SocialType;
 import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.exception.MemberNotFoundException;
 import org.baratie.yumyum.domain.member.exception.NicknameAlreadyUsing;
 import org.baratie.yumyum.domain.member.exception.PasswordNotEqualException;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
-import org.baratie.yumyum.global.utils.file.service.ImageService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 
 @Service
@@ -28,60 +20,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final ImageService imageService;
 
-    /**
-     * 회원가입
-     * @param signUpDto
-     * @return
-     */
-    public void register(SignUpDto signUpDto, MultipartFile file) throws IOException {
-        nicknameDuplicateCheck(signUpDto.getNickName());
-        String password = passwordEncoder.encode(signUpDto.getPassword());
-        String profileUrl = imageService.profileImageUpload(file);
-        Member member = signUpDto.toEntity(password, profileUrl);
-        memberRepository.save(member);
-    }
 
-    /**
-     * 로그인
-     * @param loginDto
-     * @return
-     */
-    public LoginResponseDto login(LoginDto loginDto){
-        try {
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
-
-            Authentication auth = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-            Member member = getMemberByEmail(loginDto.getEmail());
-
-            if(member.getSocialType() == SocialType.YUMYUM) {
-                Long memberId = member.getId();
-                String nickname = member.getNickname();
-                String imageUrl = member.getImageUrl();
-                String phoneNumber = member.getPhoneNumber();
-
-                String atk = jwtService.createToken(auth);
-                String rtk = jwtService.createRtk(auth);
-
-                return new LoginResponseDto(memberId, nickname, imageUrl, phoneNumber, atk, rtk);
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // 예외 발생 시 스택 트레이스를 출력
-            throw new RuntimeException("로그인 실패", e); // 사용자 정의 예외 메시지와 함께 예외를 다시 던짐
-        }
-        return null;
-    }
-
-    /**
-     * 관리자페이지 회원 조회
-     */
-    public Page<SimpleMemberDto> getSimpleMemberInfo(Pageable pageable) {
-        return memberRepository.getSimpleMemberInfo(pageable);
-    }
 
     /**
      * 내 정보 보기
@@ -112,7 +52,7 @@ public class MemberService {
      * 닉네임 중복 체크
      * @param nickname 변경할 닉네임
      */
-    private void nicknameDuplicateCheck(String nickname) {
+    public void nicknameDuplicateCheck(String nickname) {
         if (memberRepository.existsByNickname(nickname)) {
             throw new NicknameAlreadyUsing(ErrorCode.EXIST_MEMBER_NICKNAME);
         }
@@ -149,13 +89,6 @@ public class MemberService {
         return memberRepository.findByEmail(email).orElseThrow(
                 () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND)
         );
-    }
-
-    public void deleteMember(Long memberId) {
-        Member member = getMember(memberId);
-        Member deletedMember = member.deleteMember(memberId);
-
-        memberRepository.save(deletedMember);
     }
 
     /**
