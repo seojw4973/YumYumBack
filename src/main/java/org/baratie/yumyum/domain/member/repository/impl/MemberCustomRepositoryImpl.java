@@ -53,6 +53,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     @Override
     public Page<SimpleMemberDto> getSimpleMemberInfo(Pageable pageable) {
         List<SimpleMemberDto> results = query.select(Projections.constructor(SimpleMemberDto.class,
+                        member.id,
                         member.nickname,
                         member.email,
                         member.phoneNumber,
