@@ -26,8 +26,6 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
 
     private final JPAQueryFactory query;
 
-
-
     /**
      * 내가 작성한 리뷰
      * @param memberId 로그인한 사용자 ID
@@ -55,6 +53,14 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
                 .limit(pageable.getPageSize() + 1)
                 .where(memberIdEq(memberId))
                 .fetch();
+
+        for(MyReviewDto dto : results) {
+            List<String> images = query.select(image.imageUrl)
+                    .from(image)
+                    .where(image.review.id.eq(dto.getReviewId()))
+                    .fetch();
+            dto.addImageList(images);
+        }
 
         boolean hasNext = results.size() > pageable.getPageSize();
         if (hasNext) {
