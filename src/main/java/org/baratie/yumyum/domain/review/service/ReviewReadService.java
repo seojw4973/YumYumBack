@@ -8,6 +8,7 @@ import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
 import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.global.utils.file.repository.ImageRepository;
+import org.baratie.yumyum.global.utils.pageDto.CustomSliceDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -29,8 +30,10 @@ public class ReviewReadService {
      * @param pageable
      * @return
      */
-    public Slice<ReviewAllDto> getAllReview(Pageable pageable){
-        return reviewRepository.findAllReviews(pageable);
+    public CustomSliceDto getAllReview(Pageable pageable){
+        Slice<ReviewAllDto> allReviews = reviewRepository.findAllReviews(pageable);
+
+        return new CustomSliceDto(allReviews);
     }
 
     /**
@@ -39,8 +42,10 @@ public class ReviewReadService {
      * @param pageable
      * @return 가게에 달린 리뷰
      */
-    public Slice<StoreReviewDto> getStoreReviewList(Long storeId, Pageable pageable) {
-        return reviewRepository.findReviewByStoreId(storeId, pageable);
+    public CustomSliceDto getStoreReviewList(Long storeId, Pageable pageable) {
+        Slice<StoreReviewDto> reviewOnStore = reviewRepository.findReviewByStoreId(storeId, pageable);
+
+        return new CustomSliceDto(reviewOnStore);
     }
 
     /**

@@ -14,12 +14,10 @@ import org.baratie.yumyum.domain.reply.repository.ReplyRepository;
 import org.baratie.yumyum.domain.review.domain.Review;
 import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
+import org.baratie.yumyum.global.utils.pageDto.CustomSliceDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,8 +46,9 @@ public class ReplyService {
      * @param pageable
      * @return 리뷰에 달린 댓글
      */
-    public Slice<ReplyResponseDto> getReplyOnReview(Long reviewId, Pageable pageable) {
-        return replyRepository.getReplyOnReview(reviewId, pageable);
+    public CustomSliceDto getReplyOnReview(Long reviewId, Pageable pageable) {
+        Slice<ReplyResponseDto> replyOnReview = replyRepository.getReplyOnReview(reviewId, pageable);
+        return new CustomSliceDto(replyOnReview);
     }
 
     /**

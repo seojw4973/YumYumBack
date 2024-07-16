@@ -5,14 +5,13 @@ import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.reply.dto.CreateReplyDto;
-import org.baratie.yumyum.domain.reply.dto.ReplyResponseDto;
 import org.baratie.yumyum.domain.reply.dto.UpdateRelyDto;
 import org.baratie.yumyum.domain.reply.service.ReplyService;
 import org.baratie.yumyum.domain.review.domain.Review;
 import org.baratie.yumyum.domain.review.service.ReviewService;
+import org.baratie.yumyum.global.utils.pageDto.CustomSliceDto;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,11 +31,11 @@ public class ReplyController {
      * 리뷰에 달린 댓글 조회
      */
     @GetMapping("/{reviewId}")
-    public ResponseEntity<Slice<ReplyResponseDto>> getReplyOnReview(@PathVariable Long reviewId, @RequestParam int pageNumber) {
+    public ResponseEntity<CustomSliceDto> getReplyOnReview(@PathVariable Long reviewId, @RequestParam int pageNumber) {
         reviewService.validationReviewId(reviewId);
 
         Pageable pageable = PageRequest.of(pageNumber, 5);
-        Slice<ReplyResponseDto> replyOnReview = replyService.getReplyOnReview(reviewId, pageable);
+        CustomSliceDto replyOnReview = replyService.getReplyOnReview(reviewId, pageable);
 
         return new ResponseEntity<>(replyOnReview, HttpStatus.OK);
     }
