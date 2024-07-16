@@ -45,7 +45,7 @@ public class MemberService {
         passwordCheck(updateMemberDto);
         String profileUrl;
         if(file != null && !file.isEmpty()){
-            if(member.getImageUrl() != null) {
+            if(member.getImageUrl() != null && !member.getImageUrl().isEmpty()) {
                 imageService.targetFileDelete(member);
             }
             profileUrl = imageService.profileImageUpload(file);

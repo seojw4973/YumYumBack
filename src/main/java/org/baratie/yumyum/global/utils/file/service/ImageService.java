@@ -36,7 +36,9 @@ public class ImageService{
     private String endpoint;
 
     public String profileImageUpload(MultipartFile file) throws IOException {
+        System.out.println("file.toString() = " + file.toString());
         if (file == null || file.isEmpty()) {
+            System.out.println("이미지가 없습니다.");
             return null;
         }
 
@@ -50,7 +52,19 @@ public class ImageService{
     }
 
     public void fileUploadMultiple(ImageType type,Object target, List<MultipartFile> files){
+        System.out.println("file.toString() = " + files.toString());
+        if (files == null || files.isEmpty()) {
+            System.out.println("이미지가 없습니다.");
+            return;
+        }
+
         for(MultipartFile file : files){
+
+            if (file.isEmpty()) {
+                System.out.println("이미지가 없습니다.");
+                continue;
+            }
+
             String uuid = UUID.randomUUID().toString();
             String fileName = uuid + "_" + file.getOriginalFilename();
 
