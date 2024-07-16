@@ -39,6 +39,15 @@ public class ReportController {
     }
 
     /**
+     * 신고된 가게 조회
+     */
+    @GetMapping("/store")
+    public ResponseEntity<Page<ReportPageResponseDto>> findStoreReport(@PageableDefault(size=5) Pageable pageable) {
+        Page<ReportPageResponseDto> reportStoreList = reportService.getStoreReport(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(reportStoreList);
+    }
+
+    /**
      * 신고하기
      */
     @PostMapping
