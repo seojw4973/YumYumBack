@@ -14,27 +14,31 @@ public class SearchStoreDto {
 
     private Long storeId;
     private String name;
-    private String imageUrl;
     private String address;
     private int views;
     private Double avgGrade;
     private Long totalReviewCount;
     private Long totalFavoriteCount;
     private Boolean favoriteStatus;
-    private List<String> hashtags;
     private String categoryName;
     private BigDecimal longitude;
     private BigDecimal latitude;
+
+    private List<String> hashtags;
+    private List<String> images;
 
 
     public void addHashtagList(List<String> hashtags) {
         this.hashtags = hashtags;
     }
 
-    public SearchStoreDto(Long storeId, String name, String imageUrl, String address, int views, Double avgGrade, Long totalReviewCount, Long totalFavoriteCount, Boolean favoriteStatus, String categoryName, BigDecimal longitude, BigDecimal latitude){
+    public void addImageList(List<String> images) {
+        this.images = images;
+    }
+
+    public SearchStoreDto(Long storeId, String name, String address, int views, Double avgGrade, Long totalReviewCount, Long totalFavoriteCount, Boolean favoriteStatus, String categoryName, BigDecimal longitude, BigDecimal latitude){
         this.storeId = storeId;
         this.name = name;
-        this.imageUrl = imageUrl;
         this.address = address;
         this.views = views;
         this.avgGrade = avgGrade;
