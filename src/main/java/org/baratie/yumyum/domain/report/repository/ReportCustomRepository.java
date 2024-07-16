@@ -11,4 +11,6 @@ public interface ReportCustomRepository {
     Page<ReportPageResponseDto> findByReviewType(Pageable pageable);
 
     Page<ReportPageResponseDto> findByReplyType(Pageable pageable);
+
+    Page<ReportPageResponseDto> findByStoreType(Pageable pageable);
 }

@@ -16,6 +16,7 @@ import static org.baratie.yumyum.domain.member.domain.QMember.member;
 import static org.baratie.yumyum.domain.reply.domain.QReply.reply;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.report.domain.QReport.report;
+import static org.baratie.yumyum.domain.store.domain.QStore.store;
 
 @RequiredArgsConstructor
 public class ReportCustomRepositoryImpl implements ReportCustomRepository {
@@ -40,7 +41,11 @@ public class ReportCustomRepositoryImpl implements ReportCustomRepository {
                 .orderBy(report.createdAt.desc())
                 .fetch();
 
-        return new PageImpl<>(results, pageable, results.size());
+        long totalCount = query.from(report)
+                .where(report.type.eq(ReportType.REVIEW))
+                .fetchCount();
+
+        return new PageImpl<>(results, pageable, totalCount);
     }
 
     @Override
@@ -61,6 +66,35 @@ public class ReportCustomRepositoryImpl implements ReportCustomRepository {
                 .orderBy(report.createdAt.desc())
                 .fetch();
 
-        return new PageImpl<>(results, pageable, results.size());
+        long totalCount = query.from(report)
+                .where(report.type.eq(ReportType.REPLY))
+                .fetchCount();
+
+        return new PageImpl<>(results, pageable, totalCount);
+    }
+
+    @Override
+    public Page<ReportPageResponseDto> findByStoreType(Pageable pageable) {
+        List<ReportPageResponseDto> results = query.select(Projections.constructor(ReportPageResponseDto.class,
+                report.id,
+                report.member.nickname,
+                store.name,
+                store.id,
+                report.content,
+                report.createdAt))
+                .from(report)
+                .leftJoin(store).on(report.targetId.eq(store.id))
+                .leftJoin(report.member, member)
+                .where(report.type.eq(ReportType.STORE))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(report.createdAt.desc())
+                .fetch();
+
+        long totalCount = query.from(report)
+                .where(report.type.eq(ReportType.STORE))
+                .fetchCount();
+
+        return new PageImpl<>(results, pageable, totalCount);
     }
 }

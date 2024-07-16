@@ -21,9 +21,12 @@ public class ReportService {
         return reportRepository.findByReviewType(pageable);
     }
 
-
     public Page<ReportPageResponseDto> getReplyReport(Pageable pageable) {
         return reportRepository.findByReplyType(pageable);
+    }
+
+    public Page<ReportPageResponseDto> getStoreReport(Pageable pageable) {
+        return reportRepository.findByStoreType(pageable);
     }
 
     public void createReport(Long memberId, CreateReportDto createReportDto) {
