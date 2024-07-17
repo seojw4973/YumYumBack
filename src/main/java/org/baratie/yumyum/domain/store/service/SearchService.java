@@ -1,12 +1,15 @@
 package org.baratie.yumyum.domain.store.service;
 
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
 import org.baratie.yumyum.domain.store.dto.SearchStoreDto;
 import org.baratie.yumyum.domain.store.repository.StoreRepository;
+import org.baratie.yumyum.global.utils.file.repository.ImageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +17,8 @@ import java.util.List;
 public class SearchService {
 
     private final StoreRepository storeRepository;
+    private final ImageRepository imageRepository;
+    private final HashtagRepository hashtagRepository;
 
     /**
      * 검색 시 맛집 리스트 조회
@@ -22,7 +27,9 @@ public class SearchService {
      * @return 검색 조건에 맞는 맛집 리스트 30개 제한으로 리턴
      */
     public List<SearchStoreDto> getSearchStores(Long memberId, String keyword) {
-        return storeRepository.findSearchStore(memberId, keyword);
+        Map<Long, List<String>> imageList = imageRepository.findImageByStoreIdList();
+        Map<Long, List<String>> hashtagList = hashtagRepository.findHashtagByStoreId();
+        return storeRepository.findSearchStore(memberId, imageList, hashtagList, keyword);
     }
 
     /**
@@ -32,6 +39,8 @@ public class SearchService {
      * @return 전달받은 위치 반경 1km 내의 맛집 리스트 리턴
      */
     public List<SearchStoreDto> getNearByStore(Double lng, Double lat) {
-        return storeRepository.findNearByStore(lng, lat);
+        Map<Long, List<String>> imageList = imageRepository.findImageByStoreIdList();
+        Map<Long, List<String>> hashtagList = hashtagRepository.findHashtagByStoreId();
+        return storeRepository.findNearByStore(lng, lat, imageList, hashtagList);
     }
 }
