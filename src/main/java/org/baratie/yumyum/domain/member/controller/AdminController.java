@@ -28,10 +28,7 @@ public class AdminController {
      * 관리자 페이지 회원 전체 조회
      */
     @GetMapping("/member")
-    public ResponseEntity<Page<SimpleMemberDto>> getAllMember(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PageableDefault(size = 5) Pageable pageable) {
-        customUserDetails.getAuthorities().equals(Role.ADMIN);
-
-
+    public ResponseEntity<Page<SimpleMemberDto>> getAllMember(@PageableDefault(size = 5) Pageable pageable) {
         Page<SimpleMemberDto> simpleMemberDto = adminService.getSimpleMemberInfo(pageable);
 
         return new ResponseEntity<>(simpleMemberDto, HttpStatus.OK);
@@ -42,8 +39,8 @@ public class AdminController {
      */
     @GetMapping("/store")
     public ResponseEntity<Page<AdminStoreDto>> findAllAdmin(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-
         Page<AdminStoreDto> adminStoreDto = adminService.getAdminStores(pageable);
+
         return ResponseEntity.status(HttpStatus.OK).body(adminStoreDto);
     }
 
