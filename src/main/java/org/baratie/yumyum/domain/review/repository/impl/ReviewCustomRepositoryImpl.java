@@ -128,6 +128,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .where(storeIdEq(storeId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
+                .orderBy(review.createdAt.desc())
                 .fetch();
 
         results.forEach(dto -> {

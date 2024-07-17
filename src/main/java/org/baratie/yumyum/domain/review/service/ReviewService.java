@@ -2,10 +2,8 @@ package org.baratie.yumyum.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.global.utils.file.domain.ImageType;
-import org.baratie.yumyum.global.utils.file.repository.ImageRepository;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
-import org.baratie.yumyum.domain.review.dto.LikeReviewDto;
 import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.review.domain.Review;
 import org.baratie.yumyum.domain.review.dto.*;
@@ -16,8 +14,6 @@ import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.service.StoreService;
 import org.baratie.yumyum.global.exception.ErrorCode;
 import org.baratie.yumyum.global.utils.file.service.ImageService;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,7 +44,7 @@ public class ReviewService {
         Review review = request.toEntity(store, member);
         Review saveReview = reviewRepository.save(review);
 
-        if(files != null){
+        if(files != null && !files.isEmpty()){
             imageService.fileUploadMultiple(ImageType.REVIEW, saveReview, files);
         }
 
@@ -70,6 +66,7 @@ public class ReviewService {
         if(files == null){
             imageService.targetFilesDelete(ImageType.REVIEW, updateReview.getId());
         }else if(!files.isEmpty()){
+            imageService.targetFilesDelete(ImageType.REVIEW, updateReview.getId());
             imageService.fileUploadMultiple(ImageType.REVIEW, updateReview, files);
         }
 

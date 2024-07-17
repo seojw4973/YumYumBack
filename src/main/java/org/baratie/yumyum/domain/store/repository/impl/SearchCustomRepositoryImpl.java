@@ -10,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.store.dto.SearchStoreDto;
 import org.baratie.yumyum.domain.store.repository.SearchCustomRepository;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ import static org.baratie.yumyum.domain.hashtag.domain.QHashtag.hashtag;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.store;
 import static org.baratie.yumyum.global.utils.file.domain.QImage.image;
+import static org.baratie.yumyum.domain.menu.domain.QMenu.menu;
 
 @RequiredArgsConstructor
 public class SearchCustomRepositoryImpl implements SearchCustomRepository {
@@ -46,7 +48,6 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
         List<SearchStoreDto> searchStoreList = query.select(Projections.constructor(SearchStoreDto.class,
                         store.id,
                         store.name,
-                        image.imageUrl,
                         store.address,
                         store.views,
                         Expressions.numberTemplate(Double.class, "round({0}, 2)", review.grade.avg().coalesce(0.0)),
@@ -60,23 +61,15 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
                 .from(store)
                 .leftJoin(store.reviewList, review)
                 .leftJoin(store.favoriteList, favorite)
-                .leftJoin(store.imageList, image)
-                .leftJoin(store.hashtagList, hashtag)
                 .leftJoin(store.categoryList, category)
+                .leftJoin(store.menuList, menu)
+                .leftJoin(store.hashtagList, hashtag)
                 .where(searchCondition(keyword))
                 .groupBy(store.id, store.name, store.address, category.name)
                 .limit(30L)
                 .fetch();
 
-        for (SearchStoreDto dto : searchStoreList) {
-            List<String> hashtags = query.select(hashtag.content)
-                    .from(hashtag)
-                    .where(hashtag.store.id.eq(dto.getStoreId()))
-                    .limit(3L)
-                    .fetch();
-            dto.addHashtagList(hashtags);
-        }
-        return searchStoreList;
+        return getSearchStoreDtos(searchStoreList);
     }
 
     /**
@@ -104,7 +97,6 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
         List<SearchStoreDto> nearbyStoreList = query.select(Projections.constructor(SearchStoreDto.class,
                         store.id,
                         store.name,
-                        image.imageUrl,
                         store.address,
                         store.views,
                         Expressions.numberTemplate(Double.class, "round({0}, 2)", review.grade.avg().coalesce(0.0)),
@@ -117,8 +109,6 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
                 .from(store)
                 .leftJoin(store.reviewList, review)
                 .leftJoin(store.favoriteList, favorite)
-                .leftJoin(store.imageList, image)
-                .leftJoin(store.hashtagList, hashtag)
                 .leftJoin(store.categoryList, category)
                 .where(distanceExpr.loe(1000))
                 .groupBy(store.id, store.name, store.address, category.name)
@@ -126,23 +116,35 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
                 .limit(30L)
                 .fetch();
 
-        for (SearchStoreDto dto : nearbyStoreList) {
+        return getSearchStoreDtos(nearbyStoreList);
+    }
+
+    @NotNull
+    private List<SearchStoreDto> getSearchStoreDtos(List<SearchStoreDto> dtos) {
+        for (SearchStoreDto dto : dtos) {
             List<String> hashtags = query.select(hashtag.content)
                     .from(hashtag)
                     .where(hashtag.store.id.eq(dto.getStoreId()))
                     .limit(3L)
                     .fetch();
             dto.addHashtagList(hashtags);
+
+            List<String> images = query.select(image.imageUrl)
+                    .from(image)
+                    .where(image.store.id.eq(dto.getStoreId()))
+                    .fetch();
+            dto.addImageList(images);
         }
-        return nearbyStoreList;
+        return dtos;
     }
 
     private BooleanExpression searchCondition(String keyword) {
         return nameContain(keyword)
                 .or(addressContain(keyword)
                 .or(categoryContain(keyword)
+                .or(menuContain(keyword)
                 .or(hashtagContain(keyword))
-                ));
+                )));
     }
 
     private BooleanExpression nameContain(String keyword) {
@@ -153,6 +155,7 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
         return store.address.contains(keyword);
     }
 
+    private BooleanExpression menuContain(String keyword) { return menu.name.contains(keyword);}
 
     private BooleanExpression categoryContain(String keyword) {
         return category.name.contains(keyword);

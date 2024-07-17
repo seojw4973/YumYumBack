@@ -19,11 +19,13 @@ public class MyFavoriteStoreDto {
     private Long totalFavoriteCount;
     private Boolean favoriteStatus;
     private List<String> hashtags;
+    private List<String> images;
     private String categoryName;
 
     public void addHashtagList(List<String> hashtags) {
         this.hashtags = hashtags;
     }
+    public void addImageList(List<String> images) {this.images = images;}
 
     @Builder
     public MyFavoriteStoreDto(Long storeId, String name, String imageUrl, String address, int views, double avgGrade, Long totalReviewCount, Long totalFavoriteCount, Boolean favoriteStatus, String categoryName) {

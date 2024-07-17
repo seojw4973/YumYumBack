@@ -128,6 +128,12 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                     .limit(3L)
                     .fetch();
             dto.addHashtagList(hashtags);
+
+            List<String> images = query.select(image.imageUrl)
+                    .from(image)
+                    .where(image.store.id.eq(dto.getStoreId()))
+                    .fetch();
+            dto.addImageList(images);
         }
 
         boolean hasNext = results.size() > pageable.getPageSize();
