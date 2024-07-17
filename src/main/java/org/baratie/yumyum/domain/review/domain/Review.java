@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
+import org.baratie.yumyum.domain.reply.domain.Reply;
 import org.baratie.yumyum.global.utils.file.domain.Image;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.review.dto.UpdateReviewRequestDto;
