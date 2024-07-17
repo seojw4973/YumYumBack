@@ -29,12 +29,12 @@ public class ImageCustomRepositoryImpl implements ImageCustomRepository {
     }
 
     @Override
-    public Map<Long, List<String>> findImageByStoreIdList() {
+    public Map<Long, String> findImageByStoreIdList() {
 
         return query.select(image.store.id, image.imageUrl)
                 .from(image)
                 .leftJoin(image.store, store)
-                .transform(groupBy(store.id).as(list(image.imageUrl)));
+                .transform(groupBy(store.id).as(image.imageUrl));
     }
 
 }
