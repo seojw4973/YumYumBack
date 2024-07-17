@@ -10,16 +10,15 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.store.dto.SearchStoreDto;
 import org.baratie.yumyum.domain.store.repository.SearchCustomRepository;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.baratie.yumyum.domain.category.domain.QCategory.category;
 import static org.baratie.yumyum.domain.favorite.domain.QFavorite.favorite;
 import static org.baratie.yumyum.domain.hashtag.domain.QHashtag.hashtag;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.store;
-import static org.baratie.yumyum.global.utils.file.domain.QImage.image;
 import static org.baratie.yumyum.domain.menu.domain.QMenu.menu;
 
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
      * @return 내 주변 맛집 30개
      */
     @Override
-    public List<SearchStoreDto> findSearchStore(Long memberId, String keyword) {
+    public List<SearchStoreDto> findSearchStore(Long memberId, Map<Long, List<String>> imageList,Map<Long, List<String>> hashtagList, String keyword) {
         JPQLQuery<Long> favoriteCount = JPAExpressions
                 .select(favorite.count())
                 .from(favorite)
@@ -69,7 +68,7 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
                 .limit(30L)
                 .fetch();
 
-        return getSearchStoreDtos(searchStoreList);
+        return getSearchStoreDtos(searchStoreList, imageList, hashtagList);
     }
 
     /**
@@ -79,7 +78,7 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
      * @return 내 주변 맛집 30개 조회
      */
     @Override
-    public List<SearchStoreDto> findNearByStore(Double lng, Double lat) {
+    public List<SearchStoreDto> findNearByStore(Double lng, Double lat, Map<Long, List<String>> imageList, Map<Long, List<String>> hashtagList) {
         JPQLQuery<Long> favoriteCount = JPAExpressions
                 .select(favorite.count())
                 .from(favorite)
@@ -116,25 +115,21 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
                 .limit(30L)
                 .fetch();
 
-        return getSearchStoreDtos(nearbyStoreList);
+        return getSearchStoreDtos(nearbyStoreList, imageList, hashtagList);
     }
 
-    @NotNull
-    private List<SearchStoreDto> getSearchStoreDtos(List<SearchStoreDto> dtos) {
-        for (SearchStoreDto dto : dtos) {
-            List<String> hashtagList = query.select(hashtag.content)
-                    .from(hashtag)
-                    .where(hashtag.store.id.eq(dto.getStoreId()))
-                    .limit(3L)
-                    .fetch();
-            dto.addHashtagList(hashtagList);
 
-            List<String> images = query.select(image.imageUrl)
-                    .from(image)
-                    .where(image.store.id.eq(dto.getStoreId()))
-                    .fetch();
-            dto.addImageList(images);
-        }
+    private List<SearchStoreDto> getSearchStoreDtos(List<SearchStoreDto> dtos, Map<Long, List<String>> imageList, Map<Long, List<String>> hashtagList) {
+        dtos.forEach(dto -> {
+            List<String> images = imageList.get(dto.getStoreId());
+            if(images != null) {
+                dto.addImageList(images);
+            }
+            List<String> hashtags = hashtagList.get(dto.getStoreId());
+            if(hashtags != null) {
+                dto.addHashtagList(hashtags);
+            }
+        });
         return dtos;
     }
 

@@ -11,6 +11,7 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static org.baratie.yumyum.domain.review.domain.QReview.*;
 import static org.baratie.yumyum.global.utils.file.domain.QImage.*;
+import static org.baratie.yumyum.domain.store.domain.QStore.*;
 
 @RequiredArgsConstructor
 public class ImageCustomRepositoryImpl implements ImageCustomRepository {
@@ -25,6 +26,15 @@ public class ImageCustomRepositoryImpl implements ImageCustomRepository {
                 .from(image)
                 .leftJoin(image.review, review)
                 .transform(groupBy(review.id).as(list(image.imageUrl)));
+    }
+
+    @Override
+    public Map<Long, List<String>> findImageByStoreIdList() {
+
+        return query.select(image.store.id, image.imageUrl)
+                .from(image)
+                .leftJoin(image.store, store)
+                .transform(groupBy(store.id).as(list(image.imageUrl)));
     }
 
 }

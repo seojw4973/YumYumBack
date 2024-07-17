@@ -32,7 +32,8 @@ public class ReviewReadService {
      * @return
      */
     public CustomSliceDto getAllReview(Pageable pageable){
-        Slice<ReviewAllDto> allReviews = reviewRepository.findAllReviews(pageable);
+        Map<Long, List<String>> imageList = imageRepository.findImageByReviewIdList();
+        Slice<ReviewAllDto> allReviews = reviewRepository.findAllReviews(imageList ,pageable);
 
         return new CustomSliceDto(allReviews);
     }
