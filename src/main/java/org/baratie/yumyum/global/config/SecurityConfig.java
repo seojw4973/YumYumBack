@@ -1,7 +1,7 @@
 package org.baratie.yumyum.global.config;
 
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.member.Filter.JwtAuthenticationFilter;
+import org.baratie.yumyum.domain.member.filter.JwtAuthenticationFilter;
 import org.baratie.yumyum.domain.member.handler.OAuth2SuccessHandler;
 import org.baratie.yumyum.domain.member.service.auth.JwtService;
 import org.baratie.yumyum.global.exception.AuthEntryPoint;
@@ -31,7 +31,7 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtService jwtService;
     private final DefaultOAuth2UserService oAuth2Service;
-    private final OAuth2SuccessHandler oAuth2SucessHandler;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -55,15 +55,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
-            .csrf(csrfConfigurer -> csrfConfigurer.disable())
-            .formLogin(auth -> auth.disable())
-            .httpBasic(auth -> auth.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .csrf(csrfConfigurer -> csrfConfigurer.disable())
+                .formLogin(auth -> auth.disable())
+                .httpBasic(auth -> auth.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeRequests(auth -> auth
-//                .requestMatchers("/member", "/member/login", "/member/oauth2", "/review/**",
-//                        "/login/oauth2/code/*","/oauth2/**", "/oauth2.0/**",
-//                        "/swagger-ui/*", "/api/swagger-config", "/v3/api-docs/**").permitAll()
+                .requestMatchers(("/admin/**")).hasRole("ADMIN")
                 .requestMatchers("/**").permitAll()
                 .anyRequest().authenticated());
 
@@ -76,10 +74,14 @@ public class SecurityConfig {
                 .authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization"))
                 .redirectionEndpoint(redirect -> redirect.baseUri("/login/oauth2/code/*"))
                 .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2Service))
-                .successHandler(oAuth2SucessHandler);
+                .successHandler(oAuth2SuccessHandler);
 
 
         http.addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+
+        http.logout(logout -> logout.logoutUrl("/member/logout")
+                .logoutSuccessUrl("/home")
+                .deleteCookies("JSESSIONID"));
 
         return http.build();
     }
