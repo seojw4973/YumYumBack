@@ -1,7 +1,6 @@
 package org.baratie.yumyum.global.utils.file.repository;
 
 import org.baratie.yumyum.global.utils.file.domain.Image;
-import org.baratie.yumyum.global.utils.file.domain.ImageType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ImageRepository extends JpaRepository<Image, Long> {
+public interface ImageRepository extends JpaRepository<Image, Long>, ImageCustomRepository {
 
     /**
      * @param reviewId 갖고올 이미지의 review id
@@ -26,4 +25,5 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 
     @Query("SELECT i from Image i Where i.store.id = :targetId")
     List<Image> findEntityByStoreId(Long targetId);
+
 }

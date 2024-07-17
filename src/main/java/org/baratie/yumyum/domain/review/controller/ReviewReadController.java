@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.service.ReviewReadService;
 import org.baratie.yumyum.domain.review.service.ReviewService;
-import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.service.StoreService;
 import org.baratie.yumyum.global.utils.pageDto.CustomSliceDto;
 import org.springframework.data.domain.PageRequest;
@@ -49,11 +48,10 @@ public class ReviewReadController {
      */
     @GetMapping("/store/{storeId}")
     public ResponseEntity<CustomSliceDto> getStoreReviewList(@PathVariable Long storeId, @RequestParam int pageNumber) {
-        Store store = storeService.validationStoreId(storeId);
-
+        storeService.existStoreId(storeId);
         Pageable pageable = PageRequest.of(pageNumber, 5);
 
-        CustomSliceDto storeReviewList = reviewReadService.getStoreReviewList(store.getId(), pageable);
+        CustomSliceDto storeReviewList = reviewReadService.getStoreReviewList(storeId, pageable);
 
         return new ResponseEntity<>(storeReviewList, HttpStatus.ACCEPTED);
     }

@@ -4,12 +4,10 @@ import com.google.maps.errors.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
-import org.baratie.yumyum.global.utils.file.domain.Image;
 import org.baratie.yumyum.global.utils.file.domain.ImageType;
 import org.baratie.yumyum.global.utils.file.repository.ImageRepository;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.repository.MenuRepository;
-import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.*;
 import org.baratie.yumyum.domain.store.exception.StoreExistException;
@@ -17,16 +15,12 @@ import org.baratie.yumyum.domain.store.exception.StoreNotFoundException;
 import org.baratie.yumyum.domain.store.repository.StoreRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
 import org.baratie.yumyum.global.utils.file.service.ImageService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -39,7 +33,6 @@ public class StoreService {
     private final HashtagRepository hashtagRepository;
     private final GeoUtils geoUtils;
     private final ImageRepository imageRepository;
-    private final ReviewRepository reviewRepository;
     private final ImageService imageService;
 
     /**
@@ -97,7 +90,6 @@ public class StoreService {
     public void updateStore(Long storeId, UpdateStoreDto request, List<MultipartFile> files) {
         Store findstore = validationStoreId(storeId);
         Store updatedStore = findstore.updateStore(request);
-        System.out.println(updatedStore);
 
         storeRepository.save(updatedStore);
 
@@ -126,6 +118,17 @@ public class StoreService {
         return storeRepository.existAndDeletedStore(storeId).orElseThrow(
                 () -> new StoreNotFoundException(ErrorCode.STORE_NOT_FOUND)
         );
+    }
+
+    /**
+     * 가게가 존재하는지와 폐업했는지 확인
+     */
+    public void existStoreId(Long storeId) {
+        Long existed = storeRepository.existAndNotCloseStore(storeId);
+
+        if (existed <= 0) {
+            throw new StoreNotFoundException(ErrorCode.STORE_NOT_FOUND);
+        }
     }
 
     /**

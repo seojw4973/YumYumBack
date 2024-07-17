@@ -1,5 +1,6 @@
 package org.baratie.yumyum.global.config;
 
+import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -13,7 +14,7 @@ public class QuerydslConfig {
     private EntityManager entityManager;
 
     @Bean
-    public JPAQueryFactory jpaQueryFactory() {
-        return new JPAQueryFactory(entityManager);
+    public JPAQueryFactory jpaQueryFactory(){
+        return new JPAQueryFactory(JPQLTemplates.DEFAULT, entityManager);
     }
 }

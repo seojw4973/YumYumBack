@@ -16,6 +16,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.baratie.yumyum.domain.likes.domain.QLikes.likes;
 import static org.baratie.yumyum.domain.member.domain.QMember.member;
@@ -110,15 +111,17 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
      * @return 맛집에 작성된 리뷰 리스트 리턴
      */
     @Override
-    public Slice<StoreReviewDto> findReviewByStoreId(Long storeId, Pageable pageable) {
+    public Slice<StoreReviewDto> findReviewByStoreId(Long storeId, Map<Long, List<String>> imageList, Pageable pageable) {
 
         List<StoreReviewDto> results = query.select(Projections.constructor(StoreReviewDto.class,
-                        member.imageUrl,
-                        member.nickname,
-                        review.grade,
-                        ExpressionUtils.as(getReviewTotalCount(), "totalReviewCount"),
-                        ExpressionUtils.as(getAvgGrade(), "avgGrade"),
-                        review.content
+                member.id,
+                member.imageUrl,
+                member.nickname,
+                review.id,
+                review.grade,
+                review.content,
+                ExpressionUtils.as(getReviewTotalCount(), "totalReviewCount"),
+                ExpressionUtils.as(getAvgGrade(), "avgGrade")
                 ))
                 .from(review)
                 .leftJoin(review.member, member)
@@ -126,6 +129,13 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
+
+        results.forEach(dto -> {
+            List<String> images = imageList.get(dto.getReviewId());
+            if (images != null) {
+                dto.addImage(images);
+            }
+        });
 
         boolean hasNext = results.size() > pageable.getPageSize();
 

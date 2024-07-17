@@ -7,6 +7,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long>, MyReviewCustomRepository, ReviewCustomRepository {
 
-    int countReviewByStoreId(Long storeId);
-
 }
