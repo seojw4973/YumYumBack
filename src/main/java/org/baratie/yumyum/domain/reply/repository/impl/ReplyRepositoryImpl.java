@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.dto.MyReplyDto;
+import org.baratie.yumyum.domain.reply.domain.Reply;
 import org.baratie.yumyum.domain.reply.dto.ReplyResponseDto;
 import org.baratie.yumyum.domain.reply.repository.ReplyCustomRepository;
 import org.springframework.data.domain.Pageable;
@@ -81,6 +82,14 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
         }
 
         return new SliceImpl<>(results, pageable, hasNext);
+    }
+
+    @Override
+    public List<Long> findByReviewId(Long reviewId) {
+        return query.select(reply.id)
+                .from(reply)
+                .where(reply.review.id.eq(reviewId))
+                .fetch();
     }
 
     public BooleanExpression replyIdEq(Long replyId) {

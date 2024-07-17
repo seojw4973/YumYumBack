@@ -15,6 +15,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -45,10 +46,40 @@ public class AdminController {
     }
 
     /**
-     * 회원 탈퇴
-     * @param memberId 탈퇴시킬 회원
+     * 가게 삭제
      */
-    @DeleteMapping("/{memberId}")
+    @DeleteMapping("/store/{storeId}")
+    public ResponseEntity<Void> deleteStore(@PathVariable Long storeId) {
+        adminService.deleteStore(storeId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 리뷰 삭제
+     */
+    @DeleteMapping("/review/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
+        adminService.deleteReview(reviewId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 댓글 삭제
+     */
+    @DeleteMapping("/reply/{replyId}")
+    public ResponseEntity<Void> deleteReply(@PathVariable Long replyId) {
+        adminService.deleteReply(replyId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    /**
+     * 회원 탈퇴
+     */
+    @DeleteMapping("/member/{memberId}")
     public ResponseEntity<Void> deleteMember(@PathVariable Long memberId) {
         adminService.deleteMember(memberId);
 
