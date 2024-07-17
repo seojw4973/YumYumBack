@@ -5,7 +5,6 @@ import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.exception.MemberNotFoundException;
 import org.baratie.yumyum.domain.member.exception.NicknameAlreadyUsing;
-import org.baratie.yumyum.domain.member.exception.PasswordNotEqualException;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
 import org.baratie.yumyum.global.utils.file.service.ImageService;
@@ -41,15 +40,26 @@ public class MemberService {
      * @param updateMemberDto 수정 요청한 정보
      */
     public void updateMember(Member member, UpdateMemberDto updateMemberDto, MultipartFile file) throws IOException {
-        nicknameDuplicateCheck(updateMemberDto.getNickname());
-        passwordCheck(updateMemberDto);
+
+        if (updateMemberDto.getNickname() != null && !updateMemberDto.getNickname().isBlank()) {
+            nicknameDuplicateCheck(updateMemberDto.getNickname());
+        }
+
+        if (updateMemberDto.getPassword() != null && !updateMemberDto.getPassword().isBlank()) {
+            passwordUpdate(updateMemberDto);
+        }
+
         String profileUrl;
-        if(file != null && !file.isEmpty()){
-            if(member.getImageUrl() != null && !member.getImageUrl().isEmpty()) {
+
+        if (file != null && !file.isEmpty()) {
+
+            if (member.getImageUrl() != null && !member.getImageUrl().isEmpty()) {
                 imageService.targetFileDelete(member);
             }
+
             profileUrl = imageService.profileImageUpload(file);
-        }else {
+
+        } else {
             imageService.targetFileDelete(member);
             profileUrl = null;
         }
@@ -72,11 +82,7 @@ public class MemberService {
     /**
      * 비밀번호 동일 체크
      */
-    private void passwordCheck(UpdateMemberDto updateMemberDto) {
-        if (!updateMemberDto.getPassword().equals(updateMemberDto.getCheckPassword())) {
-            throw new PasswordNotEqualException(ErrorCode.PASSWORD_NOT_EQUAL);
-        }
-
+    private void passwordUpdate(UpdateMemberDto updateMemberDto) {
         String encodingPassword = passwordEncoder.encode(updateMemberDto.getPassword());
 
         updateMemberDto.setPassword(encodingPassword);
