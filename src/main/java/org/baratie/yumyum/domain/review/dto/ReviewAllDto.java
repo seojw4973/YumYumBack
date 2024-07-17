@@ -1,10 +1,7 @@
 package org.baratie.yumyum.domain.review.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.baratie.yumyum.global.utils.file.dto.ImageDto;
 
 import java.util.List;
 
@@ -22,12 +19,13 @@ public class ReviewAllDto {
     private double avgGrade;
 
     private String content;
-    private List<String> images;
+    private List<String> imageList;
 
-    public void addImageList(List<String> images){
-        this.images = images;
+    public void addImageList(List<String> imageList){
+        this.imageList = imageList;
     }
 
+    @Builder
     public ReviewAllDto(Long reviewId, String profileImage, String storeName, String address, String nickname, double grade, Long totalReviewCount, double avgGrade, String content) {
         this.reviewId = reviewId;
         this.profileImage = profileImage;

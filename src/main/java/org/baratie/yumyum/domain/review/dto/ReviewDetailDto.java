@@ -23,14 +23,14 @@ public class ReviewDetailDto {
     private double grade;
     private String content;
     private LocalDateTime createdAt;
-    private List<String> images;
+    private List<String> imageList;
 
     private String storeName;
     private String address;
 
     private Boolean likeStatus;
 
-    public ReviewDetailDto tranceDto(MemberBasicDto memberBasicDto, ReviewDetailDto reviewDetail, List<String> images) {
+    public ReviewDetailDto tranceDto(MemberBasicDto memberBasicDto, ReviewDetailDto reviewDetail, List<String> imageList) {
 
         ReviewDetailDto result = ReviewDetailDto.builder()
                 .memberId(memberBasicDto.getMemberId())
@@ -39,7 +39,7 @@ public class ReviewDetailDto {
                 .totalReviewCount(memberBasicDto.getTotalReviewCount())
                 .avgGrade(memberBasicDto.getAvgGrade())
                 .reviewId(reviewDetail.getReviewId())
-                .images(images)
+                .imageList(imageList)
                 .grade(reviewDetail.getGrade())
                 .content(reviewDetail.getContent())
                 .createdAt(reviewDetail.getCreatedAt())

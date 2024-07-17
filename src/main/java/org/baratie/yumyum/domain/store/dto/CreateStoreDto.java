@@ -5,10 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.baratie.yumyum.domain.category.domain.Category;
+import org.baratie.yumyum.domain.category.dto.CategoryDto;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
-import org.baratie.yumyum.global.utils.file.domain.Image;
-import org.baratie.yumyum.global.utils.file.dto.ImageDto;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 import org.baratie.yumyum.domain.menu.dto.MenuDto;
 import org.baratie.yumyum.domain.store.domain.Store;
@@ -37,10 +37,12 @@ public class CreateStoreDto {
 
     List<HashtagDto> hashtagList;
     List<MenuDto> menuList;
+    List<CategoryDto> categoryList;
 
     public Store toEntity(BigDecimal latitude, BigDecimal longitude) throws IOException, InterruptedException, ApiException {
         List<Hashtag> hashtagList = this.hashtagList.stream().map(HashtagDto::toEntity).collect(Collectors.toList());
         List<Menu> menuList = this.menuList.stream().map(MenuDto::toEntity).collect(Collectors.toList());
+        List<Category> categoryList = this.categoryList.stream().map(CategoryDto::toEntity).collect(Collectors.toList());
 
         return Store.builder()
                 .name(this.name)
@@ -52,6 +54,8 @@ public class CreateStoreDto {
                 .longitude(longitude)
                 .hashtagList(hashtagList)
                 .menuList(menuList)
+                .categoryList(categoryList)
                 .build();
     }
+
 }

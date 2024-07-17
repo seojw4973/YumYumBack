@@ -122,12 +122,12 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .fetch();
 
         for (MyFavoriteStoreDto dto : results) {
-            List<String> hashtags = query.select(hashtag.content)
+            List<String> hashtagList = query.select(hashtag.content)
                     .from(hashtag)
                     .where(hashtag.store.id.eq(dto.getStoreId()))
                     .limit(3L)
                     .fetch();
-            dto.addHashtagList(hashtags);
+            dto.addHashtagList(hashtagList);
 
             List<String> images = query.select(image.imageUrl)
                     .from(image)

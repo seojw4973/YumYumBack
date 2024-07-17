@@ -122,12 +122,12 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
     @NotNull
     private List<SearchStoreDto> getSearchStoreDtos(List<SearchStoreDto> dtos) {
         for (SearchStoreDto dto : dtos) {
-            List<String> hashtags = query.select(hashtag.content)
+            List<String> hashtagList = query.select(hashtag.content)
                     .from(hashtag)
                     .where(hashtag.store.id.eq(dto.getStoreId()))
                     .limit(3L)
                     .fetch();
-            dto.addHashtagList(hashtags);
+            dto.addHashtagList(hashtagList);
 
             List<String> images = query.select(image.imageUrl)
                     .from(image)
