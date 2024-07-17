@@ -18,14 +18,13 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.*;
 import static org.baratie.yumyum.domain.favorite.domain.QFavorite.favorite;
 import static org.baratie.yumyum.domain.category.domain.QCategory.category;
-import static org.baratie.yumyum.domain.hashtag.domain.QHashtag.*;
-import static org.baratie.yumyum.global.utils.file.domain.QImage.image;
 
 @RequiredArgsConstructor
 public class StoreRepositoryImpl implements StoreCustomRepository {
@@ -83,7 +82,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
      * 즐겨찾기한 맛집
      */
     @Override
-    public Slice<MyFavoriteStoreDto> findFavoriteStore(Long memberId, Pageable pageable) {
+    public Slice<MyFavoriteStoreDto> findFavoriteStore(Long memberId, Map<Long, List<String>> hashtagMap, Map<Long, String> imageMap, Pageable pageable) {
 
         JPQLQuery<Double> avgGrade = JPAExpressions
                 .select(review.grade.avg())
@@ -104,7 +103,6 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 Projections.constructor(MyFavoriteStoreDto.class,
                         store.id,
                         store.name,
-                        image.imageUrl,
                         store.address,
                         store.views,
                         avgGrade,
@@ -116,7 +114,6 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .from(store)
                 .leftJoin(store.reviewList, review)
                 .leftJoin(store.favoriteList, favorite)
-                .leftJoin(store.imageList, image)
                 .leftJoin(store.categoryList, category)
                 .where(memberIdEq(memberId), favoriteEq(true))
                 .groupBy(store.id)
@@ -124,20 +121,15 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        for (MyFavoriteStoreDto dto : results) {
-            List<String> hashtagList = query.select(hashtag.content)
-                    .from(hashtag)
-                    .where(hashtag.store.id.eq(dto.getStoreId()))
-                    .limit(3L)
-                    .fetch();
-            dto.addHashtagList(hashtagList);
+            results.forEach(dto -> {
+                List<String> hashtagList = hashtagMap.get(dto.getStoreId());
+                dto.addHashtagList(hashtagList);
+            });
 
-            List<String> images = query.select(image.imageUrl)
-                    .from(image)
-                    .where(image.store.id.eq(dto.getStoreId()))
-                    .fetch();
-            dto.addImageList(images);
-        }
+            results.forEach(dto -> {
+                String image = imageMap.get(dto.getStoreId());
+                dto.addImage(image);
+            });
 
         boolean hasNext = results.size() > pageable.getPageSize();
 
