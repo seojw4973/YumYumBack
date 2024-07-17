@@ -8,10 +8,14 @@ import org.baratie.yumyum.domain.review.dto.MyReviewDto;
 import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.dto.MyFavoriteStoreDto;
 import org.baratie.yumyum.domain.store.repository.StoreRepository;
+import org.baratie.yumyum.global.utils.file.repository.ImageRepository;
 import org.baratie.yumyum.global.utils.pageDto.CustomSliceDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +23,7 @@ public class MyPageService {
     private final ReplyRepository replyRepository;
     private final ReviewRepository reviewRepository;
     private final StoreRepository storeRepository;
+    private final ImageRepository imageRepository;
 
     /**
      * 내가 쓴 댓글 보기
@@ -48,7 +53,10 @@ public class MyPageService {
      * 내가 쓴 리뷰
      */
     public CustomSliceDto getMyReview(Long memberId, Pageable pageable) {
-        Slice<MyReviewDto> myReview = reviewRepository.getMyReview(memberId, pageable);
+
+        Map<Long, List<String>> imageMap = imageRepository.findImageByReviewIdList();
+
+        Slice<MyReviewDto> myReview = reviewRepository.getMyReview(memberId, imageMap, pageable);
         return new CustomSliceDto(myReview);
     }
 

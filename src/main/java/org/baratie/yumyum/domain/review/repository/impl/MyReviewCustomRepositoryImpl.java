@@ -14,6 +14,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.baratie.yumyum.domain.likes.domain.QLikes.likes;
 import static org.baratie.yumyum.domain.member.domain.QMember.*;
@@ -32,7 +33,7 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
      * @return 로그인한 사용자가 작성한 리뷰
      */
     @Override
-    public Slice<MyReviewDto> getMyReview(Long memberId, Pageable pageable) {
+    public Slice<MyReviewDto> getMyReview(Long memberId, Map<Long, List<String>> imageMap, Pageable pageable) {
         List<MyReviewDto> results = query.select(Projections.constructor(MyReviewDto.class,
                         review.id,
                         store.name,
@@ -54,13 +55,15 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
                 .where(memberIdEq(memberId))
                 .fetch();
 
-        for(MyReviewDto dto : results) {
-            List<String> images = query.select(image.imageUrl)
-                    .from(image)
-                    .where(image.review.id.eq(dto.getReviewId()))
-                    .fetch();
-            dto.addImageList(images);
-        }
+        results.forEach(dto -> {
+            List<String> imageList = imageMap.get(dto.getReviewId());
+
+            if (imageList != null) {
+                dto.addImageList(imageList);
+            }
+        });
+
+
 
         boolean hasNext = results.size() > pageable.getPageSize();
         if (hasNext) {
