@@ -2,6 +2,7 @@ package org.baratie.yumyum.domain.member.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
+import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.domain.SocialType;
 import org.baratie.yumyum.domain.member.dto.LoginDto;
 import org.baratie.yumyum.domain.member.dto.LoginResponseDto;
@@ -63,11 +64,12 @@ public class AuthService {
                 String nickname = member.getNickname();
                 String imageUrl = member.getImageUrl();
                 String phoneNumber = member.getPhoneNumber();
+                Role role = member.getRole();
 
                 String atk = jwtService.createToken(auth);
                 String rtk = jwtService.createRtk(auth);
 
-                return new LoginResponseDto(memberId, nickname, imageUrl, phoneNumber, atk, rtk);
+                return new LoginResponseDto(memberId, nickname, imageUrl, phoneNumber, role, atk, rtk);
             }
         } catch (Exception e) {
             e.printStackTrace(); // 예외 발생 시 스택 트레이스를 출력
