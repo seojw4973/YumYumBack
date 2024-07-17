@@ -121,9 +121,9 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
 
     private List<SearchStoreDto> getSearchStoreDtos(List<SearchStoreDto> dtos, Map<Long, String> imageMap, Map<Long, List<String>> hashtagMap) {
         dtos.forEach(dto -> {
-            String images = imageMap.get(dto.getStoreId());
-            if(images != null) {
-                dto.addImageList(images);
+            String image = imageMap.get(dto.getStoreId());
+            if(image != null) {
+                dto.addImage(image);
             }
             List<String> hashtags = hashtagMap.get(dto.getStoreId());
             if(hashtags != null) {

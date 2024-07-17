@@ -21,15 +21,15 @@ public class SearchStoreDto {
     private BigDecimal latitude;
 
     private List<String> hashtagList;
-    private String images;
+    private String imageUrl;
 
 
     public void addHashtagList(List<String> hashtagList) {
         this.hashtagList = hashtagList;
     }
 
-    public void addImageList(String images) {
-        this.images = images;
+    public void addImage(String image) {
+        this.imageUrl = image;
     }
 
     public SearchStoreDto(Long storeId, String name, String address, int views, Double avgGrade, Long totalReviewCount, Long totalFavoriteCount, Boolean favoriteStatus, String categoryName, BigDecimal longitude, BigDecimal latitude){
