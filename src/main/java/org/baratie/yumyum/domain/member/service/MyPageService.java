@@ -48,7 +48,8 @@ public class MyPageService {
      */
     public CustomSliceDto getMyLikeReview(Long memberId, Pageable pageable) {
 
-        Slice<LikeReviewDto> likeReviews = reviewRepository.findLikeReviewsByMemberId(memberId, pageable);
+        Map<Long, List<String>> imageMap = imageRepository.findImageByReviewIdList();
+        Slice<LikeReviewDto> likeReviews = reviewRepository.findLikeReviewsByMemberId(memberId, imageMap, pageable);
         return new CustomSliceDto(likeReviews);
     }
 

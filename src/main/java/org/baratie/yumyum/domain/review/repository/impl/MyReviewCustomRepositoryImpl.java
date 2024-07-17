@@ -80,7 +80,7 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
      * @return 내가 좋아요한 리뷰 리스트 리턴
      */
     @Override
-    public Slice<LikeReviewDto> findLikeReviewsByMemberId(Long memberId, Pageable pageable) {
+    public Slice<LikeReviewDto> findLikeReviewsByMemberId(Long memberId, Map<Long, List<String>> imageMap, Pageable pageable) {
 
         List<LikeReviewDto> results = query.select(Projections.constructor(LikeReviewDto.class,
                         review.id,
@@ -103,14 +103,12 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        for(LikeReviewDto dto : results){
-            List<String> images = query.select(
-                            image.imageUrl)
-                    .from(image)
-                    .where(image.review.id.eq(dto.getReviewId()))
-                    .fetch();
-            dto.addImageList(images);
-        }
+        results.forEach(
+                dto -> {
+                    List<String> images = imageMap.get(dto.getReviewId());
+                    dto.addImageList(images);
+                }
+        );
 
         boolean hasNext = results.size() > pageable.getPageSize();
         if (hasNext) {

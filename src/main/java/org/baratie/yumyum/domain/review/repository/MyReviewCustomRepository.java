@@ -13,7 +13,7 @@ public interface MyReviewCustomRepository {
 
     Long findMemberIdByReviewId(Long reviewId);
 
-    Slice<LikeReviewDto> findLikeReviewsByMemberId(Long memberId, Pageable pageable);
+    Slice<LikeReviewDto> findLikeReviewsByMemberId(Long memberId, Map<Long, List<String>> imageMap, Pageable pageable);
 
     Slice<MyReviewDto> getMyReview(Long memberId, Map<Long, List<String>> imageMap, Pageable pageable);
 }
