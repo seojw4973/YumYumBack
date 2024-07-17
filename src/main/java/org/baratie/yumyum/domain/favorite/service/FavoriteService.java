@@ -27,7 +27,7 @@ public class FavoriteService {
 
         favoriteRepository.exist(member.getId(), store.getId()).ifPresentOrElse(
                 favorite -> {
-                    favorite.changeFavoriteStatus(request.getIsFavorite());
+                    favorite.changeFavoriteStatus(request.getFavoriteStatus());
                     favoriteRepository.save(favorite);
                 },
                 () -> favoriteRepository.save(Favorite.insertFavorite(member, store))
