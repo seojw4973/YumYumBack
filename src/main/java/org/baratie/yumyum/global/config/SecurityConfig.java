@@ -1,6 +1,7 @@
 package org.baratie.yumyum.global.config;
 
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.filter.JwtAuthenticationFilter;
 import org.baratie.yumyum.domain.member.handler.OAuth2SuccessHandler;
 import org.baratie.yumyum.domain.member.service.auth.JwtService;
@@ -61,7 +62,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeRequests(auth -> auth
-                .requestMatchers(("/admin/**")).hasRole("ADMIN")
+                .requestMatchers(("/admin/**")).hasRole(Role.ADMIN.name())
                 .requestMatchers("/**").permitAll()
                 .anyRequest().authenticated());
 

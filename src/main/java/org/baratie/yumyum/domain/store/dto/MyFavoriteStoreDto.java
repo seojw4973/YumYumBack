@@ -2,7 +2,6 @@ package org.baratie.yumyum.domain.store.dto;
 
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -18,14 +17,14 @@ public class MyFavoriteStoreDto {
     private Long totalReviewCount;
     private Long totalFavoriteCount;
     private Boolean favoriteStatus;
-    private List<String> hashtags;
-    private List<String> images;
+    private List<String> hashtagList;
+    private List<String> imageList;
     private String categoryName;
 
-    public void addHashtagList(List<String> hashtags) {
-        this.hashtags = hashtags;
+    public void addHashtagList(List<String> hashList) {
+        this.hashtagList = hashList;
     }
-    public void addImageList(List<String> images) {this.images = images;}
+    public void addImageList(List<String> imageList) {this.imageList = imageList;}
 
     @Builder
     public MyFavoriteStoreDto(Long storeId, String name, String imageUrl, String address, int views, double avgGrade, Long totalReviewCount, Long totalFavoriteCount, Boolean favoriteStatus, String categoryName) {

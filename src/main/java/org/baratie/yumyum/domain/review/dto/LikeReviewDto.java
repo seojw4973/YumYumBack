@@ -2,7 +2,6 @@ package org.baratie.yumyum.domain.review.dto;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -19,10 +18,10 @@ public class LikeReviewDto {
     private double avgGrade;
     private String content;
     private Boolean likeStatus;
-    private List<String> images;
+    private List<String> imageList;
 
-    public void addImageList(List<String> images) {
-        this.images = images;
+    public void addImageList(List<String> imageList) {
+        this.imageList = imageList;
     }
 
     @Builder

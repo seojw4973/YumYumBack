@@ -1,10 +1,6 @@
 package org.baratie.yumyum.domain.store.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,12 +20,12 @@ public class SearchStoreDto {
     private BigDecimal longitude;
     private BigDecimal latitude;
 
-    private List<String> hashtags;
+    private List<String> hashtagList;
     private List<String> images;
 
 
-    public void addHashtagList(List<String> hashtags) {
-        this.hashtags = hashtags;
+    public void addHashtagList(List<String> hashtagList) {
+        this.hashtagList = hashtagList;
     }
 
     public void addImageList(List<String> images) {
