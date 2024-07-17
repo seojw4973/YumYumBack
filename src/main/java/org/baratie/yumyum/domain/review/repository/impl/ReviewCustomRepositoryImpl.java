@@ -64,7 +64,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
      * @return 최신 작성순으로 리뷰 전체 리스트 리턴
      */
     @Override
-    public Slice<ReviewAllDto> findAllReviews(Map<Long, List<String>> imageList, Pageable pageable) {
+    public Slice<ReviewAllDto> findAllReviews(Map<Long, List<String>> imageMap, Pageable pageable) {
 
         List<ReviewAllDto> results = query
                 .select(Projections.constructor(ReviewAllDto.class,
@@ -87,7 +87,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .fetch();
 
         results.forEach(dto -> {
-            List<String> images = imageList.get(dto.getReviewId());
+            List<String> images = imageMap.get(dto.getReviewId());
             if (images != null) {
                 dto.addImageList(images);
             }

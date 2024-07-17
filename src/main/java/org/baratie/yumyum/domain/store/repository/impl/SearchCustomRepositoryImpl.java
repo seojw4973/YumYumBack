@@ -33,7 +33,7 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
      * @return 내 주변 맛집 30개
      */
     @Override
-    public List<SearchStoreDto> findSearchStore(Long memberId, Map<Long, List<String>> imageList,Map<Long, List<String>> hashtagList, String keyword) {
+    public List<SearchStoreDto> findSearchStore(Long memberId, Map<Long, String> imageMap,Map<Long, List<String>> hashtagMap, String keyword) {
         JPQLQuery<Long> favoriteCount = JPAExpressions
                 .select(favorite.count())
                 .from(favorite)
@@ -68,7 +68,7 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
                 .limit(30L)
                 .fetch();
 
-        return getSearchStoreDtos(searchStoreList, imageList, hashtagList);
+        return getSearchStoreDtos(searchStoreList, imageMap, hashtagMap);
     }
 
     /**
@@ -78,7 +78,7 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
      * @return 내 주변 맛집 30개 조회
      */
     @Override
-    public List<SearchStoreDto> findNearByStore(Double lng, Double lat, Map<Long, List<String>> imageList, Map<Long, List<String>> hashtagList) {
+    public List<SearchStoreDto> findNearByStore(Double lng, Double lat, Map<Long, String> imageMap, Map<Long, List<String>> hashtagMap) {
         JPQLQuery<Long> favoriteCount = JPAExpressions
                 .select(favorite.count())
                 .from(favorite)
@@ -115,17 +115,17 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
                 .limit(30L)
                 .fetch();
 
-        return getSearchStoreDtos(nearbyStoreList, imageList, hashtagList);
+        return getSearchStoreDtos(nearbyStoreList, imageMap, hashtagMap);
     }
 
 
-    private List<SearchStoreDto> getSearchStoreDtos(List<SearchStoreDto> dtos, Map<Long, List<String>> imageList, Map<Long, List<String>> hashtagList) {
+    private List<SearchStoreDto> getSearchStoreDtos(List<SearchStoreDto> dtos, Map<Long, String> imageMap, Map<Long, List<String>> hashtagMap) {
         dtos.forEach(dto -> {
-            List<String> images = imageList.get(dto.getStoreId());
+            String images = imageMap.get(dto.getStoreId());
             if(images != null) {
                 dto.addImageList(images);
             }
-            List<String> hashtags = hashtagList.get(dto.getStoreId());
+            List<String> hashtags = hashtagMap.get(dto.getStoreId());
             if(hashtags != null) {
                 dto.addHashtagList(hashtags);
             }

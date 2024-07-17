@@ -27,9 +27,9 @@ public class SearchService {
      * @return 검색 조건에 맞는 맛집 리스트 30개 제한으로 리턴
      */
     public List<SearchStoreDto> getSearchStores(Long memberId, String keyword) {
-        Map<Long, List<String>> imageList = imageRepository.findImageByStoreIdList();
-        Map<Long, List<String>> hashtagList = hashtagRepository.findHashtagByStoreId();
-        return storeRepository.findSearchStore(memberId, imageList, hashtagList, keyword);
+        Map<Long, String> imageMap = imageRepository.findImageByStoreIdList();
+        Map<Long, List<String>> hashtagMap = hashtagRepository.findHashtagByStoreId();
+        return storeRepository.findSearchStore(memberId, imageMap, hashtagMap, keyword);
     }
 
     /**
@@ -39,8 +39,8 @@ public class SearchService {
      * @return 전달받은 위치 반경 1km 내의 맛집 리스트 리턴
      */
     public List<SearchStoreDto> getNearByStore(Double lng, Double lat) {
-        Map<Long, List<String>> imageList = imageRepository.findImageByStoreIdList();
-        Map<Long, List<String>> hashtagList = hashtagRepository.findHashtagByStoreId();
-        return storeRepository.findNearByStore(lng, lat, imageList, hashtagList);
+        Map<Long, String> imageMap = imageRepository.findImageByStoreIdList();
+        Map<Long, List<String>> hashtagMap = hashtagRepository.findHashtagByStoreId();
+        return storeRepository.findNearByStore(lng, lat, imageMap, hashtagMap);
     }
 }

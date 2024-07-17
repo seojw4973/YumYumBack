@@ -13,7 +13,7 @@ import java.util.Map;
 @Repository
 public interface ReviewCustomRepository {
 
-    Slice<ReviewAllDto> findAllReviews(Map<Long, List<String>> imageList, Pageable pageable);
+    Slice<ReviewAllDto> findAllReviews(Map<Long, List<String>> imageMap, Pageable pageable);
 
     Slice<StoreReviewDto> findReviewByStoreId(Long storeId, Map<Long, List<String>> imageList, Pageable pageable);
 

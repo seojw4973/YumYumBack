@@ -21,14 +21,14 @@ public class SearchStoreDto {
     private BigDecimal latitude;
 
     private List<String> hashtagList;
-    private List<String> images;
+    private String images;
 
 
     public void addHashtagList(List<String> hashtagList) {
         this.hashtagList = hashtagList;
     }
 
-    public void addImageList(List<String> images) {
+    public void addImageList(String images) {
         this.images = images;
     }
 
