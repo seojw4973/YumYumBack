@@ -1,6 +1,7 @@
 package org.baratie.yumyum.domain.report.repository.Impl;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.report.domain.ReportType;
@@ -9,6 +10,7 @@ import org.baratie.yumyum.domain.report.repository.ReportCustomRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
@@ -41,11 +43,10 @@ public class ReportCustomRepositoryImpl implements ReportCustomRepository {
                 .orderBy(report.createdAt.desc())
                 .fetch();
 
-        long totalCount = query.from(report)
-                .where(report.type.eq(ReportType.REVIEW))
-                .fetchCount();
+        JPAQuery<Long> countQuery = query.select(report.count()).from(report)
+                .where(report.type.eq(ReportType.REVIEW));
 
-        return new PageImpl<>(results, pageable, totalCount);
+        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 
     @Override
@@ -66,11 +67,10 @@ public class ReportCustomRepositoryImpl implements ReportCustomRepository {
                 .orderBy(report.createdAt.desc())
                 .fetch();
 
-        long totalCount = query.from(report)
-                .where(report.type.eq(ReportType.REPLY))
-                .fetchCount();
+        JPAQuery<Long> countQuery = query.select(report.count()).from(report)
+                .where(report.type.eq(ReportType.REPLY));
 
-        return new PageImpl<>(results, pageable, totalCount);
+        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 
     @Override
@@ -91,10 +91,9 @@ public class ReportCustomRepositoryImpl implements ReportCustomRepository {
                 .orderBy(report.createdAt.desc())
                 .fetch();
 
-        long totalCount = query.from(report)
-                .where(report.type.eq(ReportType.STORE))
-                .fetchCount();
+        JPAQuery<Long> countQuery = query.select(report.count()).from(report)
+                .where(report.type.eq(ReportType.STORE));
 
-        return new PageImpl<>(results, pageable, totalCount);
+        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 }

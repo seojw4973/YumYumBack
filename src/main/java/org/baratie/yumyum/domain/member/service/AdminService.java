@@ -31,8 +31,7 @@ public class AdminService {
      * @return 맛집 전체 데이터 Page 정보와 함께 리턴
      */
     public Page<AdminStoreDto> getAdminStores(Pageable pageable) {
-        Page<Store> pageStore = storeRepository.findAll(pageable);
-        return pageStore.map(m -> new AdminStoreDto(m.getId(), m.getName(), m.getCall(), m.getAddress(), m.isClosed()));
+        return storeRepository.getSimpleStore(pageable);
     }
 
     /**
