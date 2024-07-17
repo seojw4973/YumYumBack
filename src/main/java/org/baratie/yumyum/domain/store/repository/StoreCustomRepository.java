@@ -2,6 +2,7 @@ package org.baratie.yumyum.domain.store.repository;
 
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
@@ -18,5 +19,5 @@ public interface StoreCustomRepository {
 
     Slice<MyFavoriteStoreDto> findFavoriteStore(Long memberId, Pageable pageable);
 
-
+    Page<AdminStoreDto> getSimpleStore(Pageable pageable);
 }

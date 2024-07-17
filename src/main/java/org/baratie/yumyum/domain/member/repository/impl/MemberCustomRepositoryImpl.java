@@ -6,6 +6,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
@@ -16,6 +17,7 @@ import org.baratie.yumyum.domain.member.repository.MemberCustomRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
@@ -65,9 +67,10 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
                 .orderBy(member.nickname.asc(), member.id.asc())
                 .fetch();
 
+        JPAQuery<Long> countQuery = query.select(member.count()).from(member);
 
 
-        return new PageImpl<>(results, pageable, results.size());
+        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
 
     }
 

@@ -5,14 +5,17 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.*;
 import org.baratie.yumyum.domain.store.repository.StoreCustomRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -143,6 +146,28 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
         }
 
         return new SliceImpl<>(results, pageable, hasNext);
+    }
+
+    /**
+     * 관리자 페이지 맛집 조회
+     */
+    @Override
+    public Page<AdminStoreDto> getSimpleStore(Pageable pageable) {
+        List<AdminStoreDto> results = query.select(Projections.constructor(AdminStoreDto.class,
+                store.id,
+                store.name,
+                store.call,
+                store.address,
+                store.isClosed))
+                .from(store)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(store.createdAt.desc())
+                .fetch();
+
+        JPAQuery<Long> countQuery = query.select(store.count()).from(store);
+
+        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression storeIdEq(Long storeId) {
