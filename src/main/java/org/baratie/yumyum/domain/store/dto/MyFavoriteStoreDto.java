@@ -10,7 +10,6 @@ public class MyFavoriteStoreDto {
 
     private Long storeId;
     private String name;
-    private String imageUrl;
     private String address;
     private int views;
     private Double avgGrade;
@@ -18,19 +17,21 @@ public class MyFavoriteStoreDto {
     private Long totalFavoriteCount;
     private Boolean favoriteStatus;
     private List<String> hashtagList;
-    private List<String> imageList;
+    private String imageUrl;
     private String categoryName;
 
     public void addHashtagList(List<String> hashList) {
         this.hashtagList = hashList;
     }
-    public void addImageList(List<String> imageList) {this.imageList = imageList;}
+
+    public void addImage(String image) {
+        this.imageUrl = image;
+    }
 
     @Builder
-    public MyFavoriteStoreDto(Long storeId, String name, String imageUrl, String address, int views, double avgGrade, Long totalReviewCount, Long totalFavoriteCount, Boolean favoriteStatus, String categoryName) {
+    public MyFavoriteStoreDto(Long storeId, String name, String address, int views, double avgGrade, Long totalReviewCount, Long totalFavoriteCount, Boolean favoriteStatus, String categoryName) {
         this.storeId = storeId;
         this.name = name;
-        this.imageUrl = imageUrl;
         this.address = address;
         this.views = views;
         this.avgGrade = Math.round(avgGrade * 10.0) / 10.0;;

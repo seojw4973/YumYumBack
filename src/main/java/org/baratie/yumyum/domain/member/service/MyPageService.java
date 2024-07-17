@@ -1,6 +1,8 @@
 package org.baratie.yumyum.domain.member.service;
 
+import com.querydsl.core.group.Group;
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
 import org.baratie.yumyum.domain.member.dto.MyReplyDto;
 import org.baratie.yumyum.domain.reply.repository.ReplyRepository;
 import org.baratie.yumyum.domain.review.dto.LikeReviewDto;
@@ -24,6 +26,7 @@ public class MyPageService {
     private final ReviewRepository reviewRepository;
     private final StoreRepository storeRepository;
     private final ImageRepository imageRepository;
+    private final HashtagRepository hashtagRepository;
 
     /**
      * 내가 쓴 댓글 보기
@@ -65,7 +68,11 @@ public class MyPageService {
      * @param memberId
      */
     public CustomSliceDto getMyFavoriteStore(Long memberId, Pageable pageable) {
-        Slice<MyFavoriteStoreDto> favoriteStore = storeRepository.findFavoriteStore(memberId, pageable);
+
+        Map<Long, List<String>> hashtagMap = hashtagRepository.findHashtagByStoreId();
+        Map<Long, String> imageMap = imageRepository.findImageByStoreIdList();
+
+        Slice<MyFavoriteStoreDto> favoriteStore = storeRepository.findFavoriteStore(memberId,hashtagMap, imageMap, pageable);
         return new CustomSliceDto(favoriteStore);
     }
 }
