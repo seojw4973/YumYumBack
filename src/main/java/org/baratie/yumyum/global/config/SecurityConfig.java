@@ -43,7 +43,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://192.168.0.12:3000", "http://223.130.139.146:3000", "https://www.baratie.site"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://192.168.0.12:3000", "http://223.130.139.146:3000", "https://www.baratie.site", "https://yumyum-ashen.vercel.app"));
         config.setAllowedMethods(Arrays.asList("*"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
