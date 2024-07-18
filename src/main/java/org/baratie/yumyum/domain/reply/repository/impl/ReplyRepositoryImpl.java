@@ -25,20 +25,21 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
     @Override
     public Slice<ReplyResponseDto> getReplyOnReview(Long reviewId, Pageable pageable) {
 
-        List<ReplyResponseDto> results = query.select(Projections.constructor(ReplyResponseDto.class,
-                        reply.id,
-                        member.imageUrl,
-                        member.nickname,
-                        reply.content,
-                        reply.createdAt)
-                )
-                .from(reply)
-                .leftJoin(reply.member, member)
-                .where(reply.review.id.eq(reviewId))
-                .orderBy(reply.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
-                .fetch();
+        List<ReplyResponseDto> results =
+                query.select(Projections.constructor(ReplyResponseDto.class,
+                                reply.id,
+                                member.imageUrl,
+                                member.nickname,
+                                reply.content,
+                                reply.createdAt)
+                        )
+                        .from(reply)
+                        .leftJoin(reply.member, member)
+                        .where(reply.review.id.eq(reviewId))
+                        .orderBy(reply.createdAt.desc())
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize() + 1)
+                        .fetch();
 
         boolean hasNext = results.size() > pageable.getPageSize();
 
@@ -52,20 +53,21 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
     @Override
     public Slice<MyReplyDto> findByMemberId(Long memberId, Pageable pageable) {
 
-        List<MyReplyDto> results = query.select(Projections.constructor(MyReplyDto.class,
+        List<MyReplyDto> results =
+                query.select(Projections.constructor(MyReplyDto.class,
                                 reply.id,
                                 member.nickname,
                                 reply.content,
                                 reply.createdAt,
                                 reply.review.id)
-                )
-                .from(reply)
-                .leftJoin(reply.member, member)
-                .where(reply.member.id.eq(memberId))
-                .orderBy(reply.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize()+1)
-                .fetch();
+                        )
+                        .from(reply)
+                        .leftJoin(reply.member, member)
+                        .where(reply.member.id.eq(memberId))
+                        .orderBy(reply.createdAt.desc())
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize() + 1)
+                        .fetch();
 
         boolean hasNext = results.size() > pageable.getPageSize();
 

@@ -42,21 +42,21 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
 
     @Override
     public Page<SimpleMemberDto> getSimpleMemberInfo(Pageable pageable) {
-        List<SimpleMemberDto> results = query.select(Projections.constructor(SimpleMemberDto.class,
-                        member.id,
-                        member.nickname,
-                        member.email,
-                        member.phoneNumber,
-                        member.isDeleted
-                ))
-                .from(member)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .orderBy(member.nickname.asc(), member.id.asc())
-                .fetch();
+        List<SimpleMemberDto> results =
+                query.select(Projections.constructor(SimpleMemberDto.class,
+                                member.id,
+                                member.nickname,
+                                member.email,
+                                member.phoneNumber,
+                                member.isDeleted
+                        ))
+                        .from(member)
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .orderBy(member.nickname.asc(), member.id.asc())
+                        .fetch();
 
         JPAQuery<Long> countQuery = query.select(member.count()).from(member);
-
 
         return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
 

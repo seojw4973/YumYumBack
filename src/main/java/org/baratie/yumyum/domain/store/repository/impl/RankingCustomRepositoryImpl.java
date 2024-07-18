@@ -21,7 +21,6 @@ public class RankingCustomRepositoryImpl implements RankingCustomRepository {
 
     private final JPAQueryFactory query;
 
-
     /**
      * 리뷰 평점 높은 순 + 즐겨찾기 숫자 많은 순
      * @param local 지역 top10

@@ -38,7 +38,6 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
      */
     @Override
     public Optional<Store> existAndDeletedStore(Long storeId) {
-
         Store findStore = query.selectFrom(store)
                 .where(storeIdEq(storeId).and(store.isClosed.isFalse()))
                 .fetchOne();
@@ -57,8 +56,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .from(favorite)
                 .where(favorite.store.id.eq(storeId), favorite.member.id.eq(memberId));
 
-        return query
-                .select(Projections.constructor(StoreDetailDto.class,
+        return query.select(Projections.constructor(StoreDetailDto.class,
                         store.id,
                         store.name,
                         store.address,
