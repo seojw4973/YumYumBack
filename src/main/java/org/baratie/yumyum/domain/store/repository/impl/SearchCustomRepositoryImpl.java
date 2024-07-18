@@ -44,6 +44,10 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
                 .from(review)
                 .where(review.store.id.eq(store.id));
 
+        JPQLQuery<Boolean> favoriteStatus = JPAExpressions.select(favorite.isFavorite)
+                .from(favorite)
+                .where(favorite.store.id.eq(store.id), favorite.member.id.eq(memberId));
+
         List<SearchStoreDto> searchStoreList = query.select(Projections.constructor(SearchStoreDto.class,
                         store.id,
                         store.name,
@@ -52,7 +56,7 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
                         Expressions.numberTemplate(Double.class, "round({0}, 2)", review.grade.avg().coalesce(0.0)),
                         totalReviewCount,
                         favoriteCount,
-                        favorite.isFavorite,
+                        favoriteStatus,
                         category.name,
                         store.longitude,
                         store.latitude
@@ -78,7 +82,7 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
      * @return 내 주변 맛집 30개 조회
      */
     @Override
-    public List<SearchStoreDto> findNearByStore(Double lng, Double lat, Map<Long, String> imageMap, Map<Long, List<String>> hashtagMap) {
+    public List<SearchStoreDto> findNearByStore(Long memberId, Double lng, Double lat, Map<Long, String> imageMap, Map<Long, List<String>> hashtagMap) {
         JPQLQuery<Long> favoriteCount = JPAExpressions
                 .select(favorite.count())
                 .from(favorite)
@@ -88,6 +92,10 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
                 .select(review.count())
                 .from(review)
                 .where(review.store.id.eq(store.id));
+
+        JPQLQuery<Boolean> favoriteStatus = JPAExpressions.select(favorite.isFavorite)
+                .from(favorite)
+                .where(favorite.store.id.eq(store.id), favorite.member.id.eq(memberId));
 
         NumberTemplate<Double> distanceExpr = Expressions.numberTemplate(Double.class,
                 "ST_Distance_Sphere(Point({0}, {1}), Point({2}, {3}))",
@@ -101,7 +109,7 @@ public class SearchCustomRepositoryImpl implements SearchCustomRepository {
                         Expressions.numberTemplate(Double.class, "round({0}, 2)", review.grade.avg().coalesce(0.0)),
                         totalReviewCount,
                         favoriteCount,
-                        favorite.isFavorite,
+                        favoriteStatus,
                         category.name,
                         store.longitude,
                         store.latitude))

@@ -38,9 +38,9 @@ public class SearchService {
      * @param lat 위도
      * @return 전달받은 위치 반경 1km 내의 맛집 리스트 리턴
      */
-    public List<SearchStoreDto> getNearByStore(Double lng, Double lat) {
+    public List<SearchStoreDto> getNearByStore(Double lng, Double lat, Long memberId) {
         Map<Long, String> imageMap = imageRepository.findImageByStoreIdList();
         Map<Long, List<String>> hashtagMap = hashtagRepository.findHashtagByStoreId();
-        return storeRepository.findNearByStore(lng, lat, imageMap, hashtagMap);
+        return storeRepository.findNearByStore(memberId ,lng, lat, imageMap, hashtagMap);
     }
 }
