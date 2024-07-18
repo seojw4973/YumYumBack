@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class MyReplyDto {
     private Long id;
-    private String nickName;
+    private String nickname;
     private String content;
     private LocalDateTime createdAt;
     private Long reviewId;

@@ -24,7 +24,7 @@ public class SignUpDto {
     private String phoneNumber;
 
     @NotBlank
-    private String nickName;
+    private String nickname;
 
     public Member toEntity(String password, String imageUrl){
         return Member.builder()
@@ -32,7 +32,7 @@ public class SignUpDto {
                 .password(password)
                 .phoneNumber(this.phoneNumber)
                 .imageUrl(imageUrl)
-                .nickname(this.nickName)
+                .nickname(this.nickname)
                 .role(Role.USER)
                 .socialType(SocialType.YUMYUM)
                 .build();

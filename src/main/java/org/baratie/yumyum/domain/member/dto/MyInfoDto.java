@@ -13,14 +13,14 @@ public class MyInfoDto {
     private Long memberId;
     private String email;
     private String phoneNumber;
-    private String nickName;
+    private String nickname;
     private String imageUrl;
 
     public static MyInfoDto fromEntity(Member member) {
         return MyInfoDto.builder()
                 .memberId(member.getId())
                 .email(member.getEmail())
-                .nickName(member.getNickname())
+                .nickname(member.getNickname())
                 .phoneNumber(member.getPhoneNumber())
                 .imageUrl(member.getImageUrl()).build();
     }

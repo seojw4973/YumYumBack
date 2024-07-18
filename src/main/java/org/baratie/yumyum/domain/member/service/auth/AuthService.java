@@ -36,7 +36,7 @@ public class AuthService {
      * @return
      */
     public void register(SignUpDto signUpDto, MultipartFile file) throws IOException {
-        memberService.nicknameDuplicateCheck(signUpDto.getNickName());
+        memberService.nicknameDuplicateCheck(signUpDto.getNickname());
         String password = passwordEncoder.encode(signUpDto.getPassword());
         String profileUrl = null;
         if(file != null && !file.isEmpty()){

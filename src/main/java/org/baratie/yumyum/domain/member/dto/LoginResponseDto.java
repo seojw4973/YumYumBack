@@ -11,7 +11,7 @@ import org.baratie.yumyum.domain.member.domain.Role;
 @ToString
 public class LoginResponseDto {
     Long memberId;
-    String nickName;
+    String nickname;
     String imageUrl;
     String phoneNumber;
     Role role;

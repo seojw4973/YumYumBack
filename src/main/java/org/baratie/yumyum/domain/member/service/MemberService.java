@@ -1,6 +1,6 @@
 package org.baratie.yumyum.domain.member.service;
 
-import lombok.RequiredArgsConstructor;
+import  lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.exception.MemberNotFoundException;
@@ -23,7 +23,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
 
-
     /**
      * 내 정보 보기
      * @param memberId
@@ -41,6 +40,10 @@ public class MemberService {
      */
     public void updateMember(Member member, UpdateMemberDto updateMemberDto, MultipartFile file) throws IOException {
 
+        System.out.println("member = " + member.toString());
+        System.out.println("updateMemberDto = " + updateMemberDto.toString());
+        System.out.println("file = " + file);
+
         if (updateMemberDto.getNickname() != null && !updateMemberDto.getNickname().isBlank()) {
             nicknameDuplicateCheck(updateMemberDto.getNickname());
         }
@@ -56,10 +59,11 @@ public class MemberService {
             if (member.getImageUrl() != null && !member.getImageUrl().isEmpty()) {
                 imageService.targetFileDelete(member);
             }
-
             profileUrl = imageService.profileImageUpload(file);
 
         } else {
+            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@");
+
             imageService.targetFileDelete(member);
             profileUrl = null;
         }
@@ -80,7 +84,7 @@ public class MemberService {
     }
 
     /**
-     * 비밀번호 동일 체크
+     * 비밀번호 인코딩
      */
     private void passwordUpdate(UpdateMemberDto updateMemberDto) {
         String encodingPassword = passwordEncoder.encode(updateMemberDto.getPassword());
