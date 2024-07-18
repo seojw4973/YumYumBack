@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.review.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.review.dto.*;
@@ -24,7 +25,7 @@ public class ReviewController {
      */
     @PostMapping
     public ResponseEntity<Void> writeReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                            @RequestPart("createReviewDto") CreateReviewDto createReviewDto,
+                                            @Valid @RequestPart("createReviewDto") CreateReviewDto createReviewDto,
                                             @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         reviewService.createReview(customUserDetails, createReviewDto, files);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -36,7 +37,7 @@ public class ReviewController {
     @PatchMapping("/{reviewId}")
     public ResponseEntity<Void> updateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                              @PathVariable Long reviewId,
-                                             @RequestPart UpdateReviewRequestDto request,
+                                             @Valid @RequestPart UpdateReviewRequestDto request,
                                              @RequestPart List<MultipartFile> files) {
         reviewService.updateReview(customUserDetails.getId(), reviewId, request, files);
 

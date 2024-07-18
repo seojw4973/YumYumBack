@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.report.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.report.dto.CreateReportDto;
@@ -52,7 +53,7 @@ public class ReportController {
      * 신고하기
      */
     @PostMapping
-    public ResponseEntity<Void> createReport(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody CreateReportDto createReportDto) {
+    public ResponseEntity<Void> createReport(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody CreateReportDto createReportDto) {
         Long memberId = customUserDetails.getId();
         reportService.createReport(memberId, createReportDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();

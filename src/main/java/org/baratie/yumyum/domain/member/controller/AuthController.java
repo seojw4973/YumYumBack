@@ -1,10 +1,10 @@
 package org.baratie.yumyum.domain.member.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.dto.LoginDto;
 import org.baratie.yumyum.domain.member.dto.LoginResponseDto;
 import org.baratie.yumyum.domain.member.dto.SignUpDto;
-import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.member.service.auth.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class AuthController {
      * @return response 회원가입 완료 여부
      */
     @PostMapping
-    public ResponseEntity<String> registerMember(@RequestPart SignUpDto signUpDto,
+    public ResponseEntity<String> registerMember(@Valid @RequestPart SignUpDto signUpDto,
                                                  @RequestPart(required = false) MultipartFile file) throws IOException {
         authService.register(signUpDto, file);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -37,7 +37,7 @@ public class AuthController {
      * @return LoginResponseDto 로그인한 유저의 정보 및 jwt 리턴
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginDto loginDto) {
         LoginResponseDto loginResponseDtoDto = authService.login(loginDto);
         return ResponseEntity.status(HttpStatus.OK).body(loginResponseDtoDto);
     }

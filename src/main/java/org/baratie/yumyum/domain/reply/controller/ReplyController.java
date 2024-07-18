@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.reply.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
@@ -43,7 +44,7 @@ public class ReplyController {
      * 댓글 달기
      */
     @PostMapping
-    public ResponseEntity<Void> createReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody CreateReplyDto request){
+    public ResponseEntity<Void> createReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody CreateReplyDto request){
         Member member = memberService.getMember(customUserDetails.getId());
         Review review = reviewService.getReview(request.getReviewId());
 
@@ -55,7 +56,7 @@ public class ReplyController {
      * 댓글 수정
      */
     @PatchMapping("/{replyId}")
-    public ResponseEntity<Void> updateReply(@PathVariable Long replyId, @RequestBody UpdateRelyDto request){
+    public ResponseEntity<Void> updateReply(@PathVariable Long replyId, @Valid @RequestBody UpdateRelyDto request){
         replyService.updateReply(replyId, request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
