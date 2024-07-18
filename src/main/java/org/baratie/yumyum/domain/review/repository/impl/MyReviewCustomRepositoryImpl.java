@@ -1,9 +1,8 @@
 package org.baratie.yumyum.domain.review.repository.impl;
 
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +19,9 @@ import static org.baratie.yumyum.domain.likes.domain.QLikes.likes;
 import static org.baratie.yumyum.domain.member.domain.QMember.*;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.store;
-import static org.baratie.yumyum.global.utils.file.domain.QImage.image;
+import static org.baratie.yumyum.global.subquery.TotalReviewCount.getReviewTotalCount;
+import static org.baratie.yumyum.global.subquery.TotalAvgGrade.getAvgGrade;
+
 
 @RequiredArgsConstructor
 public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
@@ -34,26 +35,27 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
      */
     @Override
     public Slice<MyReviewDto> getMyReview(Long memberId, Map<Long, List<String>> imageMap, Pageable pageable) {
-        List<MyReviewDto> results = query.select(Projections.constructor(MyReviewDto.class,
-                        review.id,
-                        store.name,
-                        store.address,
-                        member.nickname,
-                        review.grade,
-                        getReviewTotalCount(memberId),
-                        getAvgGrade(memberId),
-                        review.content,
-                        likes.isLikes
-                ))
-                .from(review)
-                .leftJoin(review.member, member)
-                .leftJoin(review.store, store)
-                .leftJoin(likes).on(likes.review.id.eq(review.id))
-                .orderBy(review.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
-                .where(memberIdEq(memberId))
-                .fetch();
+        List<MyReviewDto> results =
+                query.select(Projections.constructor(MyReviewDto.class,
+                                review.id,
+                                store.name,
+                                store.address,
+                                member.nickname,
+                                review.grade,
+                                ExpressionUtils.as(getReviewTotalCount(memberId), "totalReviewCount"),
+                                ExpressionUtils.as(getAvgGrade(memberId), "avgGrade"),
+                                review.content,
+                                likes.isLikes
+                        ))
+                        .from(review)
+                        .leftJoin(review.member, member)
+                        .leftJoin(review.store, store)
+                        .leftJoin(likes).on(likes.review.id.eq(review.id))
+                        .orderBy(review.createdAt.desc())
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize() + 1)
+                        .where(memberIdEq(memberId))
+                        .fetch();
 
         results.forEach(dto -> {
             List<String> imageList = imageMap.get(dto.getReviewId());
@@ -62,8 +64,6 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
                 dto.addImageList(imageList);
             }
         });
-
-
 
         boolean hasNext = results.size() > pageable.getPageSize();
         if (hasNext) {
@@ -82,26 +82,27 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
     @Override
     public Slice<LikeReviewDto> findLikeReviewsByMemberId(Long memberId, Map<Long, List<String>> imageMap, Pageable pageable) {
 
-        List<LikeReviewDto> results = query.select(Projections.constructor(LikeReviewDto.class,
-                        review.id,
-                        store.name,
-                        store.address,
-                        member.nickname,
-                        review.grade,
-                        getReviewTotalCount(),
-                        getAvgGrade(),
-                        review.content,
-                        likes.isLikes
-                ))
-                .from(review)
-                .leftJoin(review.member, member)
-                .leftJoin(review.store, store)
-                .leftJoin(likes).on(likes.review.id.eq(review.id))
-                .where(likes.member.id.eq(memberId).and(likes.isLikes.eq(true)))
-                .orderBy(review.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
-                .fetch();
+        List<LikeReviewDto> results =
+                query.select(Projections.constructor(LikeReviewDto.class,
+                                review.id,
+                                store.name,
+                                store.address,
+                                member.nickname,
+                                review.grade,
+                                ExpressionUtils.as(getReviewTotalCount(), "totalReviewCount"),
+                                ExpressionUtils.as(getAvgGrade(), "avgGrade"),
+                                review.content,
+                                likes.isLikes
+                        ))
+                        .from(review)
+                        .leftJoin(review.member, member)
+                        .leftJoin(review.store, store)
+                        .leftJoin(likes).on(likes.review.id.eq(review.id))
+                        .where(likes.member.id.eq(memberId).and(likes.isLikes.eq(true)))
+                        .orderBy(review.createdAt.desc())
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize() + 1)
+                        .fetch();
 
         results.forEach(
                 dto -> {
@@ -131,52 +132,6 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
                 .fetchOne();
     }
 
-    /**
-     * 리뷰 총 갯수
-     * @return 멤버가 작성한 리뷰 갯수
-     */
-    private JPQLQuery<Long> getReviewTotalCount() {
-        return JPAExpressions
-                .select(review.count())
-                .from(review)
-                .where(review.member.id.eq(member.id));
-    }
-
-    /**
-     * 리뷰 총 갯수
-     * @param memberId 조회할 멤버
-     * @return 멤버가 작성한 리뷰 갯수
-     */
-    private JPQLQuery<Long> getReviewTotalCount(Long memberId) {
-        return JPAExpressions
-                .select(review.count())
-                .from(review)
-                .where(memberIdEq(memberId));
-    }
-
-    /**
-     * 리뷰 총 갯수
-     * @return 멤버가 작성한 평균 리뷰 점수
-     */
-    private JPQLQuery<Double> getAvgGrade() {
-        return JPAExpressions
-                .select(review.grade.avg())
-                .from(review)
-                .where(review.member.id.eq(member.id));
-    }
-
-    /**
-     * 평균 별점
-     * @param memberId 조회할 멤버
-     * @return 멤버가 작성한 평균 리뷰 점수
-     */
-    private JPQLQuery<Double> getAvgGrade(Long memberId) {
-        return JPAExpressions
-                .select(review.grade.avg())
-                .from(review)
-                .where(memberIdEq(memberId));
-    }
-
     public BooleanExpression memberIdEq(Long memberId) {
         return review.member.id.eq(memberId);
     }
@@ -185,12 +140,5 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
         return review.id.eq(reviewId);
     }
 
-    public BooleanExpression storeIdEq(Long storeId) {
-        return review.store.id.eq(storeId);
-    }
-  
-    public BooleanExpression likesMemberIdEq(Long memberId) { 
-      return likes.member.id.eq(memberId); 
-   }
 
 }
