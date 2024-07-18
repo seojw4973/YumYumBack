@@ -1,41 +1,29 @@
 package org.baratie.yumyum.domain.member.repository.impl;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
-import org.baratie.yumyum.domain.member.domain.QMember;
 import org.baratie.yumyum.domain.member.dto.MemberBasicDto;
 import org.baratie.yumyum.domain.member.dto.SimpleMemberDto;
 import org.baratie.yumyum.domain.member.repository.MemberCustomRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
 import static org.baratie.yumyum.domain.member.domain.QMember.*;
-import static org.baratie.yumyum.domain.review.domain.QReview.review;
+import static org.baratie.yumyum.global.subquery.TotalAvgGrade.*;
+import static org.baratie.yumyum.global.subquery.TotalReviewCount.*;
 
 @RequiredArgsConstructor
 public class MemberCustomRepositoryImpl implements MemberCustomRepository {
 
     private final JPAQueryFactory query;
-
-    @Override
-    public boolean checkDeletedMember(Long memberId) {
-        return query.select(member.isDeleted)
-                .from(member)
-                .where(member.id.eq(memberId))
-                .fetchOne();
-    }
 
     @Override
     public MemberBasicDto findMemberBasisInfo(Long memberId) {
@@ -81,28 +69,12 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
                 .fetchOne();
     }
 
-    /**
-     * 리뷰 총 갯수
-     * @param memberId 조회할 멤버
-     * @return 멤버가 작성한 리뷰 갯수
-     */
-    private JPQLQuery<Long> getReviewTotalCount(Long memberId) {
-        return JPAExpressions
-                .select(review.count())
-                .from(review)
-                .where(memberIdEq(memberId));
-    }
-
-    /**
-     * 평균 별점
-     * @param memberId 조회할 멤버
-     * @return 멤버가 작성한 평균 리뷰 점수
-     */
-    private JPQLQuery<Double> getAvgGrade(Long memberId) {
-        return JPAExpressions
-                .select(review.grade.avg())
-                .from(review)
-                .where(memberIdEq(memberId));
+    @Override
+    public boolean checkDeletedMember(Long memberId) {
+        return query.select(member.isDeleted)
+                .from(member)
+                .where(member.id.eq(memberId))
+                .fetchOne();
     }
 
     public BooleanExpression memberIdEq(Long memberId) {
