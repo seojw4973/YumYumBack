@@ -29,6 +29,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         System.out.println("rtk = " + rtk);
 
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + atk);
-        response.sendRedirect("http://192.168.0.12:3000/callback?atk=" + atk + "&rtk=" + rtk);
+        response.sendRedirect("http://223.130.139.146:3000/callback?atk=" + atk + "&rtk=" + rtk);
     }
 }
