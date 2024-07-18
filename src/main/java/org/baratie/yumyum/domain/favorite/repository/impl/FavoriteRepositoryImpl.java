@@ -21,7 +21,7 @@ public class FavoriteRepositoryImpl implements FavoriteCustomRepository {
         return Optional.ofNullable(
                 query.selectFrom(favorite)
                         .where(memberIdStoreIdEq(memberId, storeId))
-                        .fetchFirst()
+                        .fetchOne()
         );
     }
 

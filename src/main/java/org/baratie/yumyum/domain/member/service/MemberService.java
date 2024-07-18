@@ -89,17 +89,6 @@ public class MemberService {
     }
 
     /**
-     * id 값에 해당하는 멤버 가져오기
-     */
-//    public Member getMember(Long memberId){
-//        exists(memberId);
-//        validationMemberId(memberId);
-//        return memberRepository.findById(memberId).orElseThrow(
-//                () -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND)
-//        );
-//    }
-
-    /**
      * email 값에 해당하는 멤버 가져오기
      */
     public Member getMemberByEmail(String email){
@@ -117,16 +106,6 @@ public class MemberService {
             throw new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
         }
 
-    }
-
-    /**
-     * 회원 존재 여부 확인
-     */
-    public void exists(Long memberId){
-        boolean existMember = memberRepository.existsById(memberId);
-        if(!existMember){
-            throw new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
-        }
     }
 
     public Member getMember(Long memberId){

@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 public interface LikesCustomRepository {
-
     Optional<Likes> exist(Long memberId, Long reviewId);
 }

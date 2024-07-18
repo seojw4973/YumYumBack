@@ -26,7 +26,6 @@ public class LikesController {
     @PostMapping("/like")
     public ResponseEntity<Void> checkLikes(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody LikesDto likesDto){
         Member member = memberService.getMember(customUserDetails.getId());
-        System.out.println("member.getNickname() = " + member.getNickname());
         Review review = reviewService.getReview(likesDto.getReviewId());
 
         likesService.checkLikes(member, review, likesDto);

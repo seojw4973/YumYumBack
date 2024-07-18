@@ -8,7 +8,6 @@ import org.baratie.yumyum.domain.likes.repository.LikesCustomRepository;
 
 import java.util.Optional;
 
-import static org.baratie.yumyum.domain.favorite.domain.QFavorite.favorite;
 import static org.baratie.yumyum.domain.likes.domain.QLikes.*;
 
 @RequiredArgsConstructor
@@ -20,8 +19,8 @@ public class LikesCustomRepositoryImpl implements LikesCustomRepository {
     public Optional<Likes> exist(Long memberId, Long reviewId) {
         return Optional.ofNullable(
                 query.selectFrom(likes)
-                        .where(memberIdreviewIdEq(memberId, reviewId))
-                        .fetchFirst()
+                        .where(memberIdReviewIdEq(memberId, reviewId))
+                        .fetchOne()
         );
     }
 
@@ -31,7 +30,7 @@ public class LikesCustomRepositoryImpl implements LikesCustomRepository {
      * @param reviewId 즐겨찾기 누를 가게 id
      * @return BooleanExpression
      */
-    private BooleanExpression memberIdreviewIdEq(Long memberId, Long reviewId) {
+    private BooleanExpression memberIdReviewIdEq(Long memberId, Long reviewId) {
         return memberIdEq(memberId).and(reviewIdEq(reviewId));
     }
 
