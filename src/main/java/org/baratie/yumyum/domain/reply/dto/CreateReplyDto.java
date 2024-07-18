@@ -1,6 +1,7 @@
 package org.baratie.yumyum.domain.reply.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class CreateReplyDto {
     @NotBlank
     private String content;
 
-    @NotBlank
+    @NotNull
     private Long reviewId;
 
     public Reply toEntity(Review review, Member member) {

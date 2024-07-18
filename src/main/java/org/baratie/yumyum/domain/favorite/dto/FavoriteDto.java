@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class FavoriteDto {
 
-    @NotBlank
+    @NotNull
     private Long storeId;
 
     @NotNull

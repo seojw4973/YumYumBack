@@ -1,6 +1,7 @@
 package org.baratie.yumyum.domain.menu.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.baratie.yumyum.domain.menu.domain.Menu;
 
@@ -14,7 +15,7 @@ public class MenuDto {
     @NotBlank
     private String name;
 
-    @NotBlank
+    @NotNull
     private int price;
 
     public Menu toEntity(){

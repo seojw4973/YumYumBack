@@ -11,7 +11,7 @@ import lombok.*;
 @ToString
 public class LikesDto {
 
-    @NotBlank
+    @NotNull
     private Long reviewId;
 
     @NotNull
