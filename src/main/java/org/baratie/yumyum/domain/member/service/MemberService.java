@@ -40,10 +40,6 @@ public class MemberService {
      */
     public void updateMember(Member member, UpdateMemberDto updateMemberDto, MultipartFile file) throws IOException {
 
-        System.out.println("member = " + member.toString());
-        System.out.println("updateMemberDto = " + updateMemberDto.toString());
-        System.out.println("file = " + file);
-
         if (updateMemberDto.getNickname() != null && !updateMemberDto.getNickname().isBlank()) {
             nicknameDuplicateCheck(updateMemberDto.getNickname());
         }
@@ -62,8 +58,6 @@ public class MemberService {
             profileUrl = imageService.profileImageUpload(file);
 
         } else {
-            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@");
-
             imageService.targetFileDelete(member);
             profileUrl = null;
         }
