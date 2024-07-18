@@ -23,14 +23,6 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
     private final JPAQueryFactory query;
 
     @Override
-    public Long findReviewByReplyId(Long replyId) {
-        return query.select(reply.review.id)
-                .from(reply)
-                .where(replyIdEq(replyId))
-                .fetchOne();
-    }
-
-    @Override
     public Slice<ReplyResponseDto> getReplyOnReview(Long reviewId, Pageable pageable) {
 
         List<ReplyResponseDto> results = query.select(Projections.constructor(ReplyResponseDto.class,
@@ -90,6 +82,14 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
                 .from(reply)
                 .where(reply.review.id.eq(reviewId))
                 .fetch();
+    }
+
+    @Override
+    public Long findReviewByReplyId(Long replyId) {
+        return query.select(reply.review.id)
+                .from(reply)
+                .where(replyIdEq(replyId))
+                .fetchOne();
     }
 
     public BooleanExpression replyIdEq(Long replyId) {

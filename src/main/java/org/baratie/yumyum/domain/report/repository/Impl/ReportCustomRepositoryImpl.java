@@ -8,7 +8,6 @@ import org.baratie.yumyum.domain.report.domain.ReportType;
 import org.baratie.yumyum.domain.report.dto.ReportPageResponseDto;
 import org.baratie.yumyum.domain.report.repository.ReportCustomRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
@@ -27,73 +26,77 @@ public class ReportCustomRepositoryImpl implements ReportCustomRepository {
 
     @Override
     public Page<ReportPageResponseDto> findByReviewType(Pageable pageable) {
-        List<ReportPageResponseDto> results = query.select(Projections.constructor(ReportPageResponseDto.class,
-                report.id,
-                report.member.nickname,
-                review.content,
-                review.id,
-                report.content,
-                report.createdAt))
-                .from(report)
-                .leftJoin(review).on(report.targetId.eq(review.id))
-                .leftJoin(report.member, member)
-                .where(report.type.eq(ReportType.REVIEW))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .orderBy(report.createdAt.desc())
-                .fetch();
+        List<ReportPageResponseDto> results =
+                query.select(Projections.constructor(ReportPageResponseDto.class,
+                                report.id,
+                                report.member.nickname,
+                                review.content,
+                                review.id,
+                                report.content,
+                                report.createdAt))
+                        .from(report)
+                        .leftJoin(review).on(report.targetId.eq(review.id))
+                        .leftJoin(report.member, member)
+                        .where(report.type.eq(ReportType.REVIEW))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .orderBy(report.createdAt.desc())
+                        .fetch();
 
-        JPAQuery<Long> countQuery = query.select(report.count()).from(report)
-                .where(report.type.eq(ReportType.REVIEW));
-
-        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
+        return PageableExecutionUtils.getPage(results, pageable, countQuery(ReportType.REVIEW)::fetchOne);
     }
 
     @Override
     public Page<ReportPageResponseDto> findByReplyType(Pageable pageable) {
-        List<ReportPageResponseDto> results = query.select(Projections.constructor(ReportPageResponseDto.class,
-                        report.id,
-                        report.member.nickname,
-                        reply.content,
-                        reply.id,
-                        report.content,
-                        report.createdAt))
-                .from(report)
-                .leftJoin(reply).on(report.targetId.eq(reply.id))
-                .leftJoin(report.member, member)
-                .where(report.type.eq(ReportType.REPLY))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .orderBy(report.createdAt.desc())
-                .fetch();
+        List<ReportPageResponseDto> results =
+                query.select(Projections.constructor(ReportPageResponseDto.class,
+                                report.id,
+                                report.member.nickname,
+                                reply.content,
+                                reply.id,
+                                report.content,
+                                report.createdAt))
+                        .from(report)
+                        .leftJoin(reply).on(report.targetId.eq(reply.id))
+                        .leftJoin(report.member, member)
+                        .where(report.type.eq(ReportType.REPLY))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .orderBy(report.createdAt.desc())
+                        .fetch();
 
-        JPAQuery<Long> countQuery = query.select(report.count()).from(report)
-                .where(report.type.eq(ReportType.REPLY));
-
-        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
+        return PageableExecutionUtils.getPage(results, pageable, countQuery(ReportType.REPLY)::fetchOne);
     }
 
     @Override
     public Page<ReportPageResponseDto> findByStoreType(Pageable pageable) {
-        List<ReportPageResponseDto> results = query.select(Projections.constructor(ReportPageResponseDto.class,
-                report.id,
-                report.member.nickname,
-                store.name,
-                store.id,
-                report.content,
-                report.createdAt))
+        List<ReportPageResponseDto> results =
+                query.select(Projections.constructor(ReportPageResponseDto.class,
+                                report.id,
+                                report.member.nickname,
+                                store.name,
+                                store.id,
+                                report.content,
+                                report.createdAt))
+                        .from(report)
+                        .leftJoin(store).on(report.targetId.eq(store.id))
+                        .leftJoin(report.member, member)
+                        .where(report.type.eq(ReportType.STORE))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .orderBy(report.createdAt.desc())
+                        .fetch();
+
+        return PageableExecutionUtils.getPage(results, pageable, countQuery(ReportType.STORE)::fetchOne);
+    }
+
+    /**
+     * 페이지네이션 카운트 쿼리
+     * param 신고 타입
+     */
+    private JPAQuery<Long> countQuery(ReportType type) {
+        return query.select(report.count())
                 .from(report)
-                .leftJoin(store).on(report.targetId.eq(store.id))
-                .leftJoin(report.member, member)
-                .where(report.type.eq(ReportType.STORE))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .orderBy(report.createdAt.desc())
-                .fetch();
-
-        JPAQuery<Long> countQuery = query.select(report.count()).from(report)
-                .where(report.type.eq(ReportType.STORE));
-
-        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
+                .where(report.type.eq(type));
     }
 }
