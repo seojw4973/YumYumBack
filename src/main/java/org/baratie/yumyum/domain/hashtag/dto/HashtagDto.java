@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.hashtag.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 
@@ -10,6 +11,7 @@ import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 @ToString
 public class HashtagDto {
 
+    @NotBlank
     private String content;
 
     public Hashtag toEntity(){

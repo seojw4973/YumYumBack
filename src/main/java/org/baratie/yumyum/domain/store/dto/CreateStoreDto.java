@@ -1,6 +1,7 @@
 package org.baratie.yumyum.domain.store.dto;
 
 import com.google.maps.errors.ApiException;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,9 +28,15 @@ public class CreateStoreDto {
 
     private final GeoUtils geoUtils = new GeoUtils();
 
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String address;
+
+    @NotBlank
     private String calls;
+
     private String hours;
     private boolean isClosed;
     private BigDecimal latitude;
