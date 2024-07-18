@@ -31,10 +31,9 @@ public class ReplyController {
      * 리뷰에 달린 댓글 조회
      */
     @GetMapping("/{reviewId}")
-    public ResponseEntity<CustomSliceDto> getReplyOnReview(@PathVariable Long reviewId, @RequestParam int pageNumber) {
+    public ResponseEntity<CustomSliceDto> getReplyOnReview(@PathVariable Long reviewId, Pageable pageable) {
         reviewService.validationReviewId(reviewId);
 
-        Pageable pageable = PageRequest.of(pageNumber, 5);
         CustomSliceDto replyOnReview = replyService.getReplyOnReview(reviewId, pageable);
 
         return new ResponseEntity<>(replyOnReview, HttpStatus.OK);

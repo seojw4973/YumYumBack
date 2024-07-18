@@ -21,14 +21,11 @@ public class MyPageController {
 
     /**
      * 내 댓글 보기
-     * @param customUserDetails 로그인한 유저
-     * @param pageNumber 페이지 번호
-     * @return 로그인한 유저 id의 댓글 리턴
      */
     @GetMapping("/myReply")
-    public ResponseEntity<CustomSliceDto> getMyReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber) {
+    public ResponseEntity<CustomSliceDto> getMyReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable) {
         Long memberId = customUserDetails.getId();
-        Pageable pageable = PageRequest.of(pageNumber, 5);
+
         CustomSliceDto myReplyDto = myPageService.getMyReply(memberId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(myReplyDto);
     }
@@ -37,9 +34,9 @@ public class MyPageController {
      * 좋아요한 리뷰 보기
      */
     @GetMapping("/likeReview")
-    public ResponseEntity<CustomSliceDto> getLikeReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber){
+    public ResponseEntity<CustomSliceDto> getLikeReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable){
         Long memberId = customUserDetails.getId();
-        Pageable pageable = PageRequest.of(pageNumber, 5);
+
         CustomSliceDto likeReviewDto = myPageService.getMyLikeReview(memberId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(likeReviewDto);
     }
@@ -48,12 +45,10 @@ public class MyPageController {
      * 내가 작성한 리뷰
      */
     @GetMapping("/myReview")
-    public ResponseEntity<CustomSliceDto> getMyReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber) {
+    public ResponseEntity<CustomSliceDto> getMyReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable) {
         memberService.validationMemberId(customUserDetails.getId());
-        Pageable pageable = PageRequest.of(pageNumber, 5);
 
         CustomSliceDto myReview = myPageService.getMyReview(customUserDetails.getId(), pageable);
-
         return new ResponseEntity<>(myReview, HttpStatus.OK);
     }
 
@@ -61,11 +56,8 @@ public class MyPageController {
      * 내가 즐겨찾기한 가게
      */
     @GetMapping("/favorite")
-    ResponseEntity<CustomSliceDto> myFavoriteStore(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, 5);
-
+    ResponseEntity<CustomSliceDto> myFavoriteStore(@AuthenticationPrincipal CustomUserDetails customUserDetails,  Pageable pageable) {
         CustomSliceDto myFavoriteStore = myPageService.getMyFavoriteStore(customUserDetails.getId(), pageable);
-
         return new ResponseEntity<>(myFavoriteStore, HttpStatus.ACCEPTED);
     }
 
