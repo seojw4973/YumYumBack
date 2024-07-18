@@ -6,6 +6,7 @@ import org.baratie.yumyum.domain.review.service.ReviewReadService;
 import org.baratie.yumyum.domain.review.service.ReviewService;
 import org.baratie.yumyum.domain.store.service.StoreService;
 import org.baratie.yumyum.global.utils.pageDto.CustomSliceDto;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -25,9 +26,7 @@ public class ReviewReadController {
      * 리뷰 전체 조회
      */
     @GetMapping
-    public CustomSliceDto getAllReview(@RequestParam("pageNumber") int pageNumber){
-        Pageable pageable = PageRequest.of(pageNumber, 5);
-
+    public CustomSliceDto getAllReview( Pageable pageable){
         return reviewReadService.getAllReview(pageable);
     }
 
@@ -47,9 +46,8 @@ public class ReviewReadController {
      * 가게에 작성된 리뷰 리스트
      */
     @GetMapping("/store/{storeId}")
-    public ResponseEntity<CustomSliceDto> getStoreReviewList(@PathVariable Long storeId, @RequestParam int pageNumber) {
+    public ResponseEntity<CustomSliceDto> getStoreReviewList(@PathVariable Long storeId, Pageable pageable) {
         storeService.existStoreId(storeId);
-        Pageable pageable = PageRequest.of(pageNumber, 5);
 
         CustomSliceDto storeReviewList = reviewReadService.getStoreReviewList(storeId, pageable);
 
