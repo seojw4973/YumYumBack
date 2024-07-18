@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.likes.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.likes.dto.LikesDto;
 import org.baratie.yumyum.domain.likes.service.LikesService;
@@ -24,7 +25,7 @@ public class LikesController {
     private final ReviewService reviewService;
 
     @PostMapping("/like")
-    public ResponseEntity<Void> checkLikes(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody LikesDto likesDto){
+    public ResponseEntity<Void> checkLikes(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody LikesDto likesDto){
         Member member = memberService.getMember(customUserDetails.getId());
         Review review = reviewService.getReview(likesDto.getReviewId());
 

@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.review.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.baratie.yumyum.global.utils.file.domain.Image;
 import org.baratie.yumyum.global.utils.file.dto.ImageDto;
@@ -17,8 +18,14 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @ToString
 public class CreateReviewDto {
+
+    @NotBlank
     private Long storeId;
+
+    @NotBlank
     private String content;
+
+    @NotBlank
     private double grade;
 
     public Review toEntity(Store store, Member member) {

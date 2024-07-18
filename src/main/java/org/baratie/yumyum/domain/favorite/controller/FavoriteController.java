@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.favorite.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.favorite.dto.FavoriteDto;
 import org.baratie.yumyum.domain.favorite.service.FavoriteService;
@@ -23,7 +24,7 @@ public class FavoriteController {
     private final StoreService storeService;
 
     @PostMapping
-    public ResponseEntity<Void> addFavorite(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody FavoriteDto request) {
+    public ResponseEntity<Void> addFavorite(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody FavoriteDto request) {
 
         Member member = memberService.getMember(customUserDetails.getId());
         Store store = storeService.validationStoreId(request.getStoreId());
