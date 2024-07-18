@@ -46,9 +46,9 @@ public class StoreController {
      */
     @PatchMapping("/{storeId}")
     public ResponseEntity<Void> updateStore(@PathVariable Long storeId,
-                                            @RequestPart UpdateStoreDto request,
-                                            @RequestPart List<MultipartFile> files) {
-        storeService.updateStore(storeId, request, files);
+                                            @RequestPart UpdateStoreDto updateStoreDto,
+                                            @RequestPart List<MultipartFile> files) throws IOException, InterruptedException, ApiException {
+        storeService.updateStore(storeId, updateStoreDto, files);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

@@ -22,7 +22,7 @@ public class StoreDetailDto {
     private BigDecimal latitude;
     private BigDecimal longitude;
 
-    private List<Hashtag> hashtagList;
+    private List<String> hashtagList;
     private List<Menu> menuList;
     private List<String> imageList;
 
@@ -30,7 +30,7 @@ public class StoreDetailDto {
     private Long totalFavoriteCount;
     private Boolean favoriteStatus;
 
-    public StoreDetailDto tranceDto(StoreDetailDto storeDetail, List<Hashtag> hashtagList, List<Menu> menuList, List<String> imageList) {
+    public StoreDetailDto tranceDto(StoreDetailDto storeDetail, List<String> hashtagList, List<Menu> menuList, List<String> imageList) {
         StoreDetailDto result = StoreDetailDto.builder()
                 .storeId(storeDetail.getStoreId())
                 .name(storeDetail.getName())

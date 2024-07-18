@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.member.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.baratie.yumyum.domain.member.domain.Member;
@@ -13,7 +14,7 @@ import org.baratie.yumyum.domain.member.domain.SocialType;
 @ToString
 public class SignUpDto {
 
-    @NotBlank
+    @NotBlank @Email
     private String email;
 
     @NotBlank

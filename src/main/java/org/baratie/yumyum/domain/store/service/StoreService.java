@@ -3,6 +3,7 @@ package org.baratie.yumyum.domain.store.service;
 import com.google.maps.errors.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.category.domain.Category;
+import org.baratie.yumyum.domain.category.repository.CategoryRepository;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
 import org.baratie.yumyum.global.utils.file.domain.ImageType;
@@ -35,6 +36,7 @@ public class StoreService {
     private final GeoUtils geoUtils;
     private final ImageRepository imageRepository;
     private final ImageService imageService;
+    private final CategoryRepository categoryRepository;
 
     /**
      * 가게 등록
@@ -79,7 +81,7 @@ public class StoreService {
 
         StoreDetailDto storeDetailDto = storeRepository.findStoreDetail(memberId, storeId);
         List<String> imageList = imageRepository.findByStoreId(storeId);
-        List<Hashtag> hashtagList = hashtagRepository.findByStoreId(storeId);
+        List<String> hashtagList = hashtagRepository.findByStoreId(storeId);
         List<Menu> menus = menuRepository.findByStoreId(storeId);
 
         return storeDetailDto.tranceDto(storeDetailDto, hashtagList, menus, imageList);
@@ -91,10 +93,15 @@ public class StoreService {
      * @param request
      */
     @Transactional
-    public void updateStore(Long storeId, UpdateStoreDto request, List<MultipartFile> files) {
+    public void updateStore(Long storeId, UpdateStoreDto request, List<MultipartFile> files) throws IOException, InterruptedException, ApiException {
         Store findstore = validationStoreId(storeId);
-        Store updatedStore = findstore.updateStore(request);
 
+        BigDecimal[] bigDecimals = geoUtils.findGeoPoint(request.getAddress());
+        BigDecimal lat = bigDecimals[0];
+        BigDecimal lng = bigDecimals[1];
+
+        UpdateStoreDto trancesDto = request.tranceDto(lat, lng, request.getHashtagList(), request.getMenuList(), request.getCategoryList());
+        Store updatedStore = findstore.updateStore(trancesDto);
         storeRepository.save(updatedStore);
 
         List<Menu> menuList = updatedStore.getMenuList();
@@ -104,6 +111,10 @@ public class StoreService {
         List<Hashtag> hashtagList = updatedStore.getHashtagList();
         hashtagList.forEach(hashtag -> hashtag.addStore(updatedStore));
         hashtagRepository.saveAll(hashtagList);
+
+        List<Category> categoryList = updatedStore.getCategoryList();
+        categoryList.forEach(category -> category.addStore(updatedStore));
+        categoryRepository.saveAll(categoryList);
 
         if (files == null) {
             imageService.targetFilesDelete(ImageType.STORE, storeId);

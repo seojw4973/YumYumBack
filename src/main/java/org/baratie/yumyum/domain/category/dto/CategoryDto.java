@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.category.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import org.baratie.yumyum.domain.category.domain.Category;
 @NoArgsConstructor
 public class CategoryDto {
 
+    @NotBlank
     private String name;
 
     public Category toEntity(){

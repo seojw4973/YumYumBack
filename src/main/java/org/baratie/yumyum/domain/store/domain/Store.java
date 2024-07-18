@@ -8,6 +8,7 @@ import org.baratie.yumyum.domain.category.domain.Category;
 import org.baratie.yumyum.domain.favorite.domain.Favorite;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.dto.HashtagDto;
+import org.baratie.yumyum.domain.store.service.GeoUtils;
 import org.baratie.yumyum.global.utils.file.domain.Image;
 import org.baratie.yumyum.global.utils.file.domain.ImageType;
 import org.baratie.yumyum.global.utils.file.dto.ImageDto;
@@ -89,6 +90,8 @@ public class Store extends BaseTimeEntity {
         this.call = request.getCall();
         this.address = request.getAddress();
         this.hours = request.getHours();
+        this.latitude = request.getLatitude();
+        this.longitude = request.getLongitude();
 
         updateMenuList(request.getMenuList());
         updateHashtagList(request.getHashtagList());
@@ -118,16 +121,4 @@ public class Store extends BaseTimeEntity {
             this.hashtagList.add(hashtag);
         }
     }
-
-//    private void updateImageList(List<ImageDto> imageDtos) {
-//        this.imageList.clear();
-//        for (ImageDto imageDto : imageDtos) {
-//            Image image = Image.builder()
-//                    .imageUrl(imageDto.getImageUrl())
-//                    .imageType(ImageType.STORE)
-//                    .store(this)
-//                    .build();
-//            this.imageList.add(image);
-//        }
-//    }
 }
