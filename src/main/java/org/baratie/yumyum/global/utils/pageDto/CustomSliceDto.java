@@ -22,5 +22,4 @@ public class CustomSliceDto {
         this.first = slice.isFirst();
         this.last = slice.isLast();
     }
-
 }

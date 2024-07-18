@@ -10,6 +10,7 @@ import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.AdminStoreDto;
 import org.baratie.yumyum.domain.store.repository.StoreRepository;
+import org.baratie.yumyum.global.utils.pageDto.CustomPageDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,17 +29,19 @@ public class AdminService {
     /**
      * 관리자페이지 회원 조회
      */
-    public Page<SimpleMemberDto> getSimpleMemberInfo(Pageable pageable) {
-        return memberRepository.getSimpleMemberInfo(pageable);
+    public CustomPageDto getSimpleMemberInfo(Pageable pageable) {
+        Page<SimpleMemberDto> simpleMemberInfo = memberRepository.getSimpleMemberInfo(pageable);
+
+        return new CustomPageDto(simpleMemberInfo);
     }
 
     /**
      * 관리자 페이지 맛집 전체 조회
-     * @param pageable
-     * @return 맛집 전체 데이터 Page 정보와 함께 리턴
      */
-    public Page<AdminStoreDto> getAdminStores(Pageable pageable) {
-        return storeRepository.getSimpleStore(pageable);
+    public CustomPageDto getAdminStores(Pageable pageable) {
+        Page<AdminStoreDto> simpleStore = storeRepository.getSimpleStore(pageable);
+
+        return new CustomPageDto(simpleStore);
     }
 
     /**

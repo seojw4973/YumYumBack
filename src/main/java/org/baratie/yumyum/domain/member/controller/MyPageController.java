@@ -5,7 +5,6 @@ import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.domain.member.service.MyPageService;
 import org.baratie.yumyum.global.utils.pageDto.CustomSliceDto;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,5 +59,4 @@ public class MyPageController {
         CustomSliceDto myFavoriteStore = myPageService.getMyFavoriteStore(customUserDetails.getId(), pageable);
         return new ResponseEntity<>(myFavoriteStore, HttpStatus.ACCEPTED);
     }
-
 }
