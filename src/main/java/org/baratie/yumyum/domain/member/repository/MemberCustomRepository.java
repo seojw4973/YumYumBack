@@ -14,7 +14,6 @@ public interface MemberCustomRepository {
 
     Page<SimpleMemberDto> getSimpleMemberInfo(Pageable pageable);
 
-
     Member findByIdNotDeleted(Long memberId);
 
     MemberBasicDto findMemberBasisInfo(Long memberId);
