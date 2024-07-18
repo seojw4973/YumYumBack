@@ -1,6 +1,7 @@
 package org.baratie.yumyum.domain.likes.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -13,7 +14,7 @@ public class LikesDto {
     @NotBlank
     private Long reviewId;
 
-    @NotBlank
+    @NotNull
     private Boolean status;
 
 }
