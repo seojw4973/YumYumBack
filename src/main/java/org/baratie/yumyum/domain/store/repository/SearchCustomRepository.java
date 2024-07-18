@@ -10,5 +10,5 @@ import java.util.Map;
 public interface SearchCustomRepository {
     List<SearchStoreDto> findSearchStore(Long memberId, Map<Long, String> imageMap, Map<Long, List<String>> hashtagMap, String keyword);
 
-    List<SearchStoreDto> findNearByStore(Double lng, Double lat, Map<Long, String> imageMap, Map<Long, List<String>> hashtagMap);
+    List<SearchStoreDto> findNearByStore(Long memberId, Double lng, Double lat, Map<Long, String> imageMap, Map<Long, List<String>> hashtagMap);
 }

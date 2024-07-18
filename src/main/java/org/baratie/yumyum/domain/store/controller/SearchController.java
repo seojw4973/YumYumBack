@@ -22,8 +22,9 @@ public class SearchController {
      * 내 주변 맛집
      */
     @GetMapping
-    public ResponseEntity<List<SearchStoreDto>> findNearbyStore(@RequestParam Double lng, @RequestParam Double lat) {
-        List<SearchStoreDto> nearByStoreList = searchService.getNearByStore(lng, lat);
+    public ResponseEntity<List<SearchStoreDto>> findNearbyStore(@RequestParam Double lng, @RequestParam Double lat, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Long memberId = customUserDetails.getId();
+        List<SearchStoreDto> nearByStoreList = searchService.getNearByStore(lng, lat, memberId);
         return ResponseEntity.status(HttpStatus.OK).body(nearByStoreList);
     }
 
