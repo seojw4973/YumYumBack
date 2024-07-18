@@ -3,11 +3,9 @@ package org.baratie.yumyum.domain.report.controller;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.report.dto.CreateReportDto;
-import org.baratie.yumyum.domain.report.dto.ReportPageResponseDto;
 import org.baratie.yumyum.domain.report.service.ReportService;
-import org.springframework.data.domain.Page;
+import org.baratie.yumyum.global.utils.pageDto.CustomPageDto;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,27 +22,30 @@ public class ReportController {
      * 신고된 리뷰 조회
      */
     @GetMapping("/review")
-    public ResponseEntity<Page<ReportPageResponseDto>> findReviewReport(Pageable pageable) {
-        Page<ReportPageResponseDto> reportReviewList = reportService.getReviewReport(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(reportReviewList);
+    public ResponseEntity<CustomPageDto> findReviewReport(Pageable pageable) {
+        CustomPageDto reportReviewPage = reportService.getReviewReport(pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(reportReviewPage);
     }
 
     /**
      * 신고된 댓글 조회
      */
     @GetMapping("/reply")
-    public ResponseEntity<Page<ReportPageResponseDto>> findReplyReport(Pageable pageable) {
-        Page<ReportPageResponseDto> reportReplyList = reportService.getReplyReport(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(reportReplyList);
+    public ResponseEntity<CustomPageDto> findReplyReport(Pageable pageable) {
+        CustomPageDto reportReplyPage = reportService.getReplyReport(pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(reportReplyPage);
     }
 
     /**
      * 신고된 가게 조회
      */
     @GetMapping("/store")
-    public ResponseEntity<Page<ReportPageResponseDto>> findStoreReport(Pageable pageable) {
-        Page<ReportPageResponseDto> reportStoreList = reportService.getStoreReport(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(reportStoreList);
+    public ResponseEntity<CustomPageDto> findStoreReport(Pageable pageable) {
+        CustomPageDto storeReport = reportService.getStoreReport(pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(storeReport);
     }
 
     /**
@@ -56,6 +57,4 @@ public class ReportController {
         reportService.createReport(memberId, createReportDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
-
 }
