@@ -1,10 +1,8 @@
 package org.baratie.yumyum.domain.reply.service;
 
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
-import org.baratie.yumyum.domain.member.dto.MyReplyDto;
-import org.baratie.yumyum.domain.member.service.MemberService;
+import org.baratie.yumyum.domain.member.exception.MemberIdNotEqualException;
 import org.baratie.yumyum.domain.reply.domain.Reply;
 import org.baratie.yumyum.domain.reply.dto.CreateReplyDto;
 import org.baratie.yumyum.domain.reply.dto.ReplyResponseDto;
@@ -12,7 +10,6 @@ import org.baratie.yumyum.domain.reply.dto.UpdateRelyDto;
 import org.baratie.yumyum.domain.reply.exception.ReplyNotFoundException;
 import org.baratie.yumyum.domain.reply.repository.ReplyRepository;
 import org.baratie.yumyum.domain.review.domain.Review;
-import org.baratie.yumyum.domain.review.repository.ReviewRepository;
 import org.baratie.yumyum.global.exception.ErrorCode;
 import org.baratie.yumyum.global.utils.pageDto.CustomSliceDto;
 import org.springframework.data.domain.Pageable;
@@ -23,8 +20,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReplyService {
 
-    private final MemberService memberService;
-    private final ReviewRepository reviewRepository;
     private final ReplyRepository replyRepository;
 
 
@@ -65,7 +60,10 @@ public class ReplyService {
      * @param replyId 수정할 댓글 내용
      * @param request
      */
-    public void updateReply(Long replyId, UpdateRelyDto request){
+    public void updateReply(Long memberId, Long replyId, UpdateRelyDto request) {
+        validateReplyMemberSameLoginMember(memberId, replyId);
+
+
         Reply findReply = getReply(replyId);
         Reply updateReply = findReply.updateReview(request);
         replyRepository.save(updateReply);
@@ -75,9 +73,22 @@ public class ReplyService {
      * 댓글 삭제
      * @param replyId 삭제할 댓글 id
      */
-    public void deleteReply(Long replyId){
+    public void deleteReply(Long memberId, Long replyId){
         validationReplyId(replyId);
+        validateReplyMemberSameLoginMember(memberId, replyId);
+
         replyRepository.deleteById(replyId);
+    }
+
+    /**
+     * 댓글 작성자 본인인지 확인
+     */
+    private void validateReplyMemberSameLoginMember(Long memberId, Long replyId) {
+        Long checked = replyRepository.checkReplyMember(memberId, replyId);
+
+        if (checked <= 0) {
+            throw new MemberIdNotEqualException(ErrorCode.MEMBER_NOT_EQUAL);
+        }
     }
 
     /**

@@ -87,6 +87,14 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
     }
 
     @Override
+    public Long checkReplyMember(Long memberId, Long replyId) {
+        return query.select(reply.id.count())
+                .from(reply)
+                .where(reply.member.id.eq(memberId))
+                .fetchOne();
+    }
+
+    @Override
     public Long findReviewByReplyId(Long replyId) {
         return query.select(reply.review.id)
                 .from(reply)

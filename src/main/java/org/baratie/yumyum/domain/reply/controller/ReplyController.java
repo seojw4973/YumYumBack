@@ -56,8 +56,10 @@ public class ReplyController {
      * 댓글 수정
      */
     @PatchMapping("/{replyId}")
-    public ResponseEntity<Void> updateReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long replyId, @Valid @RequestBody UpdateRelyDto request){
-        replyService.updateReply(replyId, request);
+    public ResponseEntity<Void> updateReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long replyId, @Valid @RequestBody UpdateRelyDto request) {
+        memberService.validationMemberId(customUserDetails.getId());
+
+        replyService.updateReply(customUserDetails.getId(), replyId, request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -66,7 +68,9 @@ public class ReplyController {
      */
     @DeleteMapping("/{replyId}")
     public ResponseEntity<Void> deleteReply(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long replyId){
-        replyService.deleteReply(replyId);
+        memberService.validationMemberId(customUserDetails.getId());
+
+        replyService.deleteReply(customUserDetails.getId(), replyId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
