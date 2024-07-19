@@ -19,4 +19,6 @@ public interface ReplyCustomRepository {
 
     List<Long> findByReviewId(Long reviewId);
 
+    Long checkReplyMember(Long memberId, Long replyId);
+
 }
