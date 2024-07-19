@@ -97,7 +97,7 @@ public class ReplyService {
      * @param replyId
      */
     public void validationReplyId(Long replyId){
-        boolean existReply = reviewRepository.existsById(replyId);
+        boolean existReply = replyRepository.existsById(replyId);
 
         if(!existReply){
             throw new ReplyNotFoundException(ErrorCode.REPLY_NOT_FOUND);
