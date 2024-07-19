@@ -3,6 +3,7 @@ package org.baratie.yumyum.domain.store.service;
 import com.google.maps.errors.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.category.domain.Category;
+import org.baratie.yumyum.domain.category.dto.CategoryDto;
 import org.baratie.yumyum.domain.category.repository.CategoryRepository;
 import org.baratie.yumyum.domain.hashtag.domain.Hashtag;
 import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
@@ -83,8 +84,9 @@ public class StoreService {
         List<String> imageList = imageRepository.findByStoreId(storeId);
         List<String> hashtagList = hashtagRepository.findByStoreId(storeId);
         List<Menu> menus = menuRepository.findByStoreId(storeId);
+        List<String> categoryList = categoryRepository.findByStoreId(storeId);
 
-        return storeDetailDto.tranceDto(storeDetailDto, hashtagList, menus, imageList);
+        return storeDetailDto.tranceDto(storeDetailDto, hashtagList, menus, imageList, categoryList);
     }
 
     /**
