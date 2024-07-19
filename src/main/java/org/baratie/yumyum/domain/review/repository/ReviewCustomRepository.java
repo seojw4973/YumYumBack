@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.review.repository;
 
+import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
@@ -13,7 +14,7 @@ import java.util.Map;
 @Repository
 public interface ReviewCustomRepository {
 
-    Slice<ReviewAllDto> findAllReviews(Map<Long, List<String>> imageMap, Pageable pageable);
+    Slice<ReviewAllDto> findAllReviews(Long memberId, Map<Long, List<String>> imageMap, Pageable pageable);
 
     Slice<StoreReviewDto> findReviewByStoreId(Long storeId, Map<Long, List<String>> imageList, Pageable pageable);
 

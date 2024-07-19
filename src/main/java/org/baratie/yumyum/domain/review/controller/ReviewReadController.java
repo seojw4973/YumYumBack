@@ -28,8 +28,9 @@ public class ReviewReadController {
      * 리뷰 전체 조회
      */
     @GetMapping
-    public CustomSliceDto getAllReview( Pageable pageable){
-        return reviewReadService.getAllReview(pageable);
+    public CustomSliceDto getAllReview(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable){
+        Long memberId = customUserDetails.getId();
+        return reviewReadService.getAllReview(memberId, pageable);
     }
 
     /**

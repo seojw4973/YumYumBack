@@ -7,6 +7,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
@@ -70,7 +71,11 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
      * @return 최신 작성순으로 리뷰 전체 리스트 리턴
      */
     @Override
-    public Slice<ReviewAllDto> findAllReviews(Map<Long, List<String>> imageMap, Pageable pageable) {
+    public Slice<ReviewAllDto> findAllReviews(Long memberId, Map<Long, List<String>> imageMap, Pageable pageable) {
+
+        JPQLQuery<Boolean> likeStatus = JPAExpressions.select(likes.isLikes)
+                .from(likes)
+                .where(likes.review.id.eq(review.id), likes.member.id.eq(memberId));
 
         List<ReviewAllDto> results =
                 query.select(Projections.constructor(ReviewAllDto.class,
@@ -82,7 +87,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                                 review.grade,
                                 ExpressionUtils.as(getReviewTotalCount(), "totalReviewCount"),
                                 ExpressionUtils.as(getAvgGrade(), "avgGrade"),
-                                review.content)
+                                review.content,
+                                likeStatus)
                         )
                         .from(review)
                         .leftJoin(review.store, store)
@@ -151,6 +157,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 
         return new SliceImpl<>(results, pageable, hasNext);
     }
+
+
 
     public BooleanExpression reviewIdEq(Long reviewId) {
         return review.id.eq(reviewId);

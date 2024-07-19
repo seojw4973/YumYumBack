@@ -118,9 +118,7 @@ public class StoreService {
         categoryList.forEach(category -> category.addStore(updatedStore));
         categoryRepository.saveAll(categoryList);
 
-        if (files == null) {
-            imageService.targetFilesDelete(ImageType.STORE, storeId);
-        } else {
+        if (files != null){
             imageService.targetFilesDelete(ImageType.STORE, storeId);
             imageService.fileUploadMultiple(ImageType.STORE, updatedStore, files);
         }

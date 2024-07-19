@@ -19,6 +19,7 @@ public class ReviewAllDto {
     private double avgGrade;
 
     private String content;
+    private Boolean listStatus;
     private List<String> imageList;
 
     public void addImageList(List<String> imageList){
@@ -26,7 +27,7 @@ public class ReviewAllDto {
     }
 
     @Builder
-    public ReviewAllDto(Long reviewId, String profileImage, String storeName, String address, String nickname, double grade, Long totalReviewCount, double avgGrade, String content) {
+    public ReviewAllDto(Long reviewId, String profileImage, String storeName, String address, String nickname, double grade, Long totalReviewCount, double avgGrade, String content, Boolean listStatus) {
         this.reviewId = reviewId;
         this.profileImage = profileImage;
         this.storeName = storeName;
@@ -36,6 +37,7 @@ public class ReviewAllDto {
         this.totalReviewCount = totalReviewCount;
         this.avgGrade = Math.round(avgGrade*10.0)/10.0;
         this.content = content;
+        this.listStatus = listStatus;
     }
 
 

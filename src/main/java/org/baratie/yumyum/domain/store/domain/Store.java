@@ -87,7 +87,7 @@ public class Store extends BaseTimeEntity {
 
     public Store updateStore(UpdateStoreDto request) {
         this.name = request.getName();
-        this.call = request.getCall();
+        this.call = request.getCalls();
         this.address = request.getAddress();
         this.hours = request.getHours();
         this.latitude = request.getLatitude();

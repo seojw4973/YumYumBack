@@ -17,7 +17,7 @@ public class UpdateStoreDto {
     @NotBlank
     private String name;
     @NotBlank
-    private String call;
+    private String calls;
     @NotBlank
     private String address;
     @NotBlank
@@ -33,7 +33,7 @@ public class UpdateStoreDto {
     public UpdateStoreDto tranceDto(BigDecimal latitude, BigDecimal longitude, List<HashtagDto> hashtagList, List<MenuDto> menuList, List<CategoryDto> categoryList) {
         UpdateStoreDto updateStoreDto = UpdateStoreDto.builder()
                 .name(name)
-                .call(call)
+                .calls(calls)
                 .address(address)
                 .hours(hours)
                 .latitude(latitude)
@@ -48,9 +48,9 @@ public class UpdateStoreDto {
     }
 
     @Builder
-    public UpdateStoreDto(String name, String call, String address, String hours, BigDecimal latitude, BigDecimal longitude) {
+    public UpdateStoreDto(String name, String calls, String address, String hours, BigDecimal latitude, BigDecimal longitude) {
         this.name = name;
-        this.call = call;
+        this.calls = calls;
         this.address = address;
         this.hours = hours;
         this.latitude = latitude;

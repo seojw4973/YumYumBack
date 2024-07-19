@@ -1,6 +1,7 @@
 package org.baratie.yumyum.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.dto.MemberBasicDto;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
@@ -31,9 +32,9 @@ public class ReviewReadService {
      * @param pageable
      * @return
      */
-    public CustomSliceDto getAllReview(Pageable pageable){
+    public CustomSliceDto getAllReview(Long memberId, Pageable pageable){
         Map<Long, List<String>> imageMap = imageRepository.findImageByReviewIdList();
-        Slice<ReviewAllDto> allReviews = reviewRepository.findAllReviews(imageMap ,pageable);
+        Slice<ReviewAllDto> allReviews = reviewRepository.findAllReviews(memberId, imageMap ,pageable);
 
         return new CustomSliceDto(allReviews);
     }

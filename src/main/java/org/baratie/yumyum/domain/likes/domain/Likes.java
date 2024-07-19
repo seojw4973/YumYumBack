@@ -29,7 +29,7 @@ public class Likes {
     private Member member;
 
     public static Likes insertLikes(Member member, Review review) {
-        return Likes.builder().member(member).review(review).build();
+        return Likes.builder().member(member).review(review).isLikes(true).build();
     }
 
     public void changeReviewLikes(boolean isLikes){

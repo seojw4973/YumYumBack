@@ -37,9 +37,9 @@ public class ReviewController {
     @PatchMapping("/{reviewId}")
     public ResponseEntity<Void> updateReview(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                              @PathVariable Long reviewId,
-                                             @Valid @RequestPart UpdateReviewRequestDto request,
-                                             @RequestPart List<MultipartFile> files) {
-        reviewService.updateReview(customUserDetails.getId(), reviewId, request, files);
+                                             @Valid @RequestPart UpdateReviewRequestDto updateReviewRequestDto,
+                                             @RequestPart(required = false) List<MultipartFile> files) {
+        reviewService.updateReview(customUserDetails.getId(), reviewId, updateReviewRequestDto, files);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
