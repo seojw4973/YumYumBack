@@ -1,6 +1,7 @@
 package org.baratie.yumyum.domain.review.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.service.ReviewReadService;
 import org.baratie.yumyum.domain.review.service.ReviewService;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,10 +36,10 @@ public class ReviewReadController {
      * 리뷰 상세 조회
      */
     @GetMapping("/{reviewId}")
-    public ResponseEntity<ReviewDetailDto> getReviewDetail(@PathVariable Long reviewId) {
+    public ResponseEntity<ReviewDetailDto> getReviewDetail(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long reviewId) {
         reviewService.validationReviewId(reviewId);
 
-        ReviewDetailDto reviewDetail = reviewReadService.getReviewDetail(reviewId);
+        ReviewDetailDto reviewDetail = reviewReadService.getReviewDetail(customUserDetails.getId(), reviewId);
 
         return new ResponseEntity<>(reviewDetail, HttpStatus.OK);
     }

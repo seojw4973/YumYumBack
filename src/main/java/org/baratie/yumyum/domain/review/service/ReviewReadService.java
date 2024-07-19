@@ -56,16 +56,11 @@ public class ReviewReadService {
      * @param reviewId
      * @return 리뷰 상세정보 리턴
      */
-    public ReviewDetailDto getReviewDetail(Long reviewId) {
-        Long memberId = reviewRepository.findMemberIdByReviewId(reviewId);
-
-        MemberBasicDto memberBasicDto = memberRepository.findMemberBasisInfo(memberId);
-
+    public ReviewDetailDto getReviewDetail(Long memberId, Long reviewId) {
         ReviewDetailDto reviewDetail = reviewRepository.findReviewDetail(memberId, reviewId);
-
         List<String> images = imageRepository.findByReviewId(reviewId);
 
-        return reviewDetail.tranceDto(memberBasicDto, reviewDetail, images);
+        return reviewDetail.tranceDto(reviewDetail, images);
     }
 
 }

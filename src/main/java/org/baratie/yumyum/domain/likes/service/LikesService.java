@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 public class LikesService {
 
     private final LikesRepository likesRepository;
-    private final ReviewRepository reviewRepository;
 
     public void checkLikes(Member member, Review review,LikesDto likesDto){
         likesRepository.exist(member.getId(), review.getId()).ifPresentOrElse(

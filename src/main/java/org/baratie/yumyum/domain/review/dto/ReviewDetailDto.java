@@ -1,7 +1,6 @@
 package org.baratie.yumyum.domain.review.dto;
 
 import lombok.*;
-import org.baratie.yumyum.domain.member.dto.MemberBasicDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,14 +29,14 @@ public class ReviewDetailDto {
 
     private Boolean likeStatus;
 
-    public ReviewDetailDto tranceDto(MemberBasicDto memberBasicDto, ReviewDetailDto reviewDetail, List<String> imageList) {
+    public ReviewDetailDto tranceDto(ReviewDetailDto reviewDetail, List<String> imageList) {
 
         ReviewDetailDto result = ReviewDetailDto.builder()
-                .memberId(memberBasicDto.getMemberId())
-                .imageUrl(memberBasicDto.getProfileImage())
-                .nickname(memberBasicDto.getNickname())
-                .totalReviewCount(memberBasicDto.getTotalReviewCount())
-                .avgGrade(memberBasicDto.getAvgGrade())
+                .memberId(reviewDetail.getMemberId())
+                .imageUrl(reviewDetail.getImageUrl())
+                .nickname(reviewDetail.getNickname())
+                .totalReviewCount(reviewDetail.getTotalReviewCount())
+                .avgGrade(reviewDetail.getAvgGrade())
                 .reviewId(reviewDetail.getReviewId())
                 .imageList(imageList)
                 .grade(reviewDetail.getGrade())
@@ -52,7 +51,12 @@ public class ReviewDetailDto {
     }
 
     @Builder
-    public ReviewDetailDto(Long reviewId, double grade, String content, LocalDateTime createdAt, String storeName, String address, Boolean likeStatus) {
+    public ReviewDetailDto(Long memberId, String imageUrl, String nickname, Long totalReviewCount, double avgGrade, Long reviewId, double grade, String content, LocalDateTime createdAt, String storeName, String address, Boolean likeStatus) {
+        this.memberId = memberId;
+        this.imageUrl = imageUrl;
+        this.nickname = nickname;
+        this.totalReviewCount = totalReviewCount;
+        this.avgGrade = avgGrade;
         this.reviewId = reviewId;
         this.grade = grade;
         this.content = content;
@@ -61,5 +65,6 @@ public class ReviewDetailDto {
         this.address = address;
         this.likeStatus = likeStatus;
     }
+
 }
 

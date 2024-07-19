@@ -16,5 +16,4 @@ public interface MemberCustomRepository {
 
     Member findByIdNotDeleted(Long memberId);
 
-    MemberBasicDto findMemberBasisInfo(Long memberId);
 }

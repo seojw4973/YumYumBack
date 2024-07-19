@@ -14,7 +14,6 @@ import org.baratie.yumyum.domain.review.repository.ReviewCustomRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +44,11 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
 
         return query.select(
                         Projections.constructor(ReviewDetailDto.class,
+                                member.id,
+                                member.imageUrl,
+                                member.nickname,
+                                ExpressionUtils.as(getReviewTotalCount(memberId), "totalReviewCount"),
+                                ExpressionUtils.as(getAvgGrade(memberId), "avgGrade"),
                                 review.id,
                                 review.grade,
                                 review.content,
@@ -55,6 +59,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                         ))
                 .from(review)
                 .leftJoin(review.store, store)
+                .leftJoin(review.member, member)
                 .where(reviewIdEq(reviewId))
                 .fetchOne();
     }
