@@ -29,6 +29,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final ImageService imageService;
+    private final RedisService redisService;
 
     /**
      * 회원가입
@@ -68,6 +69,8 @@ public class AuthService {
 
                 String atk = jwtService.createToken(auth);
                 String rtk = jwtService.createRtk(auth);
+
+                redisService.setValue(rtk, rtk);
 
                 return new LoginResponseDto(memberId, nickname, imageUrl, phoneNumber, role, atk, rtk);
             }
