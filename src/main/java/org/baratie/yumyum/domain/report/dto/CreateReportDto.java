@@ -1,7 +1,6 @@
 package org.baratie.yumyum.domain.report.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,13 +15,13 @@ import org.baratie.yumyum.domain.report.domain.ReportType;
 @NoArgsConstructor
 public class CreateReportDto {
 
-    @NotNull
+    @NotBlank
     private ReportType reportType;
 
     @NotBlank
     private String content;
 
-    @NotNull
+    @NotBlank
     private Long targetId;
 
     public Report toEntity(Member member) {
