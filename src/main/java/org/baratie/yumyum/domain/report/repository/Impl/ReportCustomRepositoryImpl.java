@@ -90,6 +90,13 @@ public class ReportCustomRepositoryImpl implements ReportCustomRepository {
         return PageableExecutionUtils.getPage(results, pageable, countQuery(ReportType.STORE)::fetchOne);
     }
 
+    @Override
+    public void deleteByTargetId(Long reviewId) {
+            query.delete(report)
+                    .where(report.targetId.in(reviewId))
+                    .execute();
+    }
+
     /**
      * 페이지네이션 카운트 쿼리
      * param 신고 타입
