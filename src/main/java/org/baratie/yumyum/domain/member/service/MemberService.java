@@ -68,6 +68,15 @@ public class MemberService {
     }
 
     /**
+     * 회원 탈퇴
+     */
+    public void deleteMember(Member member) {
+        Member deletedMember = member.deleteMember(member.getId());
+
+        memberRepository.save(deletedMember);
+    }
+
+    /**
      * 닉네임 중복 체크
      * @param nickname 변경할 닉네임
      */

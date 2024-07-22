@@ -44,5 +44,14 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    /**
+     * 회원 탈퇴
+     */
+    @DeleteMapping
+    public ResponseEntity<Void> deleteMember(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.getMember(customUserDetails.getId());
+        memberService.deleteMember(member);
 
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
