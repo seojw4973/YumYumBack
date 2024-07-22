@@ -90,7 +90,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
         JPQLQuery<Long> favoriteCount = JPAExpressions
                 .select(favorite.count())
                 .from(favorite)
-                .where(favorite.store.id.eq(store.id));
+                .where(favorite.store.id.eq(store.id), favorite.isFavorite.eq(true));
 
         JPQLQuery<Long> totalReviewCount = JPAExpressions
                 .select(review.count())

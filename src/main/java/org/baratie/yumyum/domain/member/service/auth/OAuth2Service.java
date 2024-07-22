@@ -5,11 +5,13 @@ import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.domain.SocialType;
+import org.baratie.yumyum.domain.member.exception.DeletedMemberException;
 import org.baratie.yumyum.domain.member.oauth.GoogleUserInfo;
 import org.baratie.yumyum.domain.member.oauth.KakaoUserInfo;
 import org.baratie.yumyum.domain.member.oauth.NaverUserInfo;
 import org.baratie.yumyum.domain.member.oauth.OAuth2UserInfo;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
+import org.baratie.yumyum.global.exception.ErrorCode;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -62,6 +64,10 @@ public class OAuth2Service extends DefaultOAuth2UserService {
         String phoneNumber = oAuth2UserInfo.getPhone();
 
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
+
+        if(optionalMember.get().getNickname().startsWith("deleted")){
+            throw new DeletedMemberException(ErrorCode.MEMBER_IS_DELETED);
+        }
         Member member = null;
 
         if(optionalMember.isEmpty()){
