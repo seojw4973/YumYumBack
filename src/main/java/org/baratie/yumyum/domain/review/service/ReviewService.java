@@ -1,6 +1,7 @@
 package org.baratie.yumyum.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.likes.repository.LikesRepository;
 import org.baratie.yumyum.domain.reply.repository.ReplyRepository;
 import org.baratie.yumyum.global.utils.file.domain.ImageType;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
@@ -31,6 +32,7 @@ public class ReviewService {
     private final StoreService storeService;
     private final ImageService imageService;
     private final ReplyRepository replyRepository;
+    private final LikesRepository likesRepository;
 
     /**
      * 리뷰 등록
@@ -85,6 +87,7 @@ public class ReviewService {
         isLoginMember(memberId, reviewId);
         imageService.targetFilesDelete(ImageType.REVIEW, reviewId);
         replyRepository.deleteByReviewId(reviewId);
+        likesRepository.deleteByReviewId(reviewId);
         reviewRepository.deleteById(reviewId);
     }
 
