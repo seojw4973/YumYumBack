@@ -152,7 +152,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .from(store)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(store.createdAt.desc())
+                .orderBy(store.id.desc())
                 .fetch();
 
         JPAQuery<Long> countQuery = query.select(store.count()).from(store);
