@@ -56,7 +56,7 @@ public class ReviewDetailDto {
         this.imageUrl = imageUrl;
         this.nickname = nickname;
         this.totalReviewCount = totalReviewCount;
-        this.avgGrade = avgGrade;
+        this.avgGrade = Math.round(avgGrade*10.0)/10.0;
         this.reviewId = reviewId;
         this.grade = grade;
         this.content = content;

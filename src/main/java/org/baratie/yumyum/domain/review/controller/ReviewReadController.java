@@ -39,7 +39,6 @@ public class ReviewReadController {
     @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewDetailDto> getReviewDetail(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long reviewId) {
         reviewService.validationReviewId(reviewId);
-
         ReviewDetailDto reviewDetail = reviewReadService.getReviewDetail(customUserDetails.getId(), reviewId);
 
         return new ResponseEntity<>(reviewDetail, HttpStatus.OK);
