@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.baratie.yumyum.domain.BaseTimeEntity;
-import org.baratie.yumyum.domain.reply.domain.Reply;
 import org.baratie.yumyum.global.utils.file.domain.Image;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.review.dto.UpdateReviewRequestDto;
@@ -41,7 +40,7 @@ public class Review extends BaseTimeEntity {
     private Member member;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> imageList = new ArrayList<>();
 
     /**

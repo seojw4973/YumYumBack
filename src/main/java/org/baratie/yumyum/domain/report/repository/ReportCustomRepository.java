@@ -13,4 +13,6 @@ public interface ReportCustomRepository {
     Page<ReportPageResponseDto> findByReplyType(Pageable pageable);
 
     Page<ReportPageResponseDto> findByStoreType(Pageable pageable);
+
+    void deleteByTargetId(Long reviewId);
 }

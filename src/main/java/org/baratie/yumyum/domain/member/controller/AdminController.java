@@ -1,7 +1,9 @@
 package org.baratie.yumyum.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.service.AdminService;
+import org.baratie.yumyum.domain.member.service.MemberService;
 import org.baratie.yumyum.global.utils.pageDto.CustomPageDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
 
     private final AdminService adminService;
+    private final MemberService memberService;
 
     /**
      * 관리자 페이지 회원 전체 조회
@@ -70,7 +73,8 @@ public class AdminController {
      */
     @DeleteMapping("/member/{memberId}")
     public ResponseEntity<Void> deleteMember(@PathVariable Long memberId) {
-        adminService.deleteMember(memberId);
+        Member member = memberService.getMember(memberId);
+        adminService.deleteMember(member);
 
         return ResponseEntity.noContent().build();
     }
