@@ -4,7 +4,9 @@ import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
+import org.baratie.yumyum.domain.member.dto.TokenDto;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
 public class JwtService {
 
     private final MemberDetailsService memberDetailsService;
+    private final RedisTemplate redisTemplate;
+    private final RedisService redisService;
 
     @Value("${spring.jwt.key}")
     private String key;
@@ -57,6 +61,8 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + rtkLive))
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
+
+        redisService.setValue(authentication.getName(), rtk);
         return rtk;
     }
 
@@ -75,8 +81,8 @@ public class JwtService {
         }
     }
 
-    public Authentication getAuthentication(String atk) {
-        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(atk).getBody();
+    public Authentication getAuthentication(String token) {
+        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
 
         if(claims.get(AUTHORITIES_KEY) == null){
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
@@ -90,5 +96,19 @@ public class JwtService {
         CustomUserDetails userDetails = memberDetailsService.loadUserByUsername(claims.getSubject());
 
         return new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+    }
+
+    public TokenDto reissueToken(String jwt) {
+        String rtk = jwt.substring(7);
+
+        validateToken(rtk);
+
+        Authentication authentication = getAuthentication(rtk);
+
+        Object redisRtk = redisService.getValue(authentication.getName());
+        if(!redisRtk.equals(rtk)){
+            throw new RuntimeException("존재하지 않는 Refresh Token입니다.");
+        }
+        return new TokenDto(createToken(authentication), createRtk(authentication));
     }
 }

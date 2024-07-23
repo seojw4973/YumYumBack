@@ -29,6 +29,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final ImageService imageService;
+    private final RedisService redisService;
 
     /**
      * 회원가입
@@ -37,6 +38,7 @@ public class AuthService {
      */
     public void register(SignUpDto signUpDto, MultipartFile file) throws IOException {
         memberService.nicknameDuplicateCheck(signUpDto.getNickname());
+        memberService.emailDuplicateCheck(signUpDto.getEmail());
         String password = passwordEncoder.encode(signUpDto.getPassword());
         String profileUrl = null;
         if(file != null && !file.isEmpty()){
@@ -59,7 +61,7 @@ public class AuthService {
             Authentication auth = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
             Member member = memberService.getMemberByEmail(loginDto.getEmail());
 
-            if(member.getSocialType() == SocialType.YUMYUM) {
+            if(member.getSocialType() == SocialType.YUMYUM && !member.isDeleted()) {
                 Long memberId = member.getId();
                 String nickname = member.getNickname();
                 String imageUrl = member.getImageUrl();
