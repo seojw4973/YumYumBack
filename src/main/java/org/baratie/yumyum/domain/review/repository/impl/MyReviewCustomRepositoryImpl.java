@@ -19,6 +19,7 @@ import static org.baratie.yumyum.domain.likes.domain.QLikes.likes;
 import static org.baratie.yumyum.domain.member.domain.QMember.*;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.store;
+import static org.baratie.yumyum.global.subquery.LikeReviewCount.getLikeReviewCount;
 import static org.baratie.yumyum.global.subquery.TotalReviewCount.getReviewTotalCount;
 import static org.baratie.yumyum.global.subquery.TotalAvgGrade.getAvgGrade;
 
@@ -89,7 +90,7 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
                                 store.address,
                                 member.nickname,
                                 review.grade,
-                                ExpressionUtils.as(getReviewTotalCount(), "totalReviewCount"),
+                                ExpressionUtils.as(getLikeReviewCount(memberId), "totalReviewCount"),
                                 ExpressionUtils.as(getAvgGrade(), "avgGrade"),
                                 review.content,
                                 likes.isLikes

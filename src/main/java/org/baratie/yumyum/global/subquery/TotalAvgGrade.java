@@ -33,7 +33,7 @@ public class TotalAvgGrade {
     }
 
     public static BooleanExpression memberIdEq(Long memberId) {
-        return member.id.eq(memberId);
+        return review.id.eq(memberId);
     }
 
 }
