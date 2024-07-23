@@ -1,7 +1,6 @@
 package org.baratie.yumyum.domain.reply.repository;
 
 import org.baratie.yumyum.domain.member.dto.MyReplyDto;
-import org.baratie.yumyum.domain.reply.domain.Reply;
 import org.baratie.yumyum.domain.reply.dto.ReplyResponseDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -15,7 +14,7 @@ public interface ReplyCustomRepository {
 
     Slice<ReplyResponseDto> getReplyOnReview(Long reviewId, Pageable pageable);
 
-    Slice<MyReplyDto> findByMemberId(Long memberId, Pageable pageable);
+    Slice<MyReplyDto> getMyReply(Long memberId, Pageable pageable);
 
     List<Long> findByReviewId(Long reviewId);
 

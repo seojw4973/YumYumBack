@@ -1,6 +1,5 @@
 package org.baratie.yumyum.domain.member.service;
 
-import com.querydsl.core.group.Group;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.hashtag.repository.HashtagRepository;
 import org.baratie.yumyum.domain.member.dto.MyReplyDto;
@@ -35,7 +34,7 @@ public class MyPageService {
      * @return Slice객체로 내가 쓴 댓글 리턴
      */
     public CustomSliceDto getMyReply(Long memberId, Pageable pageable) {
-        Slice<MyReplyDto> myReply = replyRepository.findByMemberId(memberId, pageable);
+        Slice<MyReplyDto> myReply = replyRepository.getMyReply(memberId, pageable);
 
         return new CustomSliceDto(myReply);
     }

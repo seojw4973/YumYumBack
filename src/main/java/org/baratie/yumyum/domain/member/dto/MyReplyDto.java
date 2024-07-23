@@ -16,6 +16,7 @@ public class MyReplyDto {
     private Long id;
     private String nickname;
     private String content;
+    private Long totalReplyCount;
     private LocalDateTime createdAt;
     private Long reviewId;
 

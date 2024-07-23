@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.reply.repository.impl;
 
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -8,6 +9,7 @@ import org.baratie.yumyum.domain.member.dto.MyReplyDto;
 import org.baratie.yumyum.domain.reply.domain.Reply;
 import org.baratie.yumyum.domain.reply.dto.ReplyResponseDto;
 import org.baratie.yumyum.domain.reply.repository.ReplyCustomRepository;
+import org.baratie.yumyum.global.subquery.TotalReplyCount;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -16,6 +18,7 @@ import java.util.List;
 
 import static org.baratie.yumyum.domain.member.domain.QMember.member;
 import static org.baratie.yumyum.domain.reply.domain.QReply.*;
+import static org.baratie.yumyum.global.subquery.TotalReplyCount.getTotalReplyCount;
 
 @RequiredArgsConstructor
 public class ReplyRepositoryImpl implements ReplyCustomRepository {
@@ -51,16 +54,17 @@ public class ReplyRepositoryImpl implements ReplyCustomRepository {
     }
 
     @Override
-    public Slice<MyReplyDto> findByMemberId(Long memberId, Pageable pageable) {
+    public Slice<MyReplyDto> getMyReply(Long memberId, Pageable pageable) {
 
         List<MyReplyDto> results =
                 query.select(Projections.constructor(MyReplyDto.class,
                                 reply.id,
                                 member.nickname,
                                 reply.content,
+                                ExpressionUtils.as(getTotalReplyCount(memberId), "totalReplyCount"),
                                 reply.createdAt,
-                                reply.review.id)
-                        )
+                                reply.review.id
+                        ))
                         .from(reply)
                         .leftJoin(reply.member, member)
                         .where(reply.member.id.eq(memberId))

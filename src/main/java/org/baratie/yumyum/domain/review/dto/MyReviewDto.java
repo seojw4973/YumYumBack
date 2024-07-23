@@ -15,6 +15,7 @@ public class MyReviewDto {
     private double grade;
     private Long totalReviewCount;
     private double avgGrade;
+    private Long replyCount;
     private String content;
     private Boolean likeStatus;
 
@@ -24,7 +25,7 @@ public class MyReviewDto {
         this.imageList = imageList;
     }
 
-    public MyReviewDto(Long reviewId, String storeName, String address, String nickname, double grade, Long totalReviewCount, double avgGrade, String content, Boolean likeStatus) {
+    public MyReviewDto(Long reviewId, String storeName, String address, String nickname, double grade, Long totalReviewCount, double avgGrade, Long replyCount, String content, Boolean likeStatus) {
         this.reviewId = reviewId;
         this.storeName = storeName;
         this.address = address;
@@ -32,6 +33,7 @@ public class MyReviewDto {
         this.grade = grade;
         this.totalReviewCount = totalReviewCount;
         this.avgGrade = Math.round((avgGrade*10.0)/10.0);
+        this.replyCount = replyCount;
         this.content = content;
         this.likeStatus = likeStatus;
     }

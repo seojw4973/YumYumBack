@@ -16,6 +16,7 @@ public class LikeReviewDto {
     private double grade;
     private Long likeReviewCount;
     private double avgGrade;
+    private Long replyCount;
     private String content;
     private Boolean likeStatus;
     private List<String> imageList;
@@ -25,7 +26,7 @@ public class LikeReviewDto {
     }
 
     @Builder
-    public LikeReviewDto(Long reviewId, String storeName, String address, String nickname, double grade, Long likeReviewCount, double avgGrade, String content, Boolean likeStatus) {
+    public LikeReviewDto(Long reviewId, String storeName, String address, String nickname, double grade, Long likeReviewCount, double avgGrade, Long replyCount, String content, Boolean likeStatus) {
         this.reviewId = reviewId;
         this.storeName = storeName;
         this.address = address;
@@ -33,6 +34,7 @@ public class LikeReviewDto {
         this.grade = grade;
         this.likeReviewCount = likeReviewCount;
         this.avgGrade = Math.round(avgGrade*10.0)/10.0;
+        this.replyCount = replyCount;
         this.content = content;
         this.likeStatus = likeStatus;
     }
