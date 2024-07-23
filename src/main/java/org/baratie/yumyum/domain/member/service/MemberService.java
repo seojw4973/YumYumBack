@@ -3,6 +3,7 @@ package org.baratie.yumyum.domain.member.service;
 import  lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.dto.*;
+import org.baratie.yumyum.domain.member.exception.EmailAlreadyUsingException;
 import org.baratie.yumyum.domain.member.exception.MemberNotFoundException;
 import org.baratie.yumyum.domain.member.exception.NicknameAlreadyUsing;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
@@ -83,6 +84,12 @@ public class MemberService {
     public void nicknameDuplicateCheck(String nickname) {
         if (memberRepository.existsByNickname(nickname)) {
             throw new NicknameAlreadyUsing(ErrorCode.EXIST_MEMBER_NICKNAME);
+        }
+    }
+
+    public void emailDuplicateCheck(String email) {
+        if (memberRepository.existsByEmail(email)) {
+            throw new EmailAlreadyUsingException(ErrorCode.EXIST_MEMBER_EMAIL);
         }
     }
 

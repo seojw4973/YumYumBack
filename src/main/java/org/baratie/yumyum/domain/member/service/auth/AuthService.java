@@ -38,6 +38,7 @@ public class AuthService {
      */
     public void register(SignUpDto signUpDto, MultipartFile file) throws IOException {
         memberService.nicknameDuplicateCheck(signUpDto.getNickname());
+        memberService.emailDuplicateCheck(signUpDto.getEmail());
         String password = passwordEncoder.encode(signUpDto.getPassword());
         String profileUrl = null;
         if(file != null && !file.isEmpty()){
@@ -60,7 +61,7 @@ public class AuthService {
             Authentication auth = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
             Member member = memberService.getMemberByEmail(loginDto.getEmail());
 
-            if(member.getSocialType() == SocialType.YUMYUM) {
+            if(member.getSocialType() == SocialType.YUMYUM && !member.isDeleted()) {
                 Long memberId = member.getId();
                 String nickname = member.getNickname();
                 String imageUrl = member.getImageUrl();
@@ -69,8 +70,6 @@ public class AuthService {
 
                 String atk = jwtService.createToken(auth);
                 String rtk = jwtService.createRtk(auth);
-
-                redisService.setValue(rtk, rtk);
 
                 return new LoginResponseDto(memberId, nickname, imageUrl, phoneNumber, role, atk, rtk);
             }

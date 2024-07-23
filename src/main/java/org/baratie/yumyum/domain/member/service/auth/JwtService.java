@@ -61,6 +61,8 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + rtkLive))
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
+
+        redisService.setValue(authentication.getName(), rtk);
         return rtk;
     }
 
@@ -79,8 +81,8 @@ public class JwtService {
         }
     }
 
-    public Authentication getAuthentication(String atk) {
-        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(atk).getBody();
+    public Authentication getAuthentication(String token) {
+        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
 
         if(claims.get(AUTHORITIES_KEY) == null){
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
@@ -103,7 +105,7 @@ public class JwtService {
 
         Authentication authentication = getAuthentication(rtk);
 
-        Object redisRtk = redisService.getValue(rtk);
+        Object redisRtk = redisService.getValue(authentication.getName());
         if(!redisRtk.equals(rtk)){
             throw new RuntimeException("존재하지 않는 Refresh Token입니다.");
         }

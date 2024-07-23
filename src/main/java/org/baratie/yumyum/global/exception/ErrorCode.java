@@ -17,7 +17,8 @@ public enum ErrorCode {
     PASSWORD_NOT_EQUAL(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다"),
     EXIST_MEMBER_NICKNAME(HttpStatus.BAD_REQUEST, "이미 사용 중인 닉네임입니다."),
     FILE_UPLOAD_FAILED(HttpStatus.BAD_REQUEST, "이미지 업로드에 실패하였습니다."),
-    MEMBER_IS_DELETED(HttpStatus.BAD_REQUEST, "탈퇴한 회원입니다.");
+    MEMBER_IS_DELETED(HttpStatus.BAD_REQUEST, "탈퇴한 회원입니다."),
+    EXIST_MEMBER_EMAIL(HttpStatus.BAD_REQUEST, "이미 사용 중인 이메일입니다.");
 
     private final HttpStatus status;
     private final String message;
