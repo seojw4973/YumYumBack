@@ -1,9 +1,6 @@
 package org.baratie.yumyum.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
-import org.baratie.yumyum.domain.member.dto.MemberBasicDto;
-import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
@@ -25,7 +22,6 @@ public class ReviewReadService {
 
     private final ReviewRepository reviewRepository;
     private final ImageRepository imageRepository;
-    private final MemberRepository memberRepository;
 
     /**
      * 리뷰 전체 조회 (이미지 제외)
