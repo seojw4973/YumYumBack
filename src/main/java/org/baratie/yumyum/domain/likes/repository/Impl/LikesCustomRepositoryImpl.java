@@ -15,6 +15,19 @@ public class LikesCustomRepositoryImpl implements LikesCustomRepository {
 
     private final JPAQueryFactory query;
 
+    /**
+     * 리뷰가 삭제될 때 좋아요도 삭제
+     */
+    @Override
+    public void deleteByReviewId(Long reviewId) {
+        query.delete(likes)
+                .where(likes.review.id.in(reviewId))
+                .execute();
+    }
+
+    /**
+     * 회원이 좋아요했는지 확인
+     */
     @Override
     public Optional<Likes> exist(Long memberId, Long reviewId) {
         return Optional.ofNullable(
