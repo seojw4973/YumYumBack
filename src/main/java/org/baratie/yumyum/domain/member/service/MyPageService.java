@@ -47,9 +47,9 @@ public class MyPageService {
      * @return 좋아요한 리뷰 리스트 리턴
      */
     public CustomSliceDto getMyLikeReview(Long memberId, Pageable pageable) {
-
         Map<Long, List<String>> imageMap = imageRepository.findImageByReviewIdList();
         Slice<LikeReviewDto> likeReviews = reviewRepository.findLikeReviewsByMemberId(memberId, imageMap, pageable);
+
         return new CustomSliceDto(likeReviews);
     }
 
@@ -57,10 +57,9 @@ public class MyPageService {
      * 내가 쓴 리뷰
      */
     public CustomSliceDto getMyReview(Long memberId, Pageable pageable) {
-
         Map<Long, List<String>> imageMap = imageRepository.findImageByReviewIdList();
-
         Slice<MyReviewDto> myReview = reviewRepository.getMyReview(memberId, imageMap, pageable);
+
         return new CustomSliceDto(myReview);
     }
 
@@ -69,7 +68,6 @@ public class MyPageService {
      * @param memberId
      */
     public CustomSliceDto getMyFavoriteStore(Long memberId, Pageable pageable) {
-
         Map<Long, List<String>> hashtagMap = hashtagRepository.findHashtagByStoreId();
         Map<Long, String> imageMap = imageRepository.findImageByStoreIdList();
 
