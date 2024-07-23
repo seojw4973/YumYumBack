@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MyReplyDto {
-    private Long id;
+    private Long replyId;
     private String nickname;
     private String content;
     private Long totalReplyCount;
@@ -22,7 +22,7 @@ public class MyReplyDto {
 
     public MyReplyDto fromEntity(Reply reply){
         return MyReplyDto.builder()
-                .id(reply.getId())
+                .replyId(reply.getId())
                 .content(reply.getContent())
                 .createdAt(reply.getCreatedAt())
                 .reviewId(reply.getReview().getId())
