@@ -82,4 +82,10 @@ public class AuthService {
         }
         return null;
     }
+
+    public void logout(String email){
+        if(redisService.getValue(email)!= null) {
+            redisService.deleteValue(email);
+        }
+    }
 }

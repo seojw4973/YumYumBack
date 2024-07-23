@@ -13,10 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -107,8 +104,8 @@ public class JwtService {
         Authentication authentication = getAuthentication(rtk);
 
         Object redisRtk = redisService.getValue(authentication.getName());
-        if(!redisRtk.equals(rtk)){
-            throw new RuntimeException("존재하지 않는 Refresh Token입니다.");
+        if(Objects.isNull(redisRtk) || !redisRtk.equals(rtk)){
+            throw new RuntimeException("존재하지 않는 RefreshToken입니다.");
         }
         return new TokenDto(createAtk(authentication), createRtk(authentication));
     }
