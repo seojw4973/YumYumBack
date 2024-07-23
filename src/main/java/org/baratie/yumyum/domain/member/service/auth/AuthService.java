@@ -1,14 +1,15 @@
 package org.baratie.yumyum.domain.member.service.auth;
 
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.domain.SocialType;
-import org.baratie.yumyum.domain.member.dto.LoginDto;
-import org.baratie.yumyum.domain.member.dto.LoginResponseDto;
-import org.baratie.yumyum.domain.member.dto.SignUpDto;
+import org.baratie.yumyum.domain.member.dto.*;
+import org.baratie.yumyum.domain.member.exception.DeletedMemberException;
 import org.baratie.yumyum.domain.member.repository.MemberRepository;
 import org.baratie.yumyum.domain.member.service.MemberService;
+import org.baratie.yumyum.global.exception.ErrorCode;
 import org.baratie.yumyum.global.utils.file.service.ImageService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -61,17 +62,19 @@ public class AuthService {
             Authentication auth = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
             Member member = memberService.getMemberByEmail(loginDto.getEmail());
 
-            if(member.getSocialType() == SocialType.YUMYUM && !member.isDeleted()) {
-                Long memberId = member.getId();
-                String nickname = member.getNickname();
-                String imageUrl = member.getImageUrl();
-                String phoneNumber = member.getPhoneNumber();
-                Role role = member.getRole();
+            if(member.getNickname().startsWith("deleted")){
+                throw new DeletedMemberException(ErrorCode.MEMBER_IS_DELETED);
+            }
 
-                String atk = jwtService.createToken(auth);
+            if(member.getSocialType() == SocialType.YUMYUM) {
+                String atk = jwtService.createAtk(auth);
                 String rtk = jwtService.createRtk(auth);
 
-                return new LoginResponseDto(memberId, nickname, imageUrl, phoneNumber, role, atk, rtk);
+                UserDataDto userDataDto = UserDataDto.fromEntity(member);
+
+                TokenDto tokenDto = TokenDto.fromToken(atk, rtk);
+
+                return new LoginResponseDto(userDataDto, tokenDto);
             }
         } catch (Exception e) {
             e.printStackTrace(); // 예외 발생 시 스택 트레이스를 출력

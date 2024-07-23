@@ -1,17 +1,16 @@
 package org.baratie.yumyum.domain.member.controller;
 
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.member.dto.LoginDto;
-import org.baratie.yumyum.domain.member.dto.LoginResponseDto;
-import org.baratie.yumyum.domain.member.dto.SignUpDto;
-import org.baratie.yumyum.domain.member.dto.TokenDto;
+import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.service.auth.AuthService;
 import org.baratie.yumyum.domain.member.service.auth.JwtService;
 import org.baratie.yumyum.domain.member.service.auth.RedisService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,19 +44,31 @@ public class AuthController {
      * @return LoginResponseDto 로그인한 유저의 정보 및 jwt 리턴
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginDto loginDto) {
-        LoginResponseDto loginResponseDtoDto = authService.login(loginDto);
-        return ResponseEntity.status(HttpStatus.OK).body(loginResponseDtoDto);
+    public ResponseEntity<UserDataDto> login(@Valid @RequestBody LoginDto loginDto, HttpServletResponse response) {
+        LoginResponseDto loginResponseDto = authService.login(loginDto);
+        TokenDto tokenDto = loginResponseDto.getTokenDto();
+        UserDataDto userDataDto = loginResponseDto.getUserDataDto();
+
+        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDto.getAtk());
+
+        Cookie rtkCookie = new Cookie("rtk", tokenDto.getRtk());
+        rtkCookie.setHttpOnly(true);
+        rtkCookie.setSecure(true);
+        rtkCookie.setPath("/");
+        rtkCookie.setMaxAge(604800);
+        response.addCookie(rtkCookie);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userDataDto);
     }
 
     /**
      * 토큰 재발급
-     * @param request
+     * @param token
      * @return
      */
-    @PostMapping("/reissuse")
-    public ResponseEntity<TokenDto> reissue(HttpServletRequest request, HttpServletResponse response) {
-        TokenDto tokenDto = jwtService.reissueToken(request.getHeader("Authorization"));
+    @PostMapping("/reissue")
+    public ResponseEntity<TokenDto> reissue(@RequestHeader("Authorization") String token) {
+        TokenDto tokenDto = jwtService.reissueToken(token);
         return ResponseEntity.status(HttpStatus.OK).body(tokenDto);
     }
 

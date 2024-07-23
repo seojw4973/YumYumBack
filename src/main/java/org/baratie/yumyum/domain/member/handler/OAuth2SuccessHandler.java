@@ -1,6 +1,7 @@
 package org.baratie.yumyum.domain.member.handler;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,15 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
-        String atk = jwtService.createToken(authentication);
+        String atk = jwtService.createAtk(authentication);
         String rtk = jwtService.createRtk(authentication);
-        System.out.println("atk = " + atk);
-        System.out.println("rtk = " + rtk);
+
+        Cookie rtkCookie = new Cookie("rtk", rtk);
+        rtkCookie.setHttpOnly(true);
+        rtkCookie.setSecure(true);
+        rtkCookie.setPath("/");
+        rtkCookie.setMaxAge(604800);
+        response.addCookie(rtkCookie);
 
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + atk);
         response.sendRedirect("http://223.130.139.146:3000/callback?atk=" + atk + "&rtk=" + rtk);

@@ -35,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = jwt.substring(7);
+        System.out.println("token = " + token);
         try {
             if (jwtService.validateToken(token)) {
                 Authentication authentication = jwtService.getAuthentication(token);
@@ -42,6 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
+            System.out.println("e.getMessage() = " + e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Token validation failed");
             return;

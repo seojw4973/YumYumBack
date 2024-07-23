@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class JwtService {
 
     private final MemberDetailsService memberDetailsService;
-    private final RedisTemplate redisTemplate;
     private final RedisService redisService;
 
     @Value("${spring.jwt.key}")
@@ -41,23 +40,24 @@ public class JwtService {
     @PostConstruct
     protected void init(){ key = Base64.getEncoder().encodeToString(key.getBytes()); }
 
-    public String createToken(Authentication authentication){
+    public String createAtk(Authentication authentication){
         String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
 
-        String atk =  Jwts.builder()
+        return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + atkLive))
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
-        return atk;
     }
 
     public String createRtk(Authentication authentication){
         String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
 
         String rtk = Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim(AUTHORITIES_KEY, authorities)
                 .setExpiration(new Date(System.currentTimeMillis() + rtkLive))
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
@@ -71,14 +71,15 @@ public class JwtService {
             Jwts.parser().setSigningKey(key).parseClaimsJws(token);
             return true;
         }catch(io.jsonwebtoken.security.SecurityException | MalformedJwtException e){
-            return false;
+            System.out.println("Invalid JWT = " + e.getMessage());
         }catch(ExpiredJwtException e){
-            return false;
+            System.out.println("Expired JWT = " + e.getMessage());
         }catch(UnsupportedJwtException e){
-            return false;
+            System.out.println("Unsupported JWT = " + e.getMessage());
         }catch(IllegalArgumentException e){
-            return false;
+            System.out.println("JWT Claims String is empty = " + e.getMessage());
         }
+        return false;
     }
 
     public Authentication getAuthentication(String token) {
@@ -109,6 +110,6 @@ public class JwtService {
         if(!redisRtk.equals(rtk)){
             throw new RuntimeException("존재하지 않는 Refresh Token입니다.");
         }
-        return new TokenDto(createToken(authentication), createRtk(authentication));
+        return new TokenDto(createAtk(authentication), createRtk(authentication));
     }
 }
