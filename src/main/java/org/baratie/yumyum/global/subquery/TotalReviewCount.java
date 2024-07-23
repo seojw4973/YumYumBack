@@ -33,7 +33,7 @@ public class TotalReviewCount {
     }
 
     private static BooleanExpression memberIdEq(Long memberId) {
-        return member.id.eq(memberId);
+        return review.member.id.eq(memberId);
     }
 
 }
