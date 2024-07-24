@@ -69,7 +69,7 @@ public class AuthController {
      * @return
      */
     @PostMapping("/reissue")
-    public ResponseEntity<TokenDto> reissue(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Void> reissue(HttpServletRequest request, HttpServletResponse response) {
         String token = null;
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -89,7 +89,7 @@ public class AuthController {
 
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDto.getAtk());
 
-        return ResponseEntity.status(HttpStatus.OK).body(tokenDto);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**
