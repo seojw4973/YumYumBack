@@ -45,9 +45,9 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://192.168.0.13:3000", "http://223.130.139.146:3000", "https://223.130.139.146:3000", "https://www.baratie.site"));
-        config.setAllowedMethods(Arrays.asList("*"));
-        config.setAllowedHeaders(Arrays.asList("*"));
-        config.setExposedHeaders(Arrays.asList("*"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "X-Requested-With", "Accept"));
+        config.setExposedHeaders(Arrays.asList("Content-Type", "Authorization"));
         config.setAllowCredentials(true);
         config.applyPermitDefaultValues();
 
@@ -65,6 +65,9 @@ public class SecurityConfig {
 
         http.authorizeRequests(auth -> auth
                 .requestMatchers(("/admin/**")).hasAnyRole(Role.ADMIN.name())
+                .requestMatchers("/review/**", "/reply/**", "/report",
+                        "/favorite", "/like", "/search", "/member/reissue", "/member/logout",
+                        "/member/favorite", "/member/myReply", "/member/likeReview", "/member/myReview").authenticated()
                 .requestMatchers("/**").permitAll()
                 .anyRequest().authenticated());
 
