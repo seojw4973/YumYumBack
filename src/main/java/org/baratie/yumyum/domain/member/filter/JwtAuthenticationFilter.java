@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.service.auth.JwtService;
+import org.baratie.yumyum.domain.member.service.auth.RedisService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -35,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = jwt.substring(7);
+        System.out.println("token = " + token);
         try {
             if (jwtService.validateToken(token)) {
                 Authentication authentication = jwtService.getAuthentication(token);
@@ -42,6 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
+            System.out.println("e.getMessage() = " + e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Token validation failed");
             return;

@@ -5,16 +5,18 @@ import org.baratie.yumyum.domain.member.domain.Member;
 import org.baratie.yumyum.domain.member.domain.Role;
 
 @Getter
-@Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @ToString
 public class LoginResponseDto {
-    Long memberId;
-    String nickname;
-    String imageUrl;
-    String phoneNumber;
-    Role role;
-    String atk;
-    String rtk;
+
+    private TokenDto tokenDto;
+    private UserDataDto userDataDto;
+
+
+    public LoginResponseDto(UserDataDto userDataDto, TokenDto tokenDto) {
+        this.userDataDto = userDataDto;
+        this.tokenDto = tokenDto;
+    }
+
+
 }
