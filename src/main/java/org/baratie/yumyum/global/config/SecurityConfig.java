@@ -47,6 +47,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://192.168.0.13:3000", "http://223.130.139.146:3000", "https://223.130.139.146:3000", "https://www.baratie.site"));
         config.setAllowedMethods(Arrays.asList("*"));
         config.setAllowedHeaders(Arrays.asList("*"));
+        config.setExposedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
         config.applyPermitDefaultValues();
 
