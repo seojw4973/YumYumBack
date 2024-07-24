@@ -23,6 +23,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
+@CrossOrigin(exposedHeaders = "*")
 public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
