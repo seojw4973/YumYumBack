@@ -97,14 +97,13 @@ public class JwtService {
     }
 
     public TokenDto reissueToken(String jwt) {
-        String rtk = jwt.substring(7);
 
-        validateToken(rtk);
+        validateToken(jwt);
 
-        Authentication authentication = getAuthentication(rtk);
+        Authentication authentication = getAuthentication(jwt);
 
         Object redisRtk = redisService.getValue(authentication.getName());
-        if(Objects.isNull(redisRtk) || !redisRtk.equals(rtk)){
+        if(Objects.isNull(redisRtk) || !redisRtk.equals(jwt)){
             throw new RuntimeException("존재하지 않는 RefreshToken입니다.");
         }
         return new TokenDto(createAtk(authentication), createRtk(authentication));
