@@ -62,7 +62,8 @@ public class AuthService {
             Authentication auth = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
             Member member = memberService.getMemberByEmail(loginDto.getEmail());
 
-            if(member.getNickname().startsWith("deleted")){
+            if(member.isDeleted()){
+                System.out.println("존재하지 않는 회원입니다.");
                 throw new DeletedMemberException(ErrorCode.MEMBER_IS_DELETED);
             }
 
