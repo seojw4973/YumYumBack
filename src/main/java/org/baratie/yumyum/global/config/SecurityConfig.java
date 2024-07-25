@@ -75,19 +75,13 @@ public class SecurityConfig {
                 .authenticationEntryPoint(authEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler);
 
-
         http.oauth2Login()
                 .authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization"))
                 .redirectionEndpoint(redirect -> redirect.baseUri("/login/oauth2/code/*"))
                 .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2Service))
                 .successHandler(oAuth2SuccessHandler);
 
-
         http.addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
-
-        http.logout(logout -> logout.logoutUrl("/member/logout")
-                .logoutSuccessUrl("/home")
-                .deleteCookies("JSESSIONID"));
 
         return http.build();
     }
