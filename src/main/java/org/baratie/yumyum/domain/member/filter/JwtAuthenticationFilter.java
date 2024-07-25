@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         System.out.println("requestURI = " + requestURI);
 
-        if (requestURI.equals("/member/login") || requestURI.equals("/member/register") || requestURI.equals("/login/oauth2/code/naver")) {
+        if (requestURI.equals("/member/login") || requestURI.equals("/member/register") || requestURI.startsWith("/login/oauth2/code/")) {
             filterChain.doFilter(request, response);
             System.out.println("필터에 걸림");
             return;

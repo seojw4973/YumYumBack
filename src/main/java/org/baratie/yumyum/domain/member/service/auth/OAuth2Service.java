@@ -34,6 +34,7 @@ public class OAuth2Service extends DefaultOAuth2UserService {
         SocialType socialType = null;
         OAuth2UserInfo oAuth2UserInfo = null;
         String email = null;
+        String phoneNumber = null;
 
         String provider = userRequest.getClientRegistration().getRegistrationId();
 
@@ -46,28 +47,35 @@ public class OAuth2Service extends DefaultOAuth2UserService {
             if(email == null){
                 email = oAuth2UserInfo.getName() + "@naver.com";
             }
+            phoneNumber = oAuth2UserInfo.getPhone();
         } else if(provider.equals("kakao")){
             System.out.println("카카오 로그인 요청");
             oAuth2UserInfo = new KakaoUserInfo( (Map)oAuth2User.getAttributes());
             socialType = SocialType.KAKAO;
-            nickname = "Kakao" + oAuth2UserInfo.getName();
+            nickname = "Kakao" + oAuth2UserInfo.getNickname();
             email = oAuth2UserInfo.getEmail();
             if(email == null){
                 email = oAuth2User.getName() + "@kakao.com";
             }
+            phoneNumber = "KakaoPhoneNumber";
+
+
         } else if(provider.equals("google")){
             System.out.println("구글 로그인 요청");
             oAuth2UserInfo = new GoogleUserInfo( oAuth2User.getAttributes() );
             nickname = "Google" + oAuth2UserInfo.getName();
         }
 
-        String phoneNumber = oAuth2UserInfo.getPhone();
+
 
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
 
-        if(optionalMember.get().getNickname().startsWith("deleted")){
-            throw new DeletedMemberException(ErrorCode.MEMBER_IS_DELETED);
+        if(optionalMember.isPresent()){
+            if(optionalMember.get().isDeleted()){
+                throw new DeletedMemberException(ErrorCode.MEMBER_IS_DELETED);
+            }
         }
+
         Member member = null;
 
         if(optionalMember.isEmpty()){
@@ -75,7 +83,7 @@ public class OAuth2Service extends DefaultOAuth2UserService {
                     .email(email)
                     .nickname(nickname)
                     .role(Role.USER)
-                    .imageUrl("22")
+                    .imageUrl(null)
                     .phoneNumber(phoneNumber)
                     .socialType(socialType)
                     .build();

@@ -30,17 +30,17 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String atk = jwtService.createAtk(authentication);
         String rtk = jwtService.createRtk(authentication);
 
-        Cookie rtkCookie = new Cookie("rtk", rtk);
-        rtkCookie.setHttpOnly(true);
-        rtkCookie.setSecure(true);
-        rtkCookie.setPath("/");
-        rtkCookie.setMaxAge(604800);
-        response.addCookie(rtkCookie);
-
-        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + atk);
+//        Cookie rtkCookie = new Cookie("rtk", rtk);
+//        rtkCookie.setHttpOnly(true);
+//        rtkCookie.setSecure(true);
+//        rtkCookie.setPath("/");
+//        rtkCookie.setMaxAge(604800);
+//        response.addCookie(rtkCookie);
+//
+//        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + atk);
 
         redisService.setValue(authentication.getName(), atk);
 
-        response.setStatus(HttpStatus.OK.value());
+        response.sendRedirect("http://223.130.139.146:3000/callback?atk=" + atk + "&rtk=" + rtk);
     }
 }
