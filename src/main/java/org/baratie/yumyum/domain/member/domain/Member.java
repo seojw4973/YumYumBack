@@ -51,7 +51,6 @@ public class Member {
     public Member updateInfo(UpdateMemberDto updateMemberDto, String url) {
         this.imageUrl = url;
 
-        System.out.println("updateMemberDto.toString = " + updateMemberDto.toString());
 
         if (updateMemberDto.getNickname() != null && !updateMemberDto.getNickname().isBlank()) {
             this.nickname = updateMemberDto.getNickname();

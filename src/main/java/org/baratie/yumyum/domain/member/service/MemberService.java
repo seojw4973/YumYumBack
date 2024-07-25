@@ -49,18 +49,13 @@ public class MemberService {
             passwordUpdate(updateMemberDto);
         }
 
-        String profileUrl;
+        String profileUrl = member.getImageUrl();
 
         if (file != null && !file.isEmpty()) {
-
             if (member.getImageUrl() != null && !member.getImageUrl().isEmpty()) {
                 imageService.targetFileDelete(member);
             }
             profileUrl = imageService.profileImageUpload(file);
-
-        } else {
-            imageService.targetFileDelete(member);
-            profileUrl = null;
         }
 
         Member updateMember = member.updateInfo(updateMemberDto, profileUrl);
