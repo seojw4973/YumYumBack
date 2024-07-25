@@ -10,6 +10,7 @@ import org.baratie.yumyum.global.exception.AuthEntryPoint;
 import org.baratie.yumyum.global.exception.JwtAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -44,10 +45,10 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://192.168.0.13:3000", "http://223.130.139.146:3000", "https://223.130.139.146:3000", "https://www.baratie.site"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://192.168.0.13:3000", "http://223.130.139.146:3000", "https://223.130.139.146:3000", "https://www.baratie.site", "https://yum-yum-phi.vercel.app"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "X-Requested-With", "Accept"));
-        config.setExposedHeaders(Arrays.asList("Content-Type", "Authorization"));
+        config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "X-Requested-With", "Accept", HttpHeaders.SET_COOKIE));
+        config.setExposedHeaders(Arrays.asList("Content-Type", HttpHeaders.AUTHORIZATION, HttpHeaders.SET_COOKIE));
         config.setAllowCredentials(true);
         config.applyPermitDefaultValues();
 
