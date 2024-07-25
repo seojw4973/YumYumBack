@@ -16,7 +16,7 @@ public interface ReviewCustomRepository {
 
     Slice<ReviewAllDto> findAllReviews(Long memberId, Map<Long, List<String>> imageMap, Pageable pageable);
 
-    Slice<StoreReviewDto> findReviewByStoreId(Long storeId, Map<Long, List<String>> imageList, Pageable pageable);
+    Slice<StoreReviewDto> findReviewByStoreId(Long memberId, Long storeId, Map<Long, List<String>> imageList, Pageable pageable);
 
     ReviewDetailDto findReviewDetail(Long memberId, Long reviewId);
 }

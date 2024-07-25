@@ -121,7 +121,11 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
      * @return 맛집에 작성된 리뷰 리스트 리턴
      */
     @Override
-    public Slice<StoreReviewDto> findReviewByStoreId(Long storeId, Map<Long, List<String>> imageList, Pageable pageable) {
+    public Slice<StoreReviewDto> findReviewByStoreId(Long memberId, Long storeId, Map<Long, List<String>> imageList, Pageable pageable) {
+
+        JPQLQuery<Boolean> likeStatus = JPAExpressions.select(likes.isLikes)
+                .from(likes)
+                .where(likes.review.id.eq(review.id), likes.member.id.eq(memberId));
 
         List<StoreReviewDto> results =
                 query.select(Projections.constructor(StoreReviewDto.class,
@@ -132,7 +136,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                                 review.grade,
                                 review.content,
                                 ExpressionUtils.as(getReviewTotalCount(), "totalReviewCount"),
-                                ExpressionUtils.as(getAvgGrade(), "avgGrade")
+                                ExpressionUtils.as(getAvgGrade(), "avgGrade"),
+                                likeStatus
                         ))
                         .from(review)
                         .leftJoin(review.member, member)

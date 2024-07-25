@@ -48,10 +48,10 @@ public class ReviewReadController {
      * 가게에 작성된 리뷰 리스트
      */
     @GetMapping("/store/{storeId}")
-    public ResponseEntity<CustomSliceDto> getStoreReviewList(@PathVariable Long storeId, Pageable pageable) {
+    public ResponseEntity<CustomSliceDto> getStoreReviewList(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long storeId, Pageable pageable) {
         storeService.existStoreId(storeId);
-
-        CustomSliceDto storeReviewList = reviewReadService.getStoreReviewList(storeId, pageable);
+        Long memberId = customUserDetails.getId();
+        CustomSliceDto storeReviewList = reviewReadService.getStoreReviewList(memberId, storeId, pageable);
 
         return new ResponseEntity<>(storeReviewList, HttpStatus.ACCEPTED);
     }

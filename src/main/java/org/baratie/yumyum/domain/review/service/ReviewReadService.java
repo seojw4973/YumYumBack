@@ -41,9 +41,9 @@ public class ReviewReadService {
      * @param pageable
      * @return 가게에 달린 리뷰
      */
-    public CustomSliceDto getStoreReviewList(Long storeId, Pageable pageable) {
+    public CustomSliceDto getStoreReviewList(Long memberId, Long storeId, Pageable pageable) {
         Map<Long, List <String>> imageList = imageRepository.findImageByReviewIdList();
-        Slice<StoreReviewDto> reviewOnStore = reviewRepository.findReviewByStoreId(storeId, imageList, pageable);
+        Slice<StoreReviewDto> reviewOnStore = reviewRepository.findReviewByStoreId(memberId, storeId, imageList, pageable);
 
         return new CustomSliceDto(reviewOnStore);
     }
