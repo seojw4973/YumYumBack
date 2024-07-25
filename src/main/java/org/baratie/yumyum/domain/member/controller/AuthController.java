@@ -103,6 +103,7 @@ public class AuthController {
     public ResponseEntity<Void> logout(@AuthenticationPrincipal CustomUserDetails customUserDetails, HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         System.out.println("Arrays.toString(cookies) = " + Arrays.toString(cookies));
+        System.out.println("=======================================================");
         String email = customUserDetails.getUsername();
         authService.logout(email);
 
