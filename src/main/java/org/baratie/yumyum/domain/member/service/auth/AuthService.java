@@ -1,9 +1,7 @@
 package org.baratie.yumyum.domain.member.service.auth;
 
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.member.domain.Member;
-import org.baratie.yumyum.domain.member.domain.Role;
 import org.baratie.yumyum.domain.member.domain.SocialType;
 import org.baratie.yumyum.domain.member.dto.*;
 import org.baratie.yumyum.domain.member.exception.DeletedMemberException;

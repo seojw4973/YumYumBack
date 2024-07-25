@@ -24,9 +24,9 @@ public class ReviewReadService {
     private final ImageRepository imageRepository;
 
     /**
-     * 리뷰 전체 조회 (이미지 제외)
+     * 리뷰 전체 조회
      * @param pageable
-     * @return
+     * @return 작성된 리뷰 전체
      */
     public CustomSliceDto getAllReview(Long memberId, Pageable pageable){
         Map<Long, List<String>> imageMap = imageRepository.findImageByReviewIdList();

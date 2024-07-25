@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @RestController
 @RequiredArgsConstructor
@@ -72,6 +73,7 @@ public class AuthController {
     public ResponseEntity<Void> reissue(HttpServletRequest request, HttpServletResponse response) {
         String token = null;
         Cookie[] cookies = request.getCookies();
+        System.out.println("Arrays.toString(cookies) = " + Arrays.toString(cookies));
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("rtk")) {
@@ -99,6 +101,8 @@ public class AuthController {
      */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal CustomUserDetails customUserDetails, HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        System.out.println("Arrays.toString(cookies) = " + Arrays.toString(cookies));
         String email = customUserDetails.getUsername();
         authService.logout(email);
 
