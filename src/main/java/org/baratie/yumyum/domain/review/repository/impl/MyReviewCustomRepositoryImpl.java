@@ -95,7 +95,7 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
                                 member.nickname,
                                 member.imageUrl,
                                 review.grade,
-                                ExpressionUtils.as(getLikeReviewCount(memberId), "totalReviewCount"),
+                                ExpressionUtils.as(getLikeReviewCount(memberId), "likeReviewCount"),
                                 ExpressionUtils.as(getAvgGrade(), "avgGrade"),
                                 ExpressionUtils.as(getReplyCount(), "replyCount"),
                                 review.content,
