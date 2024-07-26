@@ -24,7 +24,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
-        String atk = jwtService.createAtk(authentication);
+        String atk = "Bearer " + jwtService.createAtk(authentication);
         String rtk = jwtService.createRtk(authentication);
 
 //        Cookie rtkCookie = new Cookie("rtk", rtk);
