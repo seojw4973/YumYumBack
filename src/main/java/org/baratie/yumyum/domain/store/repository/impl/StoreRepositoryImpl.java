@@ -87,10 +87,16 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
     @Override
     public Slice<MyFavoriteStoreDto> findFavoriteStore(Long memberId, Map<Long, List<String>> hashtagMap, Map<Long, String> imageMap, Pageable pageable) {
 
-        JPQLQuery<Long> favoriteCount = JPAExpressions
+        JPQLQuery<Long> myFavoriteCount = JPAExpressions
                 .select(favorite.count())
                 .from(favorite)
                 .where(favorite.isFavorite.eq(true), favorite.member.id.eq(memberId));
+
+        JPQLQuery<Long> storeFavoriteCount = JPAExpressions
+                .select(favorite.count())
+                .from(favorite)
+                .innerJoin(favorite.store, store)
+                .where(favorite.isFavorite.eq(true));
 
         List<MyFavoriteStoreDto> results = query.select(
                 Projections.constructor(MyFavoriteStoreDto.class,
@@ -100,7 +106,8 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         store.views,
                         ExpressionUtils.as(getAvgGradeWithStore(), "avgGrade"),
                         ExpressionUtils.as(getReviewTotalCountWithStore(), "totalReviewCount"),
-                        ExpressionUtils.as(favoriteCount, "favoriteCount"),
+                        ExpressionUtils.as(myFavoriteCount, "myFavoriteCount"),
+                        ExpressionUtils.as(storeFavoriteCount, "storeFavoriteCount"),
                         favorite.isFavorite,
                         category.name
                 ))
