@@ -80,7 +80,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         List<ReviewAllDto> results =
                 query.select(Projections.constructor(ReviewAllDto.class,
                                 review.id.as("reviewId"),
-                                member.imageUrl.as("profileImage"),
+                                member.imageUrl,
                                 store.name.as("storeName"),
                                 store.address.as("address"),
                                 member.nickname.as("nickname"),
