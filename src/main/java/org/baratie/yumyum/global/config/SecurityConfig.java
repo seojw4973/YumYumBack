@@ -11,6 +11,7 @@ import org.baratie.yumyum.global.exception.JwtAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -23,6 +24,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.lang.model.util.Elements;
 import java.util.Arrays;
 
 @Configuration
@@ -47,8 +49,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://192.168.0.13:3000", "http://223.130.139.146:3000", "https://223.130.139.146:3000", "https://www.baratie.site", "https://yum-yum-phi.vercel.app"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "X-Requested-With", "Accept", HttpHeaders.SET_COOKIE));
-        config.setExposedHeaders(Arrays.asList("Content-Type", HttpHeaders.AUTHORIZATION, HttpHeaders.SET_COOKIE));
+        config.setAllowedHeaders(Arrays.asList(HttpHeaders.ORIGIN, HttpHeaders.CONTENT_TYPE, HttpHeaders.AUTHORIZATION, "X-Requested-With", HttpHeaders.ACCEPT, HttpHeaders.SET_COOKIE, HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS));
+        config.setExposedHeaders(Arrays.asList("Content-Type", HttpHeaders.AUTHORIZATION, HttpHeaders.SET_COOKIE, HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS));
         config.setAllowCredentials(true);
         config.applyPermitDefaultValues();
 

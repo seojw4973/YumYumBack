@@ -17,6 +17,7 @@ import org.baratie.yumyum.domain.store.service.GeoUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +35,6 @@ public class CreateStoreDto {
     @NotBlank
     private String address;
 
-    @NotBlank
     private String calls;
 
     private String hours;
@@ -47,9 +47,17 @@ public class CreateStoreDto {
     List<CategoryDto> categoryList;
 
     public Store toEntity(BigDecimal latitude, BigDecimal longitude) throws IOException, InterruptedException, ApiException {
-        List<Hashtag> hashtagList = this.hashtagList.stream().map(HashtagDto::toEntity).collect(Collectors.toList());
-        List<Menu> menuList = this.menuList.stream().map(MenuDto::toEntity).collect(Collectors.toList());
-        List<Category> categoryList = this.categoryList.stream().map(CategoryDto::toEntity).collect(Collectors.toList());
+        List<Hashtag> hashtagList = (this.hashtagList != null)
+                ? this.hashtagList.stream().map(HashtagDto::toEntity).collect(Collectors.toList())
+                : new ArrayList<>();
+
+        List<Menu> menuList = (this.menuList != null)
+                ? this.menuList.stream().map(MenuDto::toEntity).collect(Collectors.toList())
+                : new ArrayList<>();
+
+        List<Category> categoryList = (this.categoryList != null)
+                ? this.categoryList.stream().map(CategoryDto::toEntity).collect(Collectors.toList())
+                : new ArrayList<>();
 
         return Store.builder()
                 .name(this.name)
