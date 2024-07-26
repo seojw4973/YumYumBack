@@ -9,7 +9,7 @@ import java.util.List;
 public class StoreReviewDto {
 
     private Long memberId;
-    private String profileImage;
+    private String imageUrl;
     private String nickname;
     private Long reviewId;
     private double grade;
@@ -24,9 +24,9 @@ public class StoreReviewDto {
     }
 
     @Builder
-    public StoreReviewDto(Long memberId, String profileImage, String nickname, Long reviewId, double grade, String content, Long totalReviewCount, double avgGrade, Boolean likeStatus) {
+    public StoreReviewDto(Long memberId, String imageUrl, String nickname, Long reviewId, double grade, String content, Long totalReviewCount, double avgGrade, Boolean likeStatus) {
         this.memberId = memberId;
-        this.profileImage = profileImage;
+        this.imageUrl = imageUrl;
         this.nickname = nickname;
         this.reviewId = reviewId;
         this.grade = grade;
