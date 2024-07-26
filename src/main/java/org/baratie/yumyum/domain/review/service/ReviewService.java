@@ -28,7 +28,6 @@ import java.util.List;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final MemberService memberService;
     private final StoreService storeService;
     private final ImageService imageService;
     private final ReplyRepository replyRepository;
@@ -36,13 +35,12 @@ public class ReviewService {
 
     /**
      * 리뷰 등록
-     * @param customUserDetails
+     * @param member
      * @param request
      * 멤버 id 값이 필요한지는 의문, 토론 필요
      */
     @Transactional
-    public void createReview(CustomUserDetails customUserDetails, CreateReviewDto request, List<MultipartFile> files){
-        Member member = memberService.getMember(customUserDetails.getId());
+    public void createReview(Member member, CreateReviewDto request, List<MultipartFile> files){
         Store store = storeService.validationStoreId(request.getStoreId());
 
         Review review = request.toEntity(store, member);
