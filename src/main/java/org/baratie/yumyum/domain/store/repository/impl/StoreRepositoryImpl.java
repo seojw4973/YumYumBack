@@ -92,25 +92,19 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .from(favorite)
                 .where(favorite.isFavorite.eq(true), favorite.member.id.eq(memberId));
 
-        JPQLQuery<Long> storeFavoriteCount = JPAExpressions
-                .select(favorite.count())
-                .from(favorite)
-                .innerJoin(favorite.store, store)
-                .where(favorite.isFavorite.eq(true));
-
         List<MyFavoriteStoreDto> results = query.select(
-                Projections.constructor(MyFavoriteStoreDto.class,
-                        store.id,
-                        store.name,
-                        store.address,
-                        store.views,
-                        ExpressionUtils.as(getAvgGradeWithStore(), "avgGrade"),
-                        ExpressionUtils.as(getReviewTotalCountWithStore(), "totalReviewCount"),
-                        ExpressionUtils.as(myFavoriteCount, "myFavoriteCount"),
-                        ExpressionUtils.as(storeFavoriteCount, "storeFavoriteCount"),
-                        favorite.isFavorite,
-                        category.name
-                ))
+                        Projections.constructor(MyFavoriteStoreDto.class,
+                                store.id,
+                                store.name,
+                                store.address,
+                                store.views,
+                                ExpressionUtils.as(getAvgGradeWithStore(), "avgGrade"),
+                                ExpressionUtils.as(getReviewTotalCountWithStore(), "totalReviewCount"),
+                                ExpressionUtils.as(myFavoriteCount, "myFavoriteCount"),
+                                favorite.countDistinct().as("storeFavoriteCount"),
+                                favorite.isFavorite,
+                                category.name
+                        ))
                 .from(store)
                 .leftJoin(store.reviewList, review)
                 .leftJoin(store.favoriteList, favorite)
