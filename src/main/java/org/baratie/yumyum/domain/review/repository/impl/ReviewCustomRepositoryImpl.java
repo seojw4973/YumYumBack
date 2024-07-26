@@ -7,7 +7,6 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.baratie.yumyum.domain.member.domain.CustomUserDetails;
 import org.baratie.yumyum.domain.review.dto.ReviewAllDto;
 import org.baratie.yumyum.domain.review.dto.ReviewDetailDto;
 import org.baratie.yumyum.domain.review.dto.StoreReviewDto;
@@ -22,8 +21,8 @@ import static org.baratie.yumyum.domain.likes.domain.QLikes.likes;
 import static org.baratie.yumyum.domain.member.domain.QMember.member;
 import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.store;
-import static org.baratie.yumyum.global.subquery.TotalAvgGrade.getAvgGrade;
-import static org.baratie.yumyum.global.subquery.TotalReviewCount.getReviewTotalCount;
+import static org.baratie.yumyum.global.subquery.TotalAvgGrade.getAvgGradeWithMember;
+import static org.baratie.yumyum.global.subquery.TotalReviewCount.getReviewTotalCountWithMember;
 
 @RequiredArgsConstructor
 public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
@@ -48,8 +47,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                                 member.id,
                                 member.imageUrl,
                                 member.nickname,
-                                ExpressionUtils.as(getReviewTotalCount(), "totalReviewCount"),
-                                ExpressionUtils.as(getAvgGrade(), "avgGrade"),
+                                ExpressionUtils.as(getReviewTotalCountWithMember(), "totalReviewCount"),
+                                ExpressionUtils.as(getAvgGradeWithMember(), "avgGrade"),
                                 review.id,
                                 review.grade,
                                 review.content,
@@ -85,8 +84,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                                 store.address.as("address"),
                                 member.nickname.as("nickname"),
                                 review.grade,
-                                ExpressionUtils.as(getReviewTotalCount(), "totalReviewCount"),
-                                ExpressionUtils.as(getAvgGrade(), "avgGrade"),
+                                ExpressionUtils.as(getReviewTotalCountWithMember(), "totalReviewCount"),
+                                ExpressionUtils.as(getAvgGradeWithMember(), "avgGrade"),
                                 review.content,
                                 likeStatus)
                         )
@@ -135,8 +134,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                                 review.id,
                                 review.grade,
                                 review.content,
-                                ExpressionUtils.as(getReviewTotalCount(), "totalReviewCount"),
-                                ExpressionUtils.as(getAvgGrade(), "avgGrade"),
+                                ExpressionUtils.as(getReviewTotalCountWithMember(), "totalReviewCount"),
+                                ExpressionUtils.as(getAvgGradeWithMember(), "avgGrade"),
                                 likeStatus
                         ))
                         .from(review)

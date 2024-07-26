@@ -1,5 +1,6 @@
 package org.baratie.yumyum.domain.store.repository.impl;
 
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.baratie.yumyum.domain.store.domain.Store;
 import org.baratie.yumyum.domain.store.dto.*;
 import org.baratie.yumyum.domain.store.repository.StoreCustomRepository;
+import org.baratie.yumyum.global.subquery.TotalAvgGrade;
+import org.baratie.yumyum.global.subquery.TotalReviewCount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -25,6 +28,8 @@ import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.*;
 import static org.baratie.yumyum.domain.favorite.domain.QFavorite.favorite;
 import static org.baratie.yumyum.domain.category.domain.QCategory.category;
+import static org.baratie.yumyum.global.subquery.TotalAvgGrade.getAvgGradeWithStore;
+import static org.baratie.yumyum.global.subquery.TotalReviewCount.getReviewTotalCountWithStore;
 
 @RequiredArgsConstructor
 public class StoreRepositoryImpl implements StoreCustomRepository {
@@ -82,20 +87,10 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
     @Override
     public Slice<MyFavoriteStoreDto> findFavoriteStore(Long memberId, Map<Long, List<String>> hashtagMap, Map<Long, String> imageMap, Pageable pageable) {
 
-        JPQLQuery<Double> avgGrade = JPAExpressions
-                .select(review.grade.avg())
-                .from(review)
-                .where(review.store.id.eq(store.id));
-
         JPQLQuery<Long> favoriteCount = JPAExpressions
                 .select(favorite.count())
                 .from(favorite)
-                .where(favorite.store.id.eq(store.id), favorite.isFavorite.eq(true));
-
-        JPQLQuery<Long> totalReviewCount = JPAExpressions
-                .select(review.count())
-                .from(review)
-                .where(review.store.id.eq(store.id));
+                .where(favorite.isFavorite.eq(true));
 
         List<MyFavoriteStoreDto> results = query.select(
                 Projections.constructor(MyFavoriteStoreDto.class,
@@ -103,9 +98,9 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         store.name,
                         store.address,
                         store.views,
-                        avgGrade,
-                        totalReviewCount,
-                        favoriteCount,
+                        ExpressionUtils.as(getAvgGradeWithStore(), "avgGrade"),
+                        ExpressionUtils.as(getReviewTotalCountWithStore(), "totalReviewCount"),
+                        ExpressionUtils.as(favoriteCount, "favoriteCount"),
                         favorite.isFavorite,
                         category.name
                 ))

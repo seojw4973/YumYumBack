@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.baratie.yumyum.domain.review.dto.*;
 import org.baratie.yumyum.domain.review.repository.MyReviewCustomRepository;
-import org.baratie.yumyum.global.subquery.ReplyCount;
+import org.baratie.yumyum.global.subquery.TotalAvgGrade;
+import org.baratie.yumyum.global.subquery.TotalReviewCount;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -22,8 +23,7 @@ import static org.baratie.yumyum.domain.review.domain.QReview.review;
 import static org.baratie.yumyum.domain.store.domain.QStore.store;
 import static org.baratie.yumyum.global.subquery.LikeReviewCount.getLikeReviewCount;
 import static org.baratie.yumyum.global.subquery.ReplyCount.getReplyCount;
-import static org.baratie.yumyum.global.subquery.TotalReviewCount.getReviewTotalCount;
-import static org.baratie.yumyum.global.subquery.TotalAvgGrade.getAvgGrade;
+import static org.baratie.yumyum.global.subquery.TotalAvgGrade.getAvgGradeWithMember;
 
 
 @RequiredArgsConstructor
@@ -46,8 +46,8 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
                                 member.nickname,
                                 member.imageUrl,
                                 review.grade,
-                                ExpressionUtils.as(getReviewTotalCount(memberId), "totalReviewCount"),
-                                ExpressionUtils.as(getAvgGrade(memberId), "avgGrade"),
+                                ExpressionUtils.as(TotalReviewCount.getReviewTotalCountWithMember(memberId), "totalReviewCount"),
+                                ExpressionUtils.as(TotalAvgGrade.getAvgGradeWithMember(memberId), "avgGrade"),
                                 ExpressionUtils.as(getReplyCount(), "replyCount"),
                                 review.content,
                                 likes.isLikes
@@ -96,7 +96,7 @@ public class MyReviewCustomRepositoryImpl implements MyReviewCustomRepository {
                                 member.imageUrl,
                                 review.grade,
                                 ExpressionUtils.as(getLikeReviewCount(memberId), "likeReviewCount"),
-                                ExpressionUtils.as(getAvgGrade(), "avgGrade"),
+                                ExpressionUtils.as(getAvgGradeWithMember(), "avgGrade"),
                                 ExpressionUtils.as(getReplyCount(), "replyCount"),
                                 review.content,
                                 likes.isLikes
