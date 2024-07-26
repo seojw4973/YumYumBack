@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 public class ReviewAllDto {
     private Long reviewId;
-    private String profileImage;
+    private String imageUrl;
     private String storeName;
     private String address;
 
@@ -27,9 +27,9 @@ public class ReviewAllDto {
     }
 
     @Builder
-    public ReviewAllDto(Long reviewId, String profileImage, String storeName, String address, String nickname, double grade, Long totalReviewCount, double avgGrade, String content, Boolean likeStatus) {
+    public ReviewAllDto(Long reviewId, String imageUrl, String storeName, String address, String nickname, double grade, Long totalReviewCount, double avgGrade, String content, Boolean likeStatus) {
         this.reviewId = reviewId;
-        this.profileImage = profileImage;
+        this.imageUrl = imageUrl;
         this.storeName = storeName;
         this.address = address;
         this.nickname = nickname;
