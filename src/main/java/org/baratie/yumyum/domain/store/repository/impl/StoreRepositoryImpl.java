@@ -77,7 +77,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                 .from(store)
                 .leftJoin(store.reviewList, review)
                 .leftJoin(store.favoriteList, favorite)
-                .where(storeIdEq(storeId))
+                .where(storeIdEq(storeId), favorite.isFavorite.eq(true))
                 .fetchOne();
     }
 

@@ -23,11 +23,10 @@ import java.util.Arrays;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/member")
+@RequestMapping("/auth")
 public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
-    private final RedisService redisService;
 
     /**
      * 회원가입
@@ -50,6 +49,7 @@ public class AuthController {
     public ResponseEntity<UserDataDto> login(@Valid @RequestBody LoginDto loginDto, HttpServletResponse response) {
         LoginResponseDto loginResponseDto = authService.login(loginDto);
         TokenDto tokenDto = loginResponseDto.getTokenDto();
+        System.out.println("tokenDto.getAtk() = " + tokenDto.getAtk());
         UserDataDto userDataDto = loginResponseDto.getUserDataDto();
 
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDto.getAtk());
@@ -101,9 +101,6 @@ public class AuthController {
      */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal CustomUserDetails customUserDetails, HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
-        System.out.println("Arrays.toString(cookies) = " + Arrays.toString(cookies));
-        System.out.println("=======================================================");
         String email = customUserDetails.getUsername();
         authService.logout(email);
 

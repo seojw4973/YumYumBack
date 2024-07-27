@@ -33,7 +33,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
                         .from(member)
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
-                        .orderBy(member.nickname.asc(), member.id.asc())
+                        .orderBy(member.id.asc())
                         .fetch();
 
         JPAQuery<Long> countQuery = query.select(member.count()).from(member);
