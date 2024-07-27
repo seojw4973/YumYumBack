@@ -72,7 +72,7 @@ public class StoreRepositoryImpl implements StoreCustomRepository {
                         store.latitude,
                         store.longitude,
                         review.id.countDistinct(),
-
+                        favorite.count(),
                         favoriteStatus))
                 .from(store)
                 .leftJoin(store.reviewList, review)
